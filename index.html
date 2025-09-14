@@ -80,12 +80,22 @@
             flex: 1;
             background-color: #4a5568;
             border-radius: 9999px;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            position: relative;
+            overflow: hidden;
         }
-        .progress-segment.visible {
-            opacity: 1;
+        .progress-segment::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0;
             background-color: var(--color-red);
+            border-radius: 9999px;
+            transition: width 0.5s ease-in-out;
+        }
+        .progress-segment.visible::after {
+            width: 100%;
         }
         
         #loading-text {

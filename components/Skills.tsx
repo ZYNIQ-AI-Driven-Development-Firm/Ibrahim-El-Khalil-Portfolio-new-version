@@ -49,8 +49,8 @@ const Skills: React.FC = () => {
             </div>
           ))
         ) : (
-          <div className="col-span-1 md:col-span-2 text-center text-gray-400">
-            No skills found for "{searchTerm}".
+          <div className="col-span-1 md:col-span-2 text-center text-gray-400 py-8">
+            <p>No skills found for "{searchTerm}".</p>
           </div>
         )}
       </div>

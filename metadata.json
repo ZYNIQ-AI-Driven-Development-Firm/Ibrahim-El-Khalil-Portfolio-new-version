@@ -1,5 +1,7 @@
 {
   "name": "Ibrahim El Khalil - Interactive Portfolio",
   "description": "An interactive portfolio for Ibrahim El Khalil, a Senior API Engineer, featuring an AI assistant powered by Gemini to answer questions about his skills and experience.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [
+    "microphone"
+  ]
 }

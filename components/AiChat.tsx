@@ -1,9 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { streamChatMessage } from '../services/geminiService';
 import { ChatMessage, MessageSender } from '../types';
-import { SendIcon, BotIcon, UserIcon, CloseIcon, MicrophoneIcon } from './icons';
+import { SendIcon, BotIcon, UserIcon, CloseIcon, MicrophoneIcon, MailIcon } from './icons';
 import { Content } from '@google/genai';
 import ReactMarkdown from 'react-markdown';
+
+// Web Speech API interfaces for cross-browser compatibility
+interface SpeechRecognition extends EventTarget {
+    continuous: boolean;
+    interimResults: boolean;
+    lang: string;
+    start(): void;
+    stop(): void;
+    onresult: (event: any) => void;
+    onerror: (event: any) => void;
+    onend: () => void;
+}
+declare var SpeechRecognition: { new(): SpeechRecognition };
+declare var webkitSpeechRecognition: { new(): SpeechRecognition };
+
 
 const CrackSVG: React.FC<{style?: React.CSSProperties}> = ({style}) => (
     <div className="crack-effect" style={style}>
@@ -21,6 +36,13 @@ const AiChat: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  
+  // Voice state
+  const [isVoiceMode, setIsVoiceMode] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -28,34 +50,22 @@ const AiChat: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(() => {
-    if (isOpen && messages.length === 0) {
-        setIsLoading(true);
-        setTimeout(() => {
-            setMessages([{ sender: MessageSender.AI, text: "Hello! I'm Ibrahim's AI assistant. Feel free to ask me anything about his professional background." }]);
-            setIsLoading(false);
-        }, 1000);
+  const speakText = useCallback((text: string) => {
+    if (!('speechSynthesis' in window)) {
+        console.warn("Speech Synthesis not supported.");
+        return;
     }
-  }, [isOpen]);
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
 
-  useEffect(scrollToBottom, [messages, isLoading]);
-  
-  const handleCloseChat = () => {
-      if (messages.length > 1) {
-        setShowConfirmation(true);
-      } else {
-        setIsOpen(false);
-        setMessages([]);
-      }
-  }
-  
-  const confirmClose = () => {
-      setIsOpen(false);
-      setShowConfirmation(false);
-      setMessages([]);
-  }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  }, []);
 
-  const handleSendMessage = async (messageText: string) => {
+  const handleSendMessage = useCallback(async (messageText: string) => {
     if (!messageText.trim()) return;
 
     const newUserMessage: ChatMessage = { sender: MessageSender.USER, text: messageText };
@@ -92,10 +102,12 @@ const AiChat: React.FC = () => {
             return updatedMessages;
         });
       }
-
+      
+      let finalAiText = aiResponseText;
       if (aiResponseText.includes('[SUGGESTIONS]')) {
         const parts = aiResponseText.split('[SUGGESTIONS]');
         const mainText = parts[0].trim();
+        finalAiText = mainText;
         const suggestionsJson = parts[1].trim();
         try {
             const parsedSuggestions = JSON.parse(suggestionsJson);
@@ -112,23 +124,125 @@ const AiChat: React.FC = () => {
             console.error('Failed to parse suggestions:', e);
         }
       }
+      
+      if(isVoiceMode) {
+          speakText(finalAiText);
+      }
+
     } catch (error) {
         console.error("Error streaming message:", error);
+        const errorText = "Sorry, I'm having trouble connecting. Please try again later.";
         setMessages(prev => {
             const updatedMessages = [...prev];
             const lastMessage = updatedMessages[updatedMessages.length - 1];
             if (lastMessage && lastMessage.sender === MessageSender.AI) {
-                lastMessage.text = "Sorry, I'm having trouble connecting. Please try again later.";
+                lastMessage.text = errorText;
             }
             return updatedMessages;
         });
+        if(isVoiceMode) speakText(errorText);
     } finally {
       if (firstChunk) {
         setIsLoading(false);
       }
     }
-  };
+  }, [messages, isVoiceMode, speakText]);
+
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+        setIsLoading(true);
+        setTimeout(() => {
+            const welcomeText = "Hello! I'm Ibrahim's AI assistant. Feel free to ask me anything about his professional background.";
+            setMessages([{ sender: MessageSender.AI, text: welcomeText }]);
+            if(isVoiceMode) speakText(welcomeText);
+            setIsLoading(false);
+        }, 1000);
+    }
+  }, [isOpen, isVoiceMode, speakText, messages.length]);
+
+  useEffect(() => {
+      // Cleanup speechSynthesis on close
+      return () => {
+          if (window.speechSynthesis) {
+              window.speechSynthesis.cancel();
+          }
+      }
+  }, []);
   
+  // Setup Speech Recognition
+  useEffect(() => {
+    const SpeechRecognitionAPI = SpeechRecognition || webkitSpeechRecognition;
+    if (!SpeechRecognitionAPI) {
+        console.warn("Speech Recognition not supported by this browser.");
+        return;
+    }
+
+    const recognition = new SpeechRecognitionAPI();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+            .map((result: any) => result[0])
+            .map((result) => result.transcript)
+            .join('');
+        setInput(transcript);
+        if (event.results[0].isFinal) {
+            handleSendMessage(transcript);
+        }
+    };
+    
+    recognition.onend = () => {
+        setIsListening(false);
+    };
+
+    recognition.onerror = (event: any) => {
+        console.error("Speech recognition error", event.error);
+        setIsListening(false);
+        const tempError = `Voice error: ${event.error}. Please try again.`;
+        setMessages(prev => [...prev, { sender: MessageSender.AI, text: tempError }]);
+    };
+    
+    recognitionRef.current = recognition;
+
+  }, [handleSendMessage]);
+
+  const toggleListen = () => {
+    if (isListening) {
+        recognitionRef.current?.stop();
+    } else {
+        setInput(''); // Clear input before starting
+        recognitionRef.current?.start();
+    }
+    setIsListening(!isListening);
+  };
+
+
+  useEffect(scrollToBottom, [messages, isLoading]);
+  
+  const handleCloseChat = () => {
+      if (messages.length > 1) {
+        setShowConfirmation(true);
+      } else {
+        setIsOpen(false);
+        setMessages([]);
+      }
+  }
+  
+  const confirmClose = () => {
+      setIsOpen(false);
+      setShowConfirmation(false);
+      setMessages([]);
+      setIsVoiceMode(false);
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+  }
+  
+  const openChat = (voice = false) => {
+      setIsVoiceMode(voice);
+      setIsOpen(true);
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     handleSendMessage(input);
@@ -141,18 +255,20 @@ const AiChat: React.FC = () => {
   return (
     <>
         <div className="fixed bottom-6 right-6 z-50 group">
-            <div className={`relative flex items-center justify-end transition-all duration-300 ease-in-out w-16 h-16 group-hover:w-44`}>
-                <div className="absolute right-0 flex items-center justify-center w-16 h-16 bg-slate-800/80 backdrop-blur-sm rounded-full shadow-lg cursor-pointer border border-white/10" onClick={() => setIsOpen(!isOpen)}>
+            <div className={`relative flex items-center justify-end transition-all duration-300 ease-in-out w-16 h-16 ${!isOpen && 'group-hover:w-44'}`}>
+                <div className="absolute right-0 flex items-center justify-center w-16 h-16 bg-slate-800/80 backdrop-blur-sm rounded-full shadow-lg cursor-pointer border border-white/10" onClick={() => openChat(isVoiceMode)}>
                      <BotIcon className="w-8 h-8 text-white" />
                 </div>
-                <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 mr-[4.5rem] gap-2">
-                    <button className="flex items-center justify-center w-12 h-12 bg-slate-700/80 backdrop-blur-sm rounded-full shadow-md hover:bg-[#EA2323]/80" title="Text Chat" onClick={() => setIsOpen(true)}>
-                        <SendIcon className="w-6 h-6" />
-                    </button>
-                    <button className="flex items-center justify-center w-12 h-12 bg-slate-700/80 backdrop-blur-sm rounded-full shadow-md hover:bg-[#EA2323]/80" title="Voice Chat (Coming Soon)">
-                        <MicrophoneIcon className="w-6 h-6" />
-                    </button>
-                </div>
+                {!isOpen && (
+                    <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 mr-[4.5rem] gap-2">
+                        <button className="flex items-center justify-center w-12 h-12 bg-slate-700/80 backdrop-blur-sm rounded-full shadow-md hover:bg-[#EA2323]/80" title="Text Chat" onClick={() => openChat(false)}>
+                            <SendIcon className="w-6 h-6 rotate-[-45deg]" />
+                        </button>
+                        <button className="flex items-center justify-center w-12 h-12 bg-slate-700/80 backdrop-blur-sm rounded-full shadow-md hover:bg-[#EA2323]/80" title="Voice Chat" onClick={() => openChat(true)}>
+                            <MicrophoneIcon className="w-6 h-6" />
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
 
@@ -172,7 +288,10 @@ const AiChat: React.FC = () => {
                 </div>
             )}
           <header className="p-4 border-b border-white/10 flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-white">Ask me about Ibrahim</h2>
+            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <span>Ask me about Ibrahim</span>
+                {isSpeaking && <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>}
+            </h2>
             <button onClick={handleCloseChat} className="text-gray-400 hover:text-white">
               <CloseIcon className="w-5 h-5" />
             </button>
@@ -183,10 +302,8 @@ const AiChat: React.FC = () => {
               {messages.map((message, index) => (
                 <div key={index} className={`flex items-start gap-3 ${message.sender === MessageSender.USER ? 'justify-end' : ''}`}>
                   {message.sender === MessageSender.AI && <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-700/80 flex items-center justify-center"><BotIcon className="w-5 h-5 text-slate-300" /></span>}
-                  <div className={`p-3 rounded-lg max-w-xs md:max-w-md ${message.sender === MessageSender.USER ? 'bg-[#EA2323] text-white' : 'bg-slate-700/80 text-slate-200'}`}>
-                    <div className="prose prose-sm prose-invert max-w-none">
+                  <div className={`p-3 rounded-lg max-w-xs md:max-w-md ${message.sender === MessageSender.USER ? 'bg-[#EA2323] text-white' : 'bg-slate-700/80 text-slate-200'} prose prose-sm prose-invert`}>
                       <ReactMarkdown>{message.text || " "}</ReactMarkdown>
-                    </div>
                   </div>
                   {message.sender === MessageSender.USER && <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-700/80 flex items-center justify-center"><UserIcon className="w-5 h-5 text-slate-300" /></span>}
                 </div>
@@ -216,19 +333,36 @@ const AiChat: React.FC = () => {
           )}
 
           <footer className="p-4 border-t border-white/10">
-            <form onSubmit={handleSubmit} className="flex items-center gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask a question..."
-                className="flex-1 p-2 bg-slate-700/80 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EA2323] text-white"
-                disabled={isLoading}
-              />
-              <button type="submit" disabled={isLoading || !input.trim()} className="bg-[#EA2323] text-white p-2 rounded-lg disabled:bg-slate-600 disabled:cursor-not-allowed hover:bg-red-500 transition-colors">
-                <SendIcon className="w-5 h-5" />
-              </button>
-            </form>
+            { isVoiceMode ? (
+                <div className="flex items-center justify-center gap-4">
+                    <button onClick={() => setIsVoiceMode(false)} className="text-gray-400 hover:text-white" title="Switch to Text Mode"><SendIcon className="w-6 h-6 rotate-[-45deg]" /></button>
+                    <button 
+                        onClick={toggleListen}
+                        disabled={isSpeaking}
+                        className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${isListening ? 'bg-red-500 animate-pulse' : 'bg-[#EA2323] hover:bg-red-500'} disabled:bg-slate-600 disabled:cursor-not-allowed`}
+                    >
+                        <MicrophoneIcon className="w-8 h-8 text-white" />
+                    </button>
+                    <span className="w-6 h-6"></span>
+                </div>
+            ) : (
+                <form onSubmit={handleSubmit} className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Ask a question..."
+                    className="flex-1 p-2 bg-slate-700/80 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EA2323] text-white"
+                    disabled={isLoading}
+                  />
+                   <button onClick={() => setIsVoiceMode(true)} type="button" className="text-gray-400 hover:text-white p-2" title="Switch to Voice Mode">
+                        <MicrophoneIcon className="w-5 h-5" />
+                    </button>
+                  <button type="submit" disabled={isLoading || !input.trim()} className="bg-[#EA2323] text-white p-2 rounded-lg disabled:bg-slate-600 disabled:cursor-not-allowed hover:bg-red-500 transition-colors">
+                    <SendIcon className="w-5 h-5" />
+                  </button>
+                </form>
+            )}
           </footer>
         </div>
       )}

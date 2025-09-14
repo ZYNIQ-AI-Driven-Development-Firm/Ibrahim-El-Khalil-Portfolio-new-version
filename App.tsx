@@ -7,11 +7,11 @@ import Ventures from './components/Ventures';
 import AiChat from './components/AiChat';
 
 const loadingSteps = [
-    "Booting up...",
+    "Initializing Interface...",
     "Compiling Work Experience...",
     "Analyzing Skills & Expertise...",
-    "Loading Ventures & Education...",
-    "Finalizing Interface..."
+    "Building Ventures & Education...",
+    "Finalizing..."
 ];
 
 const App: React.FC = () => {
@@ -82,6 +82,9 @@ const App: React.FC = () => {
           <Skills />
           <Education />
         </div>
+        <footer className="text-center pt-16 pb-8 text-sm text-slate-400">
+            Created By ZYNIQ AI
+        </footer>
       </main>
       <AiChat />
     </div>
