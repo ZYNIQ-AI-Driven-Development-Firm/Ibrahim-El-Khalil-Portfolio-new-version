@@ -4,7 +4,7 @@ import Experience from './components/Experience';
 import Skills from './components/Skills';
 import Education from './components/Education';
 import Ventures from './components/Ventures';
-// import AiChat from './components/AiChat';
+import AiChat from './components/AiChat';
 
 const loadingSteps = [
     "Initializing Interface...",
