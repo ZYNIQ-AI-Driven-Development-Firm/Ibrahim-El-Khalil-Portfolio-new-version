@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Hero from './components/Hero';
 import Experience from './components/Experience';
 import Skills from './components/Skills';
@@ -7,6 +8,7 @@ import Ventures from './components/Ventures';
 import OtherAchievements from './components/OtherAchievements';
 import AiChat from './components/AiChat';
 import AppointmentBooking from './components/AppointmentBooking';
+import AdminDashboard from './components/AdminDashboard';
 
 const loadingSteps = [
     "Initializing Interface...",
