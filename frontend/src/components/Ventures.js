@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { VENTURES_DATA } from '../constants';
-import { ChevronLeftIcon, ChevronRightIcon } from './icons';
+import { VENTURES_DATA, WHITE_PAPERS_DATA } from '../constants';
+import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from './icons';
 
 const Ventures = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
