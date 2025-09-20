@@ -9,7 +9,7 @@ if (!API_KEY) {
   console.error("Gemini API key is missing. Please set the API_KEY environment variable.");
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
+const ai = new GoogleGenerativeAI({ apiKey: API_KEY });
 
 const systemInstruction = `You are a helpful, friendly, and professional AI assistant for Ibrahim El Khalil's portfolio. Your purpose is to answer questions about his skills, experience, and professional background.
 You MUST base your answers ONLY on the resume information provided below.
