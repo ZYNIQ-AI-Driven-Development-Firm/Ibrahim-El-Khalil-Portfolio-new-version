@@ -78,23 +78,34 @@ const App = () => {
   }, [loading, loadingStep]);
   
   return (
-    <div>
-      <main className="relative z-10 container mx-auto px-4 md:px-6 py-8 max-w-6xl">
-        <Hero />
-        <div className="space-y-12 mt-12">
-          <Experience />
-          <Ventures />
-          <Skills />
-          <Education />
-          <OtherAchievements />
-        </div>
-        <footer className="text-center pt-12 pb-6 text-sm text-slate-400">
-            Created By ZYNIQ AI
-        </footer>
-      </main>
-      <AiChat />
-      <AppointmentBooking />
-    </div>
+    <Router>
+      <div>
+        <Routes>
+          <Route path="/admin-0v7h7g7v0k9d6a8" element={<AdminDashboard />} />
+          <Route path="/" element={
+            <>
+              {/* Loading Screen */}
+              {/* Main Portfolio */}
+              <main className="relative z-10 container mx-auto px-4 md:px-6 py-8 max-w-6xl">
+                <Hero />
+                <div className="space-y-12 mt-12">
+                  <Experience />
+                  <Ventures />
+                  <Skills />
+                  <Education />
+                  <OtherAchievements />
+                </div>
+                <footer className="text-center pt-12 pb-6 text-sm text-slate-400">
+                    Created By ZYNIQ AI
+                </footer>
+              </main>
+              <AiChat />
+              <AppointmentBooking />
+            </>
+          } />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
