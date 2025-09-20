@@ -96,7 +96,7 @@ const App = () => {
                   <OtherAchievements />
                 </div>
                 <footer className="text-center pt-12 pb-6 text-sm text-slate-400">
-                    Created By ZYNIQ AI
+                    © 2025 IEK Portfolio By ZYNIQ. All rights reserved.
                 </footer>
               </main>
               <AiChat />
