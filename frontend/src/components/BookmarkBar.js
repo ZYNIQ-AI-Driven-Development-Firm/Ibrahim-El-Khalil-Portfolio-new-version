@@ -70,14 +70,14 @@ const BookmarkBar = ({ onAppointmentClick }) => {
                 <span className="text-sm font-medium whitespace-nowrap">{button.label}</span>
               </div>
               
-              {/* Vertical bookmark perforations */}
-              <div className="absolute left-2 top-6">
+              {/* Bookmark perforations */}
+              <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
                 <div className="w-1 h-1 bg-white/30 rounded-full"></div>
               </div>
-              <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
+              <div className="absolute left-2 top-1/3 transform -translate-y-1/2">
                 <div className="w-0.5 h-0.5 bg-white/20 rounded-full"></div>
               </div>
-              <div className="absolute left-2 bottom-6">
+              <div className="absolute left-2 bottom-1/3 transform translate-y-1/2">
                 <div className="w-0.5 h-0.5 bg-white/20 rounded-full"></div>
               </div>
             </div>
