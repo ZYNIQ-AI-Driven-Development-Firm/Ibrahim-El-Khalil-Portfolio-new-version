@@ -91,6 +91,7 @@ const App = () => {
         </footer>
       </main>
       <AiChat />
+      <AppointmentBooking />
     </div>
   );
 };
