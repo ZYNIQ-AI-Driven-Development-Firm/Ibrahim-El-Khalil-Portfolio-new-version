@@ -55,7 +55,7 @@ const BookmarkBar = ({ onAppointmentClick }) => {
                 paddingTop: '12px',
                 paddingBottom: '12px',
                 width: hoveredButton === button.id ? '140px' : '60px',
-                transform: hoveredButton === button.id ? 'translateX(0)' : 'translateX(30px)'
+                transform: hoveredButton === button.id ? 'translateX(0)' : 'translateX(10px)'
               }}
             >
               <div className="flex items-center space-x-2">
