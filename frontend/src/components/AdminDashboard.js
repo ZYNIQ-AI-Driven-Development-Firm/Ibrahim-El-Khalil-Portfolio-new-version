@@ -484,6 +484,168 @@ const AdminDashboard = () => {
             </div>
           )}
 
+          {/* Analytics Section */}
+          {activeSection === 'analytics' && (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold mb-6">Advanced Analytics</h2>
+              
+              {/* Performance Metrics */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 glass-card rounded-xl p-6">
+                  <h3 className="text-xl font-semibold mb-4">📈 Traffic Trends (Last 30 Days)</h3>
+                  <div className="h-64 bg-black/20 rounded-lg flex items-center justify-center">
+                    {/* Mock Chart */}
+                    <div className="text-center">
+                      <div className="flex items-end justify-center space-x-2 mb-4">
+                        {[45, 78, 65, 89, 76, 94, 82, 67, 91, 88, 73, 96, 84, 79].map((height, i) => (
+                          <div 
+                            key={i}
+                            className="bg-gradient-to-t from-blue-500 to-blue-300 rounded-t"
+                            style={{ 
+                              height: `${height}px`, 
+                              width: '20px',
+                              animation: `fadeInUp ${0.1 * (i + 1)}s ease-out`
+                            }}
+                          ></div>
+                        ))}
+                      </div>
+                      <p className="text-gray-400 text-sm">Daily Visitors</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="glass-card rounded-xl p-6">
+                  <h3 className="text-xl font-semibold mb-4">⚡ Performance Score</h3>
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <div className="relative w-32 h-32 mx-auto mb-4">
+                        <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
+                          <circle cx="50" cy="50" r="40" stroke="#374151" strokeWidth="8" fill="none"/>
+                          <circle 
+                            cx="50" cy="50" r="40" 
+                            stroke="#10b981" strokeWidth="8" 
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeDasharray="251.2"
+                            strokeDashoffset="62.8"
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-2xl font-bold text-green-400">92</span>
+                        </div>
+                      </div>
+                      <p className="text-green-400 font-semibold">Excellent</p>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Page Load Speed</span>
+                        <span className="text-green-400">1.2s</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">SEO Score</span>
+                        <span className="text-blue-400">98/100</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Accessibility</span>
+                        <span className="text-purple-400">95/100</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Interaction Heatmap */}
+              <div className="glass-card rounded-xl p-6">
+                <h3 className="text-xl font-semibold mb-4">🔥 Interaction Heatmap</h3>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  {[
+                    { section: 'Hero Section', interactions: 2847, color: 'text-red-400', intensity: 95 },
+                    { section: 'AI Chat', interactions: 2394, color: 'text-orange-400', intensity: 80 },
+                    { section: 'Experience', interactions: 1876, color: 'text-yellow-400', intensity: 65 },
+                    { section: 'Skills Search', interactions: 1543, color: 'text-green-400', intensity: 55 },
+                    { section: 'Appointments', interactions: 876, color: 'text-blue-400', intensity: 40 },
+                    { section: 'White Papers', interactions: 654, color: 'text-purple-400', intensity: 30 },
+                    { section: 'Social Links', interactions: 432, color: 'text-pink-400', intensity: 20 },
+                    { section: 'Footer', interactions: 187, color: 'text-gray-400', intensity: 10 }
+                  ].map((item, i) => (
+                    <div key={i} className="bg-black/20 rounded-lg p-4 hover:bg-black/30 transition-colors">
+                      <h4 className="font-semibold text-white mb-2">{item.section}</h4>
+                      <p className={`text-2xl font-bold ${item.color} mb-1`}>
+                        {item.interactions.toLocaleString()}
+                      </p>
+                      <p className="text-xs text-gray-400">interactions</p>
+                      <div className="mt-2 w-full bg-gray-700 rounded-full h-1">
+                        <div 
+                          className={`h-1 rounded-full bg-gradient-to-r from-red-500 to-orange-500`}
+                          style={{ width: `${item.intensity}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Conversion Metrics */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="glass-card rounded-xl p-6">
+                  <h3 className="text-xl font-semibold mb-4">💎 Conversion Metrics</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                      <div>
+                        <p className="text-green-400 font-semibold">Contact Rate</p>
+                        <p className="text-2xl font-bold text-white">3.7%</p>
+                      </div>
+                      <div className="text-green-400">↗️ +0.8%</div>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                      <div>
+                        <p className="text-blue-400 font-semibold">AI Engagement</p>
+                        <p className="text-2xl font-bold text-white">18.6%</p>
+                      </div>
+                      <div className="text-blue-400">↗️ +2.1%</div>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                      <div>
+                        <p className="text-purple-400 font-semibold">Resume Downloads</p>
+                        <p className="text-2xl font-bold text-white">8.9%</p>
+                      </div>
+                      <div className="text-purple-400">↗️ +1.2%</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="glass-card rounded-xl p-6">
+                  <h3 className="text-xl font-semibold mb-4">🎯 User Journey</h3>
+                  <div className="space-y-3">
+                    {[
+                      { step: '1. Landing', users: '12,847', percentage: 100 },
+                      { step: '2. Browse Portfolio', users: '9,876', percentage: 77 },
+                      { step: '3. Interact with AI', users: '2,394', percentage: 19 },
+                      { step: '4. View Experience', users: '8,234', percentage: 64 },
+                      { step: '5. Contact/Appointment', users: '476', percentage: 4 }
+                    ].map((step, i) => (
+                      <div key={i} className="flex items-center space-x-3">
+                        <div className="flex-1">
+                          <div className="flex justify-between mb-1">
+                            <span className="text-gray-300 text-sm">{step.step}</span>
+                            <span className="text-white font-semibold">{step.users}</span>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div 
+                              className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-1000"
+                              style={{ width: `${step.percentage}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                        <span className="text-xs text-gray-400 w-8">{step.percentage}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* AI Assistant Section */}
           {activeSection === 'ai-assistant' && (
             <div className="space-y-6">
