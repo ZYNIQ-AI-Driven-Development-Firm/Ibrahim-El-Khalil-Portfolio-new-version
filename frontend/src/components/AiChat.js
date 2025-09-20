@@ -228,7 +228,7 @@ const AiChat = () => {
       )}
 
       {/* Main Chat Window */}
-      <div className="fixed bottom-6 right-6 w-96 h-[600px] glass-card rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden">
+      <div className="fixed bottom-4 right-4 w-80 h-[500px] glass-card rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden">
         <CrackSVG />
         
         {/* Header */}
