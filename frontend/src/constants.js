@@ -67,17 +67,6 @@ export const EXPERIENCE_DATA = [
 
 export const EDUCATION_DATA = [
   {
-    degree: 'Bachelor of Computer Science',
-    institution: 'American University of the Middle East (AUM)',
-    period: '2017 - 2021',
-    location: 'Kuwait',
-    details: [
-      'Specialized in Software Engineering and Database Systems',
-      'Graduated with Honors',
-      'Thesis: "Scalable Backend Architecture for Mobile Applications"',
-    ],
-  },
-  {
     degree: 'BTS Diploma',
     institution: 'INSFP de Mostaganem',
     period: '09/2016 - 09/2019',
