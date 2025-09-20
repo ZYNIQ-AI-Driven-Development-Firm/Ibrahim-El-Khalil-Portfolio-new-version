@@ -196,11 +196,27 @@ const AiChat = () => {
     return (
       <div className="fixed bottom-4 right-4 z-50 group">
         <div 
-          className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center justify-center transform hover:scale-105"
+          className="relative w-14 h-14 bg-gradient-to-br from-purple-600 via-red-500 to-orange-500 hover:from-purple-700 hover:via-red-600 hover:to-orange-600 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer flex items-center justify-center transform hover:scale-105 hover:rotate-3"
           onClick={() => setIsOpen(true)}
         >
-          <BotIcon className="w-5 h-5 text-white" />
-          <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse border border-white"></div>
+          {/* AI Brain Icon */}
+          <div className="relative">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
+              <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2Z" fill="currentColor"/>
+              <path d="M21 9C21 10.1 20.1 11 19 11C17.9 11 17 10.1 17 9C17 7.9 17.9 7 19 7C20.1 7 21 7.9 21 9Z" fill="currentColor"/>
+              <path d="M7 9C7 10.1 6.1 11 5 11C3.9 11 3 10.1 3 9C3 7.9 3.9 7 5 7C6.1 7 7 7.9 7 9Z" fill="currentColor"/>
+              <path d="M12 22C10.9 22 10 21.1 10 20C10 18.9 10.9 18 12 18C13.1 18 14 18.9 14 20C14 21.1 13.1 22 12 22Z" fill="currentColor"/>
+              <path d="M12 8L5 9L12 12L19 9L12 8Z" fill="currentColor" opacity="0.7"/>
+              <path d="M12 12L5 15L12 18L19 15L12 12Z" fill="currentColor" opacity="0.5"/>
+            </svg>
+            
+            {/* Animated dots */}
+            <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
+            <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></div>
+          </div>
+          
+          {/* Glowing effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-red-500 to-orange-500 rounded-2xl blur opacity-30 animate-pulse"></div>
         </div>
         
         {/* Tooltip */}
