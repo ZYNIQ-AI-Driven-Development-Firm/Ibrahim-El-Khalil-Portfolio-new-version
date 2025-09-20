@@ -87,7 +87,7 @@ const App = () => {
             Created By ZYNIQ AI
         </footer>
       </main>
-      <AiChat />
+      {/* <AiChat /> */}
     </div>
   );
 };
