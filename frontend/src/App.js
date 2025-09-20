@@ -83,6 +83,7 @@ const App = () => {
           <Ventures />
           <Skills />
           <Education />
+          <OtherAchievements />
         </div>
         <footer className="text-center pt-12 pb-6 text-sm text-slate-400">
             Created By ZYNIQ AI
