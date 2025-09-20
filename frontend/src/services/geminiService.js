@@ -40,7 +40,7 @@ ${RESUME_DATA_FOR_AI}
 
 const model = 'gemini-2.5-flash';
 
-export const streamChatMessage = async (history: Content[]) => {
+export const streamChatMessage = async (history) => {
   if (!API_KEY) {
     // A generator that yields an error message if the API key is not available.
     async function* errorStream() {
