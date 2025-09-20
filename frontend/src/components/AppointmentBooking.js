@@ -94,44 +94,7 @@ const AppointmentBooking = () => {
   };
 
   if (!isOpen) {
-    return (
-      <div className="fixed bottom-20 right-4 z-50 group">
-        <div 
-          className="relative bg-gradient-to-br from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white px-4 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105"
-          onClick={() => setIsOpen(true)}
-        >
-          {/* Ticket Shape */}
-          <div className="flex items-center space-x-2">
-            <div className="relative">
-              {/* Calendar Icon */}
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-              
-              {/* Notification dot */}
-              <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            </div>
-            <span className="text-sm font-medium">Book Meeting</span>
-          </div>
-          
-          {/* Ticket perforations */}
-          <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1">
-            <div className="w-2 h-2 bg-black rounded-full opacity-20"></div>
-          </div>
-          <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1">
-            <div className="w-2 h-2 bg-black rounded-full opacity-20"></div>
-          </div>
-        </div>
-        
-        {/* Tooltip */}
-        <div className="absolute bottom-full right-0 mb-2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
-          Schedule a meeting with Ibrahim
-        </div>
-      </div>
-    );
+    return null; // The button will be rendered by the BookmarkBar component
   }
 
   return (
