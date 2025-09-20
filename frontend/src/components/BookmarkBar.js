@@ -33,7 +33,7 @@ const BookmarkBar = ({ onAppointmentClick }) => {
   ];
 
   return (
-    <div className="fixed right-0 top-1/2 transform -translate-y-1/2 z-40">
+    <div className="fixed right-0 z-40" style={{ top: '50%', transform: 'translateY(-50%)' }}>
       <div className="flex flex-col space-y-2">
         {bookmarkButtons.map((button, index) => (
           <div
