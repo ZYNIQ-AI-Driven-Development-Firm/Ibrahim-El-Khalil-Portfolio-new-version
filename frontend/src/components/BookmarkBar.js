@@ -72,7 +72,7 @@ const BookmarkBar = ({ onAppointmentClick }) => {
                     hoveredButton === button.id ? 'opacity-100' : 'opacity-0'
                   }`}
                   style={{
-                    transform: hoveredButton === button.id ? 'translateX(0)' : 'translateX(90px)'
+                    transform: hoveredButton === button.id ? 'translateX(0)' : 'translateX(calc(100% - 45px))'
                   }}
                 >
                   {button.label}
