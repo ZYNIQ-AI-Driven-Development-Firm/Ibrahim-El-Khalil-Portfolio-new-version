@@ -77,7 +77,90 @@ export const EDUCATION_DATA = [
       'Thesis: "Scalable Backend Architecture for Mobile Applications"',
     ],
   },
+  {
+    degree: 'BTS Diploma',
+    institution: 'INSFP de Mostaganem',
+    period: '09/2016 - 09/2019',
+    location: 'Algeria',
+    field: 'Industrial Automation & Regulation',
+    details: [
+      'Automated Regulation and Control (ARC) offers the individual with wide knowledge and capabilities in the current distribution',
+      'Installation, control programs of electro-technical automation equipment',
+      'Control and regulation system of machines or industrial processes',
+    ],
+  },
+  {
+    degree: '3rd Year High School Student',
+    institution: 'Ibno Rostom High School',
+    period: '09/2012 - 09/2015',
+    location: 'Algeria',
+    field: 'Electrical and Math Engineering',
+    details: [
+      'Electrical engineers work on a wide range of components, devices and systems, from tiny microchips to huge power station generators',
+      'Strong foundation in mathematics and electrical engineering principles',
+    ],
+  },
 ];
+
+export const OTHER_ACHIEVEMENTS_DATA = {
+  certificates: [
+    {
+      name: 'AWS Certified Solutions Architect',
+      issuer: 'Amazon Web Services',
+      year: '2023',
+      description: 'Demonstrated expertise in designing distributed systems on AWS'
+    },
+    {
+      name: 'Google Cloud Professional Developer',
+      issuer: 'Google Cloud',
+      year: '2022',
+      description: 'Certified in developing scalable applications on Google Cloud Platform'
+    },
+    {
+      name: 'Python Professional Certification',
+      issuer: 'Python Institute',
+      year: '2021',
+      description: 'Advanced Python programming and software development practices'
+    },
+  ],
+  hackathons: [
+    {
+      year: '2019',
+      event: 'Mostacamp',
+      description: 'National Startup Weekend, Coach and Mentor'
+    },
+    {
+      year: '2019',
+      event: 'IBDAE',
+      description: 'National Startup Weekend, Coach and Mentor'
+    },
+    {
+      year: '2018',
+      event: 'Leapfrog Hack',
+      description: 'Largest Hackathon in Africa, "Divona Challenge", Algiers'
+    },
+    {
+      year: '2018',
+      event: 'Hack! T',
+      description: 'Algiers smart city'
+    },
+    {
+      year: '2018',
+      event: 'Make OH / IO',
+      description: 'Online hackathon'
+    },
+    {
+      year: '2017',
+      event: 'Start-up Weekend',
+      description: 'Entrepreneurship and innovation event'
+    },
+    {
+      year: '2017',
+      event: 'Hack4Algeria',
+      description: 'Sylabs Algiers'
+    },
+  ]
+};
 
 export const SKILLS_DATA = [
   {
