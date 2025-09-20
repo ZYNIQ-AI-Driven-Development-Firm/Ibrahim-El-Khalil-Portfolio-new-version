@@ -54,7 +54,7 @@ const BookmarkBar = ({ onAppointmentClick }) => {
                 paddingRight: hoveredButton === button.id ? '28px' : '20px',
                 paddingTop: '12px',
                 paddingBottom: '12px',
-                width: hoveredButton === button.id ? '140px' : '50px',
+                width: hoveredButton === button.id ? '140px' : '60px',
                 transform: hoveredButton === button.id ? 'translateX(0)' : 'translateX(30px)'
               }}
             >
