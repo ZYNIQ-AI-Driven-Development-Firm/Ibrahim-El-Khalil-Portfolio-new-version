@@ -82,6 +82,22 @@ const Skills = () => {
             </div>
           ))}
         </div>
+
+        {/* No Results Message */}
+        {searchTerm && filteredSkills.length === 0 && (
+          <div className="text-center py-8">
+            <div className="text-gray-400 mb-2">
+              <SearchIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <p>No skills found for "{searchTerm}"</p>
+            </div>
+            <button
+              onClick={() => setSearchTerm('')}
+              className="text-red-400 hover:text-red-300 text-sm underline"
+            >
+              Clear search
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
