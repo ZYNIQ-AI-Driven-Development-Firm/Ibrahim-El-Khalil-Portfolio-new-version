@@ -158,9 +158,241 @@ const AdminDashboard = () => {
         <main className="flex-1 p-6">
           {/* Overview Section */}
           {activeSection === 'overview' && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <h2 className="text-3xl font-bold mb-6">Dashboard Overview</h2>
               
+              {/* Analytics Section */}
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold mb-6 flex items-center">
+                  <span className="text-2xl mr-3">📊</span>
+                  Analytics Dashboard
+                </h3>
+                
+                {/* Top Analytics Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                  <div className="glass-card rounded-xl p-4 border-l-4 border-green-500">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-lg font-semibold mb-1">Total Visitors</h4>
+                        <p className="text-3xl font-bold text-green-400">12,847</p>
+                        <p className="text-sm text-gray-400">+18.2% from last month</p>
+                      </div>
+                      <div className="text-green-400">
+                        <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="glass-card rounded-xl p-4 border-l-4 border-blue-500">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-lg font-semibold mb-1">Page Views</h4>
+                        <p className="text-3xl font-bold text-blue-400">89,653</p>
+                        <p className="text-sm text-gray-400">+24.7% from last month</p>
+                      </div>
+                      <div className="text-blue-400">
+                        <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="glass-card rounded-xl p-4 border-l-4 border-purple-500">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-lg font-semibold mb-1">AI Interactions</h4>
+                        <p className="text-3xl font-bold text-purple-400">2,394</p>
+                        <p className="text-sm text-gray-400">+31.5% from last month</p>
+                      </div>
+                      <div className="text-purple-400">
+                        <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="glass-card rounded-xl p-4 border-l-4 border-orange-500">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-lg font-semibold mb-1">Appointments</h4>
+                        <p className="text-3xl font-bold text-orange-400">47</p>
+                        <p className="text-sm text-gray-400">+12 this week</p>
+                      </div>
+                      <div className="text-orange-400">
+                        <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Detailed Analytics Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Real-time Analytics */}
+                  <div className="glass-card rounded-xl p-6">
+                    <h4 className="text-xl font-semibold mb-4 flex items-center">
+                      <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></span>
+                      Real-time Analytics
+                    </h4>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300">Active visitors now</span>
+                        <span className="text-2xl font-bold text-green-400">23</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300">Pages viewed (last hour)</span>
+                        <span className="text-xl font-semibold text-blue-400">156</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300">AI chats initiated</span>
+                        <span className="text-xl font-semibold text-purple-400">8</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300">New appointments</span>
+                        <span className="text-xl font-semibold text-orange-400">2</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Geographic Analytics */}
+                  <div className="glass-card rounded-xl p-6">
+                    <h4 className="text-xl font-semibold mb-4">🌍 Geographic Distribution</h4>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <span className="mr-2">🇺🇸</span>
+                          <span className="text-gray-300">United States</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-20 bg-gray-700 rounded-full h-2 mr-2">
+                            <div className="bg-blue-500 h-2 rounded-full" style={{ width: '68%' }}></div>
+                          </div>
+                          <span className="text-sm text-blue-400">68%</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <span className="mr-2">🇦🇪</span>
+                          <span className="text-gray-300">UAE</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-20 bg-gray-700 rounded-full h-2 mr-2">
+                            <div className="bg-green-500 h-2 rounded-full" style={{ width: '15%' }}></div>
+                          </div>
+                          <span className="text-sm text-green-400">15%</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <span className="mr-2">🇬🇧</span>
+                          <span className="text-gray-300">United Kingdom</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-20 bg-gray-700 rounded-full h-2 mr-2">
+                            <div className="bg-purple-500 h-2 rounded-full" style={{ width: '12%' }}></div>
+                          </div>
+                          <span className="text-sm text-purple-400">12%</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <span className="mr-2">🌍</span>
+                          <span className="text-gray-300">Others</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-20 bg-gray-700 rounded-full h-2 mr-2">
+                            <div className="bg-orange-500 h-2 rounded-full" style={{ width: '5%' }}></div>
+                          </div>
+                          <span className="text-sm text-orange-400">5%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Popular Sections */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                  <div className="glass-card rounded-xl p-6">
+                    <h4 className="text-xl font-semibold mb-4">🔥 Most Viewed Sections</h4>
+                    <div className="space-y-3">
+                      {[
+                        { name: 'Work Experience', views: 8942, percentage: 85 },
+                        { name: 'Skills & Technologies', views: 7834, percentage: 74 },
+                        { name: 'Ventures & Projects', views: 6723, percentage: 64 },
+                        { name: 'AI Chat Interactions', views: 5612, percentage: 53 },
+                        { name: 'White Papers', views: 4387, percentage: 42 }
+                      ].map((section, index) => (
+                        <div key={index} className="flex items-center justify-between">
+                          <div>
+                            <span className="text-gray-300">{section.name}</span>
+                            <p className="text-sm text-gray-500">{section.views.toLocaleString()} views</p>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-24 bg-gray-700 rounded-full h-2 mr-2">
+                              <div 
+                                className="bg-gradient-to-r from-red-500 to-orange-500 h-2 rounded-full" 
+                                style={{ width: `${section.percentage}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-sm text-red-400">{section.percentage}%</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="glass-card rounded-xl p-6">
+                    <h4 className="text-xl font-semibold mb-4">📱 Device & Browser Stats</h4>
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-sm text-gray-400 mb-2">Device Types</p>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-gray-300">💻 Desktop</span>
+                            <span className="text-blue-400">58.2%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-300">📱 Mobile</span>
+                            <span className="text-green-400">32.1%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-300">📊 Tablet</span>
+                            <span className="text-purple-400">9.7%</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-400 mb-2">Top Browsers</p>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-gray-300">Chrome</span>
+                            <span className="text-blue-400">67.4%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-300">Safari</span>
+                            <span className="text-green-400">18.9%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-300">Firefox</span>
+                            <span className="text-purple-400">8.2%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-300">Edge</span>
+                            <span className="text-orange-400">5.5%</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Portfolio Content Stats */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="glass-card rounded-xl p-4">
                   <h3 className="text-lg font-semibold mb-2">Experience</h3>
