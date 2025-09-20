@@ -7,7 +7,7 @@ import Education from './components/Education';
 import Ventures from './components/Ventures';
 import OtherAchievements from './components/OtherAchievements';
 import AiChat from './components/AiChat';
-import AppointmentBooking from './components/AppointmentBooking';
+import AppointmentManager from './components/AppointmentManager';
 import AdminDashboard from './components/AdminDashboard';
 
 const loadingSteps = [
