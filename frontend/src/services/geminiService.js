@@ -50,7 +50,7 @@ export const streamChatMessage = async (history) => {
   }
   
   try {
-    const contents: Content[] = history;
+    const contents = history;
     
     const responseStream = await ai.models.generateContentStream({
       model: model,
