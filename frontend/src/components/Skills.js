@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { SKILLS_DATA } from '../constants';
+import { SearchIcon } from './icons';
 
 const Skills = () => {
   return (
