@@ -1,5 +1,3 @@
-import { ExperienceItem, EducationItem, SkillCategory, VentureItem } from './types';
-
 export const PROFILE_DATA = {
   name: 'Ibrahim El Khalil',
   title: 'Entrepreneur | Senior Software Engineer | AI Architect',
