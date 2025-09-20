@@ -15,6 +15,7 @@ const Education = () => {
                   <div>
                     <h3 className="text-xl font-bold text-white mb-1">{edu.degree}</h3>
                     <h4 className="text-lg text-red-400 mb-1">{edu.institution}</h4>
+                    {edu.field && <p className="text-sm text-orange-400 mb-1">{edu.field}</p>}
                     {edu.location && <p className="text-gray-400 text-sm">{edu.location}</p>}
                   </div>
                   
