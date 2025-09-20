@@ -130,6 +130,7 @@ const AdminDashboard = () => {
           <nav className="space-y-2">
             {[
               { id: 'overview', label: '📊 Overview', icon: '📊' },
+              { id: 'analytics', label: '📈 Analytics', icon: '📈' },
               { id: 'profile', label: '👤 Profile', icon: '👤' },
               { id: 'experience', label: '💼 Experience', icon: '💼' },
               { id: 'skills', label: '🎯 Skills', icon: '🎯' },
