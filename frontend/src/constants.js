@@ -151,6 +151,43 @@ export const OTHER_ACHIEVEMENTS_DATA = {
   ]
 };
 
+export const WHITE_PAPERS_DATA = [
+  {
+    id: 1,
+    title: 'Microservices Architecture',
+    briefDescription: 'Comprehensive analysis of microservices design patterns and implementation strategies',
+    fullDescription: 'This white paper explores the fundamental principles of microservices architecture, examining the transition from monolithic to distributed systems. It covers key design patterns, service decomposition strategies, communication protocols, and best practices for building scalable, maintainable microservices ecosystems.',
+    keyPoints: [
+      'Service decomposition and boundary identification',
+      'Inter-service communication patterns and protocols',
+      'Data consistency and distributed transaction management',
+      'Deployment strategies and containerization',
+      'Monitoring, logging, and observability in distributed systems',
+      'Security considerations for microservices architectures'
+    ],
+    publishedDate: '2024',
+    pages: '28 pages',
+    category: 'Software Architecture'
+  },
+  {
+    id: 2,
+    title: 'AuraliX Concept',
+    briefDescription: 'Revolutionary framework for decentralized multi-agent systems and autonomous coordination',
+    fullDescription: 'The AuraliX Concept paper introduces a groundbreaking approach to decentralized multi-agent systems, leveraging blockchain technology and advanced consensus algorithms. This research presents a novel framework for autonomous agent coordination, enabling intelligent distributed computing at scale.',
+    keyPoints: [
+      'Decentralized agent coordination mechanisms',
+      'Blockchain-based consensus for agent networks',
+      'Autonomous decision-making algorithms',
+      'Scalable multi-agent communication protocols',
+      'Smart contract integration for agent governance',
+      'Real-world applications and use cases'
+    ],
+    publishedDate: '2024',
+    pages: '35 pages', 
+    category: 'Distributed Systems'
+  }
+];
+
 export const SKILLS_DATA = [
   {
     category: 'Backend Development',
