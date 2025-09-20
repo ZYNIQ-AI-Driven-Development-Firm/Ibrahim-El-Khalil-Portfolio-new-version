@@ -46,20 +46,20 @@ const BookmarkBar = ({ onAppointmentClick }) => {
             <div 
               className={`relative bg-gradient-to-l ${
                 hoveredButton === button.id ? button.hoverColor : button.color
-              } text-white cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl`}
+              } text-white cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl overflow-hidden`}
               onClick={button.onClick}
               style={{
                 clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%)',
                 paddingLeft: '16px',
-                paddingRight: '28px',
+                paddingRight: hoveredButton === button.id ? '28px' : '20px',
                 paddingTop: '12px',
                 paddingBottom: '12px',
-                minWidth: '140px',
-                transform: hoveredButton === button.id ? 'translateX(0)' : 'translateX(24px)'
+                width: hoveredButton === button.id ? '140px' : '50px',
+                transform: hoveredButton === button.id ? 'translateX(0)' : 'translateX(90px)'
               }}
             >
               <div className="flex items-center space-x-2">
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                   {button.icon}
                   
                   {/* Notification dot */}
@@ -67,7 +67,16 @@ const BookmarkBar = ({ onAppointmentClick }) => {
                     <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                   )}
                 </div>
-                <span className="text-sm font-medium whitespace-nowrap">{button.label}</span>
+                <span 
+                  className={`text-sm font-medium whitespace-nowrap transition-opacity duration-300 ${
+                    hoveredButton === button.id ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  style={{
+                    transform: hoveredButton === button.id ? 'translateX(0)' : 'translateX(10px)'
+                  }}
+                >
+                  {button.label}
+                </span>
               </div>
               
               {/* Bookmark perforations */}
