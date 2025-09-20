@@ -100,7 +100,7 @@ const App = () => {
                 </footer>
               </main>
               <AiChat />
-              <AppointmentBooking />
+              <AppointmentManager />
             </>
           } />
         </Routes>
