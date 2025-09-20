@@ -97,7 +97,7 @@ const BookmarkBar = ({ onAppointmentClick }) => {
             </div>
             
             {/* Tooltip */}
-            <div className={`absolute right-full top-1/2 transform -translate-y-1/2 mr-3 bg-black text-white text-xs py-1 px-2 rounded whitespace-nowrap transition-opacity duration-200 ${
+            <div className={`absolute right-full top-1/2 transform -translate-y-1/2 mr-3 bg-black text-white text-xs py-2 px-3 rounded whitespace-nowrap transition-opacity duration-200 z-10 ${
               hoveredButton === button.id ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}>
               Schedule a meeting with Ibrahim
