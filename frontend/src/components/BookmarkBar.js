@@ -46,7 +46,7 @@ const BookmarkBar = ({ onAppointmentClick }) => {
             <div 
               className={`relative bg-gradient-to-l ${
                 hoveredButton === button.id ? button.hoverColor : button.color
-              } text-white cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl overflow-hidden`}
+              } text-white cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl overflow-hidden border border-white/10`}
               onClick={button.onClick}
               style={{
                 clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%)',
