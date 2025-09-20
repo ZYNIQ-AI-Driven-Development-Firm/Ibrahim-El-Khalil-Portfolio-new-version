@@ -91,7 +91,14 @@ const Ventures = () => {
                   <div className="relative z-10 space-y-4">
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
                       <div className="lg:col-span-3">
-                        <h3 className="text-xl font-bold text-white mb-1">{venture.name}</h3>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="text-xl font-bold text-white">{venture.name}</h3>
+                          {venture.type && (
+                            <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full border border-purple-500/30">
+                              {venture.type}
+                            </span>
+                          )}
+                        </div>
                         <h4 className="text-lg text-red-400 mb-2">{venture.role}</h4>
                         <p className="text-gray-300 leading-relaxed text-sm">{venture.description}</p>
                       </div>
