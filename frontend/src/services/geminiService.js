@@ -1,5 +1,4 @@
-// Fix: Removed unused imports Chat and GenerateContentResponse.
-import { GoogleGenAI, Content } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { RESUME_DATA_FOR_AI } from '../constants';
 
 const API_KEY = process.env.API_KEY;
