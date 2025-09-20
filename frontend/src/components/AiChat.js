@@ -194,13 +194,13 @@ const AiChat = () => {
 
   if (!isOpen) {
     return (
-      <div className="fixed bottom-6 right-6 z-50 group">
+      <div className="fixed bottom-4 right-4 z-50 group">
         <div 
-          className="w-14 h-14 bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center justify-center transform hover:scale-110"
+          className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center justify-center transform hover:scale-105"
           onClick={() => setIsOpen(true)}
         >
-          <BotIcon className="w-6 h-6 text-white" />
-          <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse border border-white"></div>
+          <BotIcon className="w-5 h-5 text-white" />
+          <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse border border-white"></div>
         </div>
         
         {/* Tooltip */}
