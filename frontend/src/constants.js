@@ -3,7 +3,7 @@ export const PROFILE_DATA = {
   title: 'Entrepreneur | Senior Software Engineer | AI Architect',
   location: 'Dubai, UAE',
   summary: 'Seasoned Software Engineer and Entrepreneur with 7+ years of expertise in designing and implementing scalable, high-performance backend solutions and AI systems. Passionate about building robust, secure, and efficient systems that drive business success and innovation.',
-  image: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAHAAcADASIAAhEBAxEB/8QAGwABAAMBAQEBAAAAAAAAAAAAAAECAwQFBgf/xAA5EAACAQMDAwMDAgQFAwUBAAABAgMABBEFEiExE0FRBiJhcRQygZEjQlKhscEVYtHh8CQzU3KS8f/EABoBAQEBAQEBAQAAAAAAAAAAAAABAgMEBQb/xAAhEQEBAQEAAgMBAQEBAQAAAAAAAQIRAyExEgRBURMiYT/aAAwDAQACEQMRAD8A+q0paWgBaClpRQAtKWigApaUUAFLS0tABS0tFAC0tLRQAtKWloAKWloKACloKWgApaWkoAWlpKWgBaWkpaAFpaSloAWlpKWgBaWkpaAWkpRSUAFLSUtAC0lLRQAtJS0UAFLSUtAC0lLRQAUtJS0ALSUUtAC0lLRQAUlFLQAtJS0UAFLSUtAC0tIKWgAqKWilFABRS0UAFLS0UAFLRSUAFFFJQAUUUUAFLRSUAFFFJQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFJS0AFFJRQAUUUUAFFFJQAUUUUAFFFJQAUUUUAFFFKKAExSUtFACUtFFABSUtFACUUUUAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0lACUUUUAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRRRQAlFLSUAJRRRQAlFLSUAJRS0lACUUUUAJRS0UAJRRRQAUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlRS4oxQAlFLijFACYoxS4oxQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAUUtFFABQaKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAClFJSigAooooAKWkpaACiiigAooooAKWkpaACiiigAopaSloAKKKSgBaKKKAClpKWgAopKSgBaKKKACloKWgAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACloKWgAooooAKWkpaAFooooAKKKWgAopaSgBaKKKACloKWgAooooAKKKKAFpKKWgAopaSgBaKKKACiiloAKKKSgBaKKKAFpKKWgAooooAKKKKAClpKWgAooooAKKKKACiiigBaSiigAopaSgBaKKKACiiloAKKKKACiiigBaKSloAKKKKACiiigBaSiigAooooAKKKKACiiigBaSiigAopaSgAooooAKKWkoAKKKWgAooopAAooooGFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAgooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigA//Z',
+  image: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAHAAcADASIAAhEBAxEB/8QAGwABAAMBAQEBAAAAAAAAAAAAAAECAwQFBgf/xAA5EAACAQMDAwMDAgQFAwUBAAABAgMABBEFEiExE0FRBiJhcRQygZEjQlKhscEVYtHh8CQzU3KS8f/EABoBAQEBAQEBAQAAAAAAAAAAAAABAgMEBQb/xAAhEQEBAQEAAgMBAQEBAQAAAAAAAQIRAyExEgRBURMiYT/aAAwDAQACEQMRAD8A+q0paWgBaClpRQAtKWigApaUUAFLS0tABS0tFAC0tLRQAtKWloAKWloKACloKWgApaWkoAWlpKWgBaWkpaAFpaSloAWlpKWgBaWkpaAWkpRSUAFLSUtAC0lLRQAtJS0UAFLSUtAC0lLRQAUtJS0ALSUUtAC0lLRQAUlFLQAtJS0UAFLSUtAC0tIKWgAqKWilFABRS0UAFLS0UAFLRSUAFFFJQAUUUUAFLRSUAFFFJQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFJS0AFFJRQAUUUUAFFFJQAUUUUAFFFJQAUUUUAFFFKKAExSUtFACUtFFABSUtFACUUUUAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0lACUUUUAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRS0UAJRRRQAlFLSUAJRRRQAlFLSUAJRS0lACUUUUAJRS0UAJRRRQAUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlRS4oxQAlFLijFACYoxS4oxQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAlLRRQAUUtFFABQaKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAClFJSigAooooAKWkpaACiiigAooooAKWkpaACiiigAopaSloAKKKSgBaKKKAClpKWgAopKSgBaKKKACloKWgAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACloKWgAooooAKWkpaAFooooAKKKWgAopaSgBaKKKACloKWgAooooAKKKKAFpKKWgAopaSgBaKKKACiiloAKKKSgBaKKKAFpKKWgAooooAKKKKAClpKWgAooooAKKKKACiiigBaSiigAopaSgBaKKKACiiloAKKKKACiiigBaKSloAKKKKACiiigBaSiigAooooAKKKKACiiigBaSiigAopaSgAooooAKKWkoAKKKWgAooopAAooooGFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAgooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigA//Z',
 };
 
 export const SOCIAL_LINKS = {
@@ -12,8 +12,8 @@ export const SOCIAL_LINKS = {
   email: 'ibrahimelkhalilpreview@gmail.com',
 };
 
-export const EXPERIENCE_DATA: ExperienceItem[] = [
-    {
+export const EXPERIENCE_DATA = [
+  {
     role: 'Senior API Engineer',
     company: 'FirstGroup for Shory KSA',
     period: 'Jul 2023 - Present',
@@ -24,10 +24,10 @@ export const EXPERIENCE_DATA: ExperienceItem[] = [
       'Managed cloud resources on AWS and GCP to ensure high availability and performance.',
     ],
     projects: [
-        {
-            name: 'KSA Market Launch Platform',
-            description: 'Responsible for the entire backend platform for the new branch in KSA, ensuring seamless integration and scalability from day one.'
-        }
+      {
+        name: 'KSA Market Launch Platform',
+        description: 'Responsible for the entire backend platform for the new branch in KSA, ensuring seamless integration and scalability from day one.'
+      }
     ]
   },
   {
@@ -49,8 +49,8 @@ export const EXPERIENCE_DATA: ExperienceItem[] = [
     description: [
       'Led digital transformation for 5 real estate firms, increasing operational efficiency by 25%.',
       'Enhanced project discovery for real estate developers by developing a SaaS solution, impacting over 100 projects.',
-      'Utilized Splunk for logging and observability, improving system monitoring and reducing downtime.',
-    ],
+      'Utilized Splunk for logging and observability, improving system monitoring and reducing downtime.'
+    ]
   },
   {
     role: 'Lead Backend Developer',
@@ -59,143 +59,139 @@ export const EXPERIENCE_DATA: ExperienceItem[] = [
     location: 'Mostaganem, Algeria',
     description: [
       'Developed, tested, and debugged software tools for clients and internal customers.',
-      'Managed PostgreSQL and non-SQL databases (Celery, Redis, Elasticsearch) within Agile development processes.',
+      'Collaborated with product managers to deliver high-quality software solutions.',
+      'Led a team of 3 developers in implementing microservices architecture.'
+    ]
+  }
+];
+
+export const EDUCATION_DATA = [
+  {
+    degree: 'Bachelor of Computer Science',
+    institution: 'American University of the Middle East (AUM)',
+    period: '2017 - 2021',
+    location: 'Kuwait',
+    details: [
+      'Specialized in Software Engineering and Database Systems',
+      'Graduated with Honors',
+      'Thesis: "Scalable Backend Architecture for Mobile Applications"',
+    ],
+  },
+];
+
+export const SKILLS_DATA = [
+  {
+    category: 'Backend Development',
+    skills: [
+      { name: 'Python', level: 95 },
+      { name: 'Django', level: 90 },
+      { name: 'FastAPI', level: 88 },
+      { name: 'Flask', level: 85 },
+      { name: 'Node.js', level: 75 },
     ],
   },
   {
-    role: 'Fullstack Web Developer',
-    company: 'Preview-Lab',
-    period: 'Jan 2018 - Jan 2020',
-    location: 'Mostaganem, Algeria',
-    description: [
-      'Developed a Python-based API (RESTful Web Service) using Flask for client applications, handling over 10,000 requests per day.',
-      'Maintained and optimized MongoDB and PostgreSQL databases.',
+    category: 'Databases',
+    skills: [
+      { name: 'PostgreSQL', level: 90 },
+      { name: 'MongoDB', level: 85 },
+      { name: 'Redis', level: 80 },
+      { name: 'MySQL', level: 85 },
+      { name: 'DynamoDB', level: 75 },
+    ],
+  },
+  {
+    category: 'Cloud & DevOps',
+    skills: [
+      { name: 'AWS', level: 88 },
+      { name: 'Docker', level: 85 },
+      { name: 'Kubernetes', level: 80 },
+      { name: 'GCP', level: 75 },
+      { name: 'CI/CD', level: 80 },
+    ],
+  },
+  {
+    category: 'AI & Machine Learning',
+    skills: [
+      { name: 'Machine Learning', level: 80 },
+      { name: 'TensorFlow', level: 75 },
+      { name: 'PyTorch', level: 70 },
+      { name: 'NLP', level: 75 },
+      { name: 'Computer Vision', level: 65 },
     ],
   },
 ];
 
-export const EDUCATION_DATA: EducationItem[] = [
-    {
-        institution: 'INSFP de Mostaganem',
-        degree: 'BTS Diploma in Industrial Automation & Regulation',
-        period: '2016 - 2019',
-        location: 'Mostaganem, Algeria',
-        description: 'Graduated first in my class. My final thesis project was designing and building a fully functional 6-axis robotic arm from scratch, including hardware and software.'
-    },
-    {
-        institution: 'Ibno Rostom High School',
-        degree: 'Electrical and Math Engineering',
-        period: '2012 - 2015',
-        location: 'Mostaganem, Algeria',
-    }
+export const VENTURES_DATA = [
+  {
+    name: 'AdvancedPython.ai',
+    role: 'Co-Founder & CTO',
+    period: '2023 - Present',
+    description: 'Advanced AI-powered platform for Python development assistance and code optimization.',
+    achievements: [
+      'Built an AI system that helps developers write more efficient Python code',
+      'Integrated advanced language models for real-time code suggestions',
+      'Developed automated testing and optimization tools',
+    ],
+    technologies: ['Python', 'AI/ML', 'FastAPI', 'PostgreSQL', 'Docker'],
+  },
+  {
+    name: 'PythonGuide.net',
+    role: 'Founder',
+    period: '2022 - Present',
+    description: 'Comprehensive educational platform for Python developers of all levels.',
+    achievements: [
+      'Created extensive tutorial library with 500+ lessons',
+      'Built community platform serving 10,000+ developers',
+      'Developed interactive coding exercises and challenges',
+    ],
+    technologies: ['Django', 'React', 'PostgreSQL', 'Redis', 'AWS'],
+  },
 ];
-
-export const SKILLS_DATA: SkillCategory[] = [
-    {
-        title: 'Python Frameworks',
-        skills: ['Django', 'Django REST Framework', 'Flask', 'FastAPI', 'Tornado']
-    },
-    {
-        title: 'Cloud & DevOps',
-        skills: ['AWS', 'Google Cloud', 'Docker', 'Kubernetes', 'Elastic Stack (ELK)', 'CI/CD']
-    },
-    {
-        title: 'Databases',
-        skills: ['PostgreSQL', 'MongoDB', 'NoSQL', 'SQL', 'Redis', 'Elasticsearch', 'Vector DBs']
-    },
-    {
-        title: 'AI, Data & Automation',
-        skills: ['Pandas', 'TensorFlow', 'Agetic AI', 'n8n Automations', 'Microservices', 'Kafka']
-    }
-];
-
-export const VENTURES_DATA: VentureItem[] = [
-    {
-        name: 'Preview-Lab',
-        tagline: 'The Genesis of Innovation.',
-        description: 'For over a decade, Preview-Lab has been the incubator where all ideas begin. It has evolved into a consultancy, follow-up, and investment hub for emerging startups, agencies, and companies, leveraging 10+ years of expertise from myself and a network of industry experts.',
-        logoPlaceholder: true,
-    },
-    {
-        name: 'ZYNIQ',
-        tagline: 'AI-Driven Development Firm.',
-        description: '"Adapting to the future isn’t enough — you have to build it. At ZYNIQ, we architect that transformation. We combine synthetic intelligence, niche problem-solving, and uncompromising quality to deliver powerful, intelligent solutions. From concept to code, we make the future tangible." ZYNIQ is the execution powerhouse for AI and complex tech solutions conceptualized in Preview-Lab.',
-        logoPlaceholder: true,
-    },
-    {
-        name: 'Auralix',
-        description: 'A cutting-edge project focused on audio intelligence and synthesis.',
-        byline: 'By ZYNIQ and Preview-Lab',
-        logoPlaceholder: true,
-    },
-    {
-        name: 'Zero',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        byline: 'By ZYNIQ',
-        logoPlaceholder: true,
-    },
-    {
-        name: 'DBly',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        byline: 'By ZYNIQ',
-        logoPlaceholder: true,
-    },
-    {
-        name: 'Flowy',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        byline: 'By ZYNIQ',
-        logoPlaceholder: true,
-    },
-    {
-        name: 'Mixly',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        byline: 'By ZYNIQ',
-        logoPlaceholder: true,
-    }
-];
-
 
 export const RESUME_DATA_FOR_AI = `
-# Ibrahim El Khalil's Resume
+Professional Summary:
+Ibrahim El Khalil - Entrepreneur, Senior Software Engineer & AI Architect
+Location: Dubai, UAE
+Experience: 7+ years in backend development and AI systems
 
-## Profile
-- **Name**: ${PROFILE_DATA.name}
-- **Title**: ${PROFILE_DATA.title}
-- **Location**: ${PROFILE_DATA.location}
-- **Summary**: ${PROFILE_DATA.summary}
+Current Role:
+Senior API Engineer at FirstGroup for Shory KSA (Jul 2023 - Present)
+- Leading API infrastructure development for KSA market launch
+- Designing scalable microservices using Python, FastAPI, and Docker
+- Managing cloud resources on AWS and GCP
 
-## Work Experience
-${EXPERIENCE_DATA.map(job => `
-### ${job.role} at ${job.company}
-- **Period**: ${job.period}
-- **Location**: ${job.location}
-- **Responsibilities**:
-${job.description.map(d => `  - ${d}`).join('\n')}
-${job.projects ? `
-- **Key Projects**:
-${job.projects.map(p => `  - **${p.name}**: ${p.description}`).join('\n')}
-` : ''}
-`).join('')}
+Previous Experience:
+1. Senior Backend Developer at Skyloov (Jul 2023)
+   - Developed Python APIs using Django, Flask, PostgreSQL
+   - Managed 4 microservices handling 100,000+ daily requests
+   - Implemented AWS services (DynamoDB, Lambda, S3)
 
-## Ventures & Entrepreneurship
-${VENTURES_DATA.map(v => `
-### ${v.name} ${v.tagline ? `- ${v.tagline}`: ''}
-- **Description**: ${v.description}
-${v.byline ? `- **Affiliation**: ${v.byline}` : ''}
-`).join('')}
+2. Senior Backend Developer at Pixel (Aug 2022 - Jul 2023)
+   - Led digital transformation for 5 real estate firms
+   - Increased operational efficiency by 25%
+   - Developed SaaS solution impacting 100+ projects
 
-## Education
-${EDUCATION_DATA.map(edu => `
-### ${edu.degree}
-- **Institution**: ${edu.institution}
-- **Period**: ${edu.period}
-- **Location**: ${edu.location}
-${edu.description ? `- **Note**: ${edu.description}` : ''}
-`).join('')}
+3. Lead Backend Developer at FineTech Kio (Jun 2019 - Jun 2022)
+   - Developed software tools for clients and internal customers
+   - Led team of 3 developers in microservices architecture
 
-## Skills & Expertise
-${SKILLS_DATA.map(category => `
-### ${category.title}
-- ${category.skills.join(', ')}
-`).join('')}
+Ventures:
+- Co-Founder & CTO of AdvancedPython.ai (2023-Present): AI platform for Python development
+- Founder of PythonGuide.net (2022-Present): Educational platform for Python developers
+
+Education:
+Bachelor of Computer Science from American University of the Middle East (2017-2021)
+Graduated with Honors, specialized in Software Engineering
+
+Core Skills:
+Backend: Python (95%), Django (90%), FastAPI (88%), Flask (85%), Node.js (75%)
+Databases: PostgreSQL (90%), MongoDB (85%), Redis (80%), MySQL (85%), DynamoDB (75%)
+Cloud: AWS (88%), Docker (85%), Kubernetes (80%), GCP (75%), CI/CD (80%)
+AI/ML: Machine Learning (80%), TensorFlow (75%), PyTorch (70%), NLP (75%)
+
+Contact:
+LinkedIn: https://www.linkedin.com/in/khalilpreview/
+GitHub: https://github.com/ibrahimelgibran
+Email: ibrahimelkhalilpreview@gmail.com
 `;
