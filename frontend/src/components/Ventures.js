@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { VENTURES_DATA } from '../constants';
+import { ChevronLeftIcon, ChevronRightIcon } from './icons';
 
 const Ventures = () => {
   return (
