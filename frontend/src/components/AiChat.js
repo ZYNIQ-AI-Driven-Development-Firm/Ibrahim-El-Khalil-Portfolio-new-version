@@ -1,26 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { streamChatMessage } from '../services/geminiService';
-import { ChatMessage, MessageSender } from '../types';
-import { SendIcon, BotIcon, UserIcon, CloseIcon, MicrophoneIcon, MailIcon } from './icons';
-import { Content } from '@google/genai';
+import { SendIcon, BotIcon, UserIcon, CloseIcon, MicrophoneIcon } from './icons';
 import ReactMarkdown from 'react-markdown';
 
-// Web Speech API interfaces for cross-browser compatibility
-interface SpeechRecognition extends EventTarget {
-    continuous: boolean;
-    interimResults: boolean;
-    lang: string;
-    start(): void;
-    stop(): void;
-    onresult: (event: any) => void;
-    onerror: (event: any) => void;
-    onend: () => void;
-}
-declare var SpeechRecognition: { new(): SpeechRecognition };
-declare var webkitSpeechRecognition: { new(): SpeechRecognition };
-
-
-const CrackSVG: React.FC<{style?: React.CSSProperties}> = ({style}) => (
+const CrackSVG = ({style}) => (
     <div className="crack-effect" style={style}>
         <svg viewBox="0 0 200 200" preserveAspectRatio="none">
             <path d="M20 20 L180 180" stroke="rgba(234, 35, 35, 0.6)" strokeWidth="1" />
@@ -29,343 +12,386 @@ const CrackSVG: React.FC<{style?: React.CSSProperties}> = ({style}) => (
     </div>
 );
 
-const AiChat: React.FC = () => {
+const AiChat = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
   
   // Voice state
   const [isVoiceMode, setIsVoiceMode] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef(null);
 
-
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const speakText = useCallback((text: string) => {
+  const speakText = useCallback((text) => {
     if (!('speechSynthesis' in window)) {
         console.warn("Speech Synthesis not supported.");
         return;
     }
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
-
+    
     const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.volume = 0.8;
+    
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
+    
     window.speechSynthesis.speak(utterance);
   }, []);
 
-  const handleSendMessage = useCallback(async (messageText: string) => {
-    if (!messageText.trim()) return;
-
-    const newUserMessage: ChatMessage = { sender: MessageSender.USER, text: messageText };
-    const currentMessages = [...messages, newUserMessage];
-    setMessages(currentMessages);
-    setInput('');
-    setSuggestions([]);
-    setIsLoading(true);
-
-    const history: Content[] = currentMessages.map(msg => ({
-        role: msg.sender === MessageSender.USER ? 'user' : 'model',
-        parts: [{ text: msg.text }],
-    }));
+  const startListening = useCallback(() => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      console.warn("Speech Recognition not supported.");
+      return;
+    }
     
-    let aiResponseText = '';
-    const newAiMessage: ChatMessage = { sender: MessageSender.AI, text: '' };
-    setMessages(prev => [...prev, newAiMessage]);
-
-    let firstChunk = true;
-    try {
-      const stream = await streamChatMessage(history);
-      for await (const chunk of stream) {
-          if (firstChunk) {
-              setIsLoading(false);
-              firstChunk = false;
-          }
-        aiResponseText += chunk;
-        setMessages(prev => {
-            const updatedMessages = [...prev];
-            const lastMessage = updatedMessages[updatedMessages.length - 1];
-            if (lastMessage && lastMessage.sender === MessageSender.AI) {
-                lastMessage.text = aiResponseText;
-            }
-            return updatedMessages;
-        });
-      }
-      
-      let finalAiText = aiResponseText;
-      if (aiResponseText.includes('[SUGGESTIONS]')) {
-        const parts = aiResponseText.split('[SUGGESTIONS]');
-        const mainText = parts[0].trim();
-        finalAiText = mainText;
-        const suggestionsJson = parts[1].trim();
-        try {
-            const parsedSuggestions = JSON.parse(suggestionsJson);
-            setSuggestions(parsedSuggestions);
-            setMessages(prev => {
-                const updatedMessages = [...prev];
-                const lastMessage = updatedMessages[updatedMessages.length - 1];
-                if (lastMessage && lastMessage.sender === MessageSender.AI) {
-                    lastMessage.text = mainText;
-                }
-                return updatedMessages;
-            });
-        } catch (e) {
-            console.error('Failed to parse suggestions:', e);
-        }
-      }
-      
-      if(isVoiceMode) {
-          speakText(finalAiText);
-      }
-
-    } catch (error) {
-        console.error("Error streaming message:", error);
-        const errorText = "Sorry, I'm having trouble connecting. Please try again later.";
-        setMessages(prev => {
-            const updatedMessages = [...prev];
-            const lastMessage = updatedMessages[updatedMessages.length - 1];
-            if (lastMessage && lastMessage.sender === MessageSender.AI) {
-                lastMessage.text = errorText;
-            }
-            return updatedMessages;
-        });
-        if(isVoiceMode) speakText(errorText);
-    } finally {
-      if (firstChunk) {
-        setIsLoading(false);
-      }
-    }
-  }, [messages, isVoiceMode, speakText]);
-
-  useEffect(() => {
-    if (isOpen && messages.length === 0) {
-        setIsLoading(true);
-        setTimeout(() => {
-            const welcomeText = "Hello! I'm Ibrahim's AI assistant. Feel free to ask me anything about his professional background.";
-            setMessages([{ sender: MessageSender.AI, text: welcomeText }]);
-            if(isVoiceMode) speakText(welcomeText);
-            setIsLoading(false);
-        }, 1000);
-    }
-  }, [isOpen, isVoiceMode, speakText, messages.length]);
-
-  useEffect(() => {
-      // Cleanup speechSynthesis on close
-      return () => {
-          if (window.speechSynthesis) {
-              window.speechSynthesis.cancel();
-          }
-      }
-  }, []);
-  
-  // Setup Speech Recognition
-  useEffect(() => {
-    const SpeechRecognitionAPI = SpeechRecognition || webkitSpeechRecognition;
-    if (!SpeechRecognitionAPI) {
-        console.warn("Speech Recognition not supported by this browser.");
-        return;
-    }
-
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognitionAPI();
+    
     recognition.continuous = false;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
-
-    recognition.onresult = (event: any) => {
-        const transcript = Array.from(event.results)
-            .map((result: any) => result[0])
-            .map((result) => result.transcript)
-            .join('');
-        setInput(transcript);
-        if (event.results[0].isFinal) {
-            handleSendMessage(transcript);
-        }
+    
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+    
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map(result => result[0])
+        .map(result => result.transcript)
+        .join('');
+        
+      setInput(transcript);
+    };
+    
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error', event.error);
+      setIsListening(false);
     };
     
     recognition.onend = () => {
-        setIsListening(false);
-    };
-
-    recognition.onerror = (event: any) => {
-        console.error("Speech recognition error", event.error);
-        setIsListening(false);
-        const tempError = `Voice error: ${event.error}. Please try again.`;
-        setMessages(prev => [...prev, { sender: MessageSender.AI, text: tempError }]);
+      setIsListening(false);
     };
     
     recognitionRef.current = recognition;
+    recognition.start();
+  }, []);
 
-  }, [handleSendMessage]);
-
-  const toggleListen = () => {
-    if (isListening) {
-        recognitionRef.current?.stop();
-    } else {
-        setInput(''); // Clear input before starting
-        recognitionRef.current?.start();
+  const stopListening = useCallback(() => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
     }
-    setIsListening(!isListening);
+  }, []);
+
+  const handleVoiceToggle = useCallback(() => {
+    setIsVoiceMode(!isVoiceMode);
+    if (isListening) {
+      stopListening();
+    }
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
+  }, [isVoiceMode, isListening, isSpeaking, stopListening]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const predefinedSuggestions = [
+    "Tell me about Ibrahim's experience",
+    "What technologies does he work with?",
+    "What are his key projects?",
+    "How can I contact Ibrahim?"
+  ];
+
+  const handleSuggestionClick = (suggestion) => {
+    setInput(suggestion);
+    setSuggestions([]);
   };
 
-
-  useEffect(scrollToBottom, [messages, isLoading]);
-  
-  const handleCloseChat = () => {
-      if (messages.length > 1) {
-        setShowConfirmation(true);
-      } else {
-        setIsOpen(false);
-        setMessages([]);
-      }
-  }
-  
-  const confirmClose = () => {
-      setIsOpen(false);
-      setShowConfirmation(false);
-      setMessages([]);
-      setIsVoiceMode(false);
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-  }
-  
-  const openChat = (voice = false) => {
-      setIsVoiceMode(voice);
-      setIsOpen(true);
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    handleSendMessage(input);
+    if (!input.trim() || isLoading) return;
+
+    const userMessage = {
+      id: Date.now(),
+      text: input.trim(),
+      sender: 'user',
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
+    setSuggestions([]);
+
+    try {
+      const aiMessage = {
+        id: Date.now() + 1,
+        text: '',
+        sender: 'ai',
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, aiMessage]);
+
+      let fullResponse = '';
+      await streamChatMessage(userMessage.text, (chunk) => {
+        fullResponse += chunk;
+        setMessages(prev => prev.map(msg => 
+          msg.id === aiMessage.id 
+            ? { ...msg, text: fullResponse }
+            : msg
+        ));
+      });
+
+      if (isVoiceMode && fullResponse) {
+        speakText(fullResponse);
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        text: 'Sorry, I encountered an error. Please try again.',
+        sender: 'ai',
+        timestamp: new Date()
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
-  
-  const handleSuggestionClick = (suggestion: string) => {
-      handleSendMessage(suggestion);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setInput(value);
+    
+    if (value.trim()) {
+      const filtered = predefinedSuggestions.filter(s => 
+        s.toLowerCase().includes(value.toLowerCase())
+      );
+      setSuggestions(filtered.slice(0, 3));
+    } else {
+      setSuggestions([]);
+    }
   };
+
+  if (!isOpen) {
+    return (
+      <div className="fixed bottom-6 right-6 z-50 group">
+        <div 
+          className="w-14 h-14 bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center justify-center transform hover:scale-110"
+          onClick={() => setIsOpen(true)}
+        >
+          <BotIcon className="w-6 h-6 text-white" />
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse border border-white"></div>
+        </div>
+        
+        {/* Tooltip */}
+        <div className="absolute bottom-16 right-0 bg-black text-white text-sm py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+          Chat with AI about Ibrahim
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
-        <div className="fixed bottom-6 right-6 z-50 group">
-            <div className={`relative flex items-center justify-end transition-all duration-300 ease-in-out w-16 h-16 ${!isOpen && 'group-hover:w-44'}`}>
-                <div className="absolute right-0 flex items-center justify-center w-16 h-16 bg-slate-800/80 backdrop-blur-sm rounded-full shadow-lg cursor-pointer border border-white/10" onClick={() => openChat(isVoiceMode)}>
-                     <BotIcon className="w-8 h-8 text-white" />
-                </div>
-                {!isOpen && (
-                    <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 mr-[4.5rem] gap-2">
-                        <button className="flex items-center justify-center w-12 h-12 bg-slate-700/80 backdrop-blur-sm rounded-full shadow-md hover:bg-[#EA2323]/80" title="Text Chat" onClick={() => openChat(false)}>
-                            <SendIcon className="w-6 h-6 rotate-[-45deg]" />
-                        </button>
-                        <button className="flex items-center justify-center w-12 h-12 bg-slate-700/80 backdrop-blur-sm rounded-full shadow-md hover:bg-[#EA2323]/80" title="Voice Chat" onClick={() => openChat(true)}>
-                            <MicrophoneIcon className="w-6 h-6" />
-                        </button>
-                    </div>
-                )}
-            </div>
-        </div>
-
-      {isOpen && (
+      {/* Confirmation Modal */}
+      {showConfirmation && (
         <div className="fixed bottom-24 right-6 w-full max-w-md h-[70vh] max-h-[600px] glass-card rounded-lg shadow-xl flex flex-col z-40">
-           <CrackSVG />
-           {showConfirmation && (
-                <div className="absolute inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center rounded-lg">
-                    <div className="glass-card p-6 rounded-lg text-center">
-                        <h3 className="text-lg font-semibold mb-2">End Session?</h3>
-                        <p className="text-sm text-gray-300 mb-4">Your conversation will be lost.</p>
-                        <div className="flex justify-center gap-4">
-                            <button onClick={() => setShowConfirmation(false)} className="px-4 py-2 rounded bg-slate-600 hover:bg-slate-500 transition-colors">Continue Chat</button>
-                            <button onClick={confirmClose} className="px-4 py-2 rounded bg-[#EA2323] hover:bg-red-500 transition-colors">End Session</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-          <header className="p-4 border-b border-white/10 flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                <span>Ask me about Ibrahim</span>
-                {isSpeaking && <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>}
-            </h2>
-            <button onClick={handleCloseChat} className="text-gray-400 hover:text-white">
-              <CloseIcon className="w-5 h-5" />
-            </button>
-          </header>
-          
-          <div className="flex-1 p-4 overflow-y-auto bg-black/20">
-            <div className="space-y-4">
-              {messages.map((message, index) => (
-                <div key={index} className={`flex items-start gap-3 ${message.sender === MessageSender.USER ? 'justify-end' : ''}`}>
-                  {message.sender === MessageSender.AI && <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-700/80 flex items-center justify-center"><BotIcon className="w-5 h-5 text-slate-300" /></span>}
-                  <div className={`p-3 rounded-lg max-w-xs md:max-w-md ${message.sender === MessageSender.USER ? 'bg-[#EA2323] text-white' : 'bg-slate-700/80 text-slate-200'} prose prose-sm prose-invert`}>
-                      <ReactMarkdown>{message.text || " "}</ReactMarkdown>
-                  </div>
-                  {message.sender === MessageSender.USER && <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-700/80 flex items-center justify-center"><UserIcon className="w-5 h-5 text-slate-300" /></span>}
-                </div>
-              ))}
-              {isLoading && (
-                  <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-700/80 flex items-center justify-center"><BotIcon className="w-5 h-5 text-slate-300 animate-pulse" /></span>
-                      <div className="p-3 rounded-lg bg-slate-700/80 text-gray-400 flex items-center">
-                          <span>AI is thinking...</span>
-                      </div>
-                  </div>
-              )}
-              <div ref={messagesEndRef} />
+          <div className="p-4 text-center">
+            <h3 className="text-lg font-semibold text-white mb-2">Start AI Chat?</h3>
+            <p className="text-gray-300 text-sm mb-4">This will connect you with an AI assistant to learn more about Ibrahim El Khalil's professional background.</p>
+            <div className="flex gap-2">
+              <button onClick={() => setShowConfirmation(false)} className="px-4 py-2 rounded bg-slate-600 hover:bg-slate-500 transition-colors">Continue Chat</button>
+              <button onClick={() => { setShowConfirmation(false); setIsOpen(false); }} className="px-4 py-2 rounded bg-red-600 hover:bg-red-500 transition-colors">Cancel</button>
             </div>
           </div>
-          
-          {suggestions.length > 0 && !isLoading && (
-            <div className="p-2 border-t border-white/10">
-                <div className="flex flex-wrap gap-2 justify-center">
-                    {suggestions.map((s, i) => (
-                        <button key={i} onClick={() => handleSuggestionClick(s)} className="px-3 py-1 text-sm bg-slate-700/80 hover:bg-slate-600/80 rounded-full transition-colors">
-                            {s}
-                        </button>
-                    ))}
-                </div>
-            </div>
-          )}
-
-          <footer className="p-4 border-t border-white/10">
-            { isVoiceMode ? (
-                <div className="flex items-center justify-center gap-4">
-                    <button onClick={() => setIsVoiceMode(false)} className="text-gray-400 hover:text-white" title="Switch to Text Mode"><SendIcon className="w-6 h-6 rotate-[-45deg]" /></button>
-                    <button 
-                        onClick={toggleListen}
-                        disabled={isSpeaking}
-                        className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${isListening ? 'bg-red-500 animate-pulse' : 'bg-[#EA2323] hover:bg-red-500'} disabled:bg-slate-600 disabled:cursor-not-allowed`}
-                    >
-                        <MicrophoneIcon className="w-8 h-8 text-white" />
-                    </button>
-                    <span className="w-6 h-6"></span>
-                </div>
-            ) : (
-                <form onSubmit={handleSubmit} className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask a question..."
-                    className="flex-1 p-2 bg-slate-700/80 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EA2323] text-white"
-                    disabled={isLoading}
-                  />
-                   <button onClick={() => setIsVoiceMode(true)} type="button" className="text-gray-400 hover:text-white p-2" title="Switch to Voice Mode">
-                        <MicrophoneIcon className="w-5 h-5" />
-                    </button>
-                  <button type="submit" disabled={isLoading || !input.trim()} className="bg-[#EA2323] text-white p-2 rounded-lg disabled:bg-slate-600 disabled:cursor-not-allowed hover:bg-red-500 transition-colors">
-                    <SendIcon className="w-5 h-5" />
-                  </button>
-                </form>
-            )}
-          </footer>
         </div>
       )}
+
+      {/* Main Chat Window */}
+      <div className="fixed bottom-6 right-6 w-96 h-[600px] glass-card rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden">
+        <CrackSVG />
+        
+        {/* Header */}
+        <div className="relative z-10 flex items-center justify-between p-4 border-b border-white/10">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center">
+              <BotIcon className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <h3 className="font-medium text-white">AI Assistant</h3>
+              <p className="text-xs text-gray-300">Ask me about Ibrahim</p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleVoiceToggle}
+              className={`p-2 rounded-lg transition-colors duration-200 ${
+                isVoiceMode 
+                  ? 'bg-red-500/20 text-red-400' 
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+              }`}
+              aria-label="Toggle voice mode"
+            >
+              <MicrophoneIcon className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-colors duration-200"
+              aria-label="Close chat"
+            >
+              <CloseIcon className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Messages */}
+        <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
+          {messages.length === 0 && (
+            <div className="text-center py-8">
+              <BotIcon className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-gray-300 text-sm mb-4">Hi! I'm Ibrahim's AI assistant. Ask me anything about his experience, skills, or projects!</p>
+              <div className="space-y-2">
+                {predefinedSuggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    className="block w-full text-left p-2 text-xs bg-white/5 hover:bg-white/10 rounded-lg text-gray-300 hover:text-white transition-colors duration-200"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={`flex items-start space-x-2 max-w-[85%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  message.sender === 'user' 
+                    ? 'bg-blue-500' 
+                    : 'bg-gradient-to-br from-red-500 to-red-600'
+                }`}>
+                  {message.sender === 'user' ? (
+                    <UserIcon className="w-3 h-3 text-white" />
+                  ) : (
+                    <BotIcon className="w-3 h-3 text-white" />
+                  )}
+                </div>
+                <div className={`rounded-2xl px-3 py-2 text-sm ${
+                  message.sender === 'user'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-white/10 text-gray-100'
+                }`}>
+                  {message.sender === 'ai' ? (
+                    <ReactMarkdown className="prose prose-sm prose-invert max-w-none">
+                      {message.text}
+                    </ReactMarkdown>
+                  ) : (
+                    message.text
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+          
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="flex items-start space-x-2">
+                <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center">
+                  <BotIcon className="w-3 h-3 text-white" />
+                </div>
+                <div className="bg-white/10 rounded-2xl px-3 py-2">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Suggestions */}
+        {suggestions.length > 0 && (
+          <div className="relative z-10 px-4 pb-2">
+            <div className="space-y-1">
+              {suggestions.map((suggestion, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  className="block w-full text-left p-2 text-xs bg-white/5 hover:bg-white/10 rounded-lg text-gray-300 hover:text-white transition-colors duration-200"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Input */}
+        <div className="relative z-10 p-4 border-t border-white/10">
+          <form onSubmit={handleSubmit} className="flex space-x-2">
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={input}
+                onChange={handleInputChange}
+                placeholder={isListening ? "Listening..." : "Ask me anything about Ibrahim..."}
+                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/25 transition-all duration-200"
+                disabled={isLoading || isListening}
+              />
+              {isVoiceMode && (
+                <button
+                  type="button"
+                  onClick={isListening ? stopListening : startListening}
+                  className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-lg transition-colors duration-200 ${
+                    isListening 
+                      ? 'bg-red-500 text-white animate-pulse' 
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                  disabled={isLoading}
+                >
+                  <MicrophoneIcon className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+            <button
+              type="submit"
+              disabled={!input.trim() || isLoading || isListening}
+              className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-xl px-4 py-3 transition-all duration-200 flex items-center justify-center"
+            >
+              <SendIcon className="w-4 h-4" />
+            </button>
+          </form>
+        </div>
+      </div>
     </>
   );
 };
