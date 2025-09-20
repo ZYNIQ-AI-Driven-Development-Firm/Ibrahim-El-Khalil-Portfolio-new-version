@@ -46,9 +46,7 @@ const BookmarkBar = ({ onAppointmentClick }) => {
             <div 
               className={`relative bg-gradient-to-l ${
                 hoveredButton === button.id ? button.hoverColor : button.color
-              } text-white cursor-pointer transition-all duration-300 transform ${
-                hoveredButton === button.id ? 'translate-x-0' : 'translate-x-6'
-              } shadow-lg hover:shadow-xl`}
+              } text-white cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl`}
               onClick={button.onClick}
               style={{
                 clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%)',
@@ -56,7 +54,8 @@ const BookmarkBar = ({ onAppointmentClick }) => {
                 paddingRight: '28px',
                 paddingTop: '12px',
                 paddingBottom: '12px',
-                minWidth: '140px'
+                minWidth: '140px',
+                transform: hoveredButton === button.id ? 'translateX(0)' : 'translateX(24px)'
               }}
             >
               <div className="flex items-center space-x-2">
