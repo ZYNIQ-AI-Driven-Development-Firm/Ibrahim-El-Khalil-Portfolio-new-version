@@ -3,13 +3,71 @@ import { VENTURES_DATA } from '../constants';
 import { ChevronLeftIcon, ChevronRightIcon } from './icons';
 
 const Ventures = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % VENTURES_DATA.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + VENTURES_DATA.length) % VENTURES_DATA.length);
+  };
+
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
   return (
     <section className="py-12">
       <div className="space-y-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-white mb-8">Ventures & Projects</h2>
-        
-        <div className="space-y-4">
-          {VENTURES_DATA.map((venture, index) => (
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl md:text-3xl font-bold text-white">Ventures & Projects</h2>
+          
+          {/* Slide Navigation */}
+          <div className="flex items-center space-x-4">
+            {/* Slide Indicators */}
+            <div className="flex space-x-2">
+              {VENTURES_DATA.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    index === currentSlide 
+                      ? 'bg-red-500 w-6' 
+                      : 'bg-gray-600 hover:bg-gray-500'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+            
+            {/* Navigation Arrows */}
+            <div className="flex space-x-2">
+              <button
+                onClick={prevSlide}
+                className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 hover:scale-105"
+                aria-label="Previous venture"
+              >
+                <ChevronLeftIcon className="w-4 h-4 text-white" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 hover:scale-105"
+                aria-label="Next venture"
+              >
+                <ChevronRightIcon className="w-4 h-4 text-white" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Slide Container */}
+        <div className="relative overflow-hidden">
+          <div 
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {VENTURES_DATA.map((venture, index) => (
             <div key={index} className="glass-card rounded-xl p-5 relative overflow-hidden">
               <div className="relative z-10 space-y-4">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
