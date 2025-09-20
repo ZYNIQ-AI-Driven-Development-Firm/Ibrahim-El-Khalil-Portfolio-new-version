@@ -52,17 +52,14 @@ const BookmarkBar = ({ onAppointmentClick }) => {
                 clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%)',
                 paddingLeft: '16px',
                 paddingRight: '28px',
-                paddingTop: '20px',
-                paddingBottom: '20px',
-                minHeight: '120px',
-                width: '50px',
-                transform: hoveredButton === button.id ? 'translateX(0)' : 'translateX(35px)',
-                writingMode: 'vertical-rl',
-                textOrientation: 'mixed'
+                paddingTop: '12px',
+                paddingBottom: '12px',
+                minWidth: '140px',
+                transform: hoveredButton === button.id ? 'translateX(0)' : 'translateX(24px)'
               }}
             >
-              <div className="flex flex-col items-center space-y-2 h-full justify-center">
-                <div className="relative" style={{ writingMode: 'horizontal-tb' }}>
+              <div className="flex items-center space-x-2">
+                <div className="relative">
                   {button.icon}
                   
                   {/* Notification dot */}
@@ -70,18 +67,7 @@ const BookmarkBar = ({ onAppointmentClick }) => {
                     <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                   )}
                 </div>
-                <span 
-                  className="text-sm font-medium whitespace-nowrap"
-                  style={{ 
-                    writingMode: 'vertical-rl',
-                    textOrientation: 'mixed',
-                    transform: 'rotate(0deg)'
-                  }}
-                >
-                  {button.label.split(' ').map((word, i) => (
-                    <div key={i} className="block">{word}</div>
-                  ))}
-                </span>
+                <span className="text-sm font-medium whitespace-nowrap">{button.label}</span>
               </div>
               
               {/* Vertical bookmark perforations */}
