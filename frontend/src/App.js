@@ -75,15 +75,15 @@ const App = () => {
   
   return (
     <div>
-      <main className="relative z-10 container mx-auto px-4 md:px-8 py-12">
+      <main className="relative z-10 container mx-auto px-4 md:px-6 py-8 max-w-6xl">
         <Hero />
-        <div className="space-y-16 mt-16">
+        <div className="space-y-12 mt-12">
           <Experience />
           <Ventures />
           <Skills />
           <Education />
         </div>
-        <footer className="text-center pt-16 pb-8 text-sm text-slate-400">
+        <footer className="text-center pt-12 pb-6 text-sm text-slate-400">
             Created By ZYNIQ AI
         </footer>
       </main>
