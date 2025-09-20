@@ -4,6 +4,8 @@ import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from './icons';
 
 const Ventures = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentPaperSlide, setCurrentPaperSlide] = useState(0);
+  const [selectedPaper, setSelectedPaper] = useState(null);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % VENTURES_DATA.length);
@@ -15,6 +17,22 @@ const Ventures = () => {
 
   const goToSlide = (index) => {
     setCurrentSlide(index);
+  };
+
+  const nextPaperSlide = () => {
+    setCurrentPaperSlide((prev) => (prev + 1) % WHITE_PAPERS_DATA.length);
+  };
+
+  const prevPaperSlide = () => {
+    setCurrentPaperSlide((prev) => (prev - 1 + WHITE_PAPERS_DATA.length) % WHITE_PAPERS_DATA.length);
+  };
+
+  const openPaperModal = (paper) => {
+    setSelectedPaper(paper);
+  };
+
+  const closePaperModal = () => {
+    setSelectedPaper(null);
   };
 
   return (
