@@ -85,7 +85,7 @@ const App = () => {
     <Router>
       <div>
         <Routes>
-          <Route path="/admin-0v7h7g7v0k9d6a8" element={<AdminDashboard />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/" element={
             <>
               {/* Loading Screen */}
