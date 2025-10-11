@@ -52,6 +52,10 @@ const AppointmentManager = () => {
     setIsModalOpen(true);
   };
 
+  const handleSkillsClick = () => {
+    setIsSkillsPopupOpen(true);
+  };
+
   const handleDateSelect = (date) => {
     setSelectedDate(date);
     setCurrentStep(2);
