@@ -90,7 +90,6 @@ const App = () => {
                 <div className="space-y-12 mt-12">
                   <Experience />
                   <Ventures />
-                  <Skills />
                   <Education />
                   <OtherAchievements />
                 </div>
