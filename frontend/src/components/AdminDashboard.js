@@ -21,12 +21,13 @@ const AdminDashboard = () => {
 
   // Editing states
   const [editingItem, setEditingItem] = useState(null);
+  const [editingSection, setEditingSection] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Authentication
   const handleLogin = (e) => {
     e.preventDefault();
-    if (password === 'admin123') {
+    if (password === 'pass@123') {
       setIsAuthenticated(true);
       localStorage.setItem('admin_authenticated', 'true');
       loadAllData();
@@ -59,7 +60,7 @@ const AdminDashboard = () => {
     setLoading(true);
     try {
       const [profileData, expData, eduData, skillsData, venturesData, achData, papersData, aptData, analyticsData] = await Promise.all([
-        API.getProfile(),
+        API.getProfile().catch(() => null),
         API.getExperience(),
         API.getEducation(),
         API.getSkills(),
@@ -98,221 +99,77 @@ const AdminDashboard = () => {
     }
   };
 
-  // Experience handlers
-  const handleExperienceCreate = async (data) => {
+  // Generic delete handler
+  const handleDelete = async (section, id, apiDeleteFunc) => {
+    if (!window.confirm(`Are you sure you want to delete this ${section}?`)) return;
     try {
-      await API.createExperience(data);
+      await apiDeleteFunc(id);
       await loadAllData();
-      showMessage('Experience added successfully!');
-      closeModal();
+      showMessage(`${section} deleted successfully!`);
     } catch (error) {
-      showMessage('Error adding experience', 'error');
-    }
-  };
-
-  const handleExperienceUpdate = async (id, data) => {
-    try {
-      await API.updateExperience(id, data);
-      await loadAllData();
-      showMessage('Experience updated successfully!');
-      closeModal();
-    } catch (error) {
-      showMessage('Error updating experience', 'error');
-    }
-  };
-
-  const handleExperienceDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this experience?')) return;
-    try {
-      await API.deleteExperience(id);
-      await loadAllData();
-      showMessage('Experience deleted successfully!');
-    } catch (error) {
-      showMessage('Error deleting experience', 'error');
-    }
-  };
-
-  // Education handlers
-  const handleEducationCreate = async (data) => {
-    try {
-      await API.createEducation(data);
-      await loadAllData();
-      showMessage('Education added successfully!');
-      closeModal();
-    } catch (error) {
-      showMessage('Error adding education', 'error');
-    }
-  };
-
-  const handleEducationUpdate = async (id, data) => {
-    try {
-      await API.updateEducation(id, data);
-      await loadAllData();
-      showMessage('Education updated successfully!');
-      closeModal();
-    } catch (error) {
-      showMessage('Error updating education', 'error');
-    }
-  };
-
-  const handleEducationDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this education entry?')) return;
-    try {
-      await API.deleteEducation(id);
-      await loadAllData();
-      showMessage('Education deleted successfully!');
-    } catch (error) {
-      showMessage('Error deleting education', 'error');
-    }
-  };
-
-  // Skills handlers
-  const handleSkillCreate = async (data) => {
-    try {
-      await API.createSkillCategory(data);
-      await loadAllData();
-      showMessage('Skill category added successfully!');
-      closeModal();
-    } catch (error) {
-      showMessage('Error adding skill category', 'error');
-    }
-  };
-
-  const handleSkillUpdate = async (id, data) => {
-    try {
-      await API.updateSkillCategory(id, data);
-      await loadAllData();
-      showMessage('Skill category updated successfully!');
-      closeModal();
-    } catch (error) {
-      showMessage('Error updating skill category', 'error');
-    }
-  };
-
-  const handleSkillDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this skill category?')) return;
-    try {
-      await API.deleteSkillCategory(id);
-      await loadAllData();
-      showMessage('Skill category deleted successfully!');
-    } catch (error) {
-      showMessage('Error deleting skill category', 'error');
-    }
-  };
-
-  // Venture handlers
-  const handleVentureCreate = async (data) => {
-    try {
-      await API.createVenture(data);
-      await loadAllData();
-      showMessage('Venture added successfully!');
-      closeModal();
-    } catch (error) {
-      showMessage('Error adding venture', 'error');
-    }
-  };
-
-  const handleVentureUpdate = async (id, data) => {
-    try {
-      await API.updateVenture(id, data);
-      await loadAllData();
-      showMessage('Venture updated successfully!');
-      closeModal();
-    } catch (error) {
-      showMessage('Error updating venture', 'error');
-    }
-  };
-
-  const handleVentureDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this venture?')) return;
-    try {
-      await API.deleteVenture(id);
-      await loadAllData();
-      showMessage('Venture deleted successfully!');
-    } catch (error) {
-      showMessage('Error deleting venture', 'error');
-    }
-  };
-
-  // White Paper handlers
-  const handleWhitePaperCreate = async (data) => {
-    try {
-      await API.createWhitePaper(data);
-      await loadAllData();
-      showMessage('White paper added successfully!');
-      closeModal();
-    } catch (error) {
-      showMessage('Error adding white paper', 'error');
-    }
-  };
-
-  const handleWhitePaperUpdate = async (id, data) => {
-    try {
-      await API.updateWhitePaper(id, data);
-      await loadAllData();
-      showMessage('White paper updated successfully!');
-      closeModal();
-    } catch (error) {
-      showMessage('Error updating white paper', 'error');
-    }
-  };
-
-  const handleWhitePaperDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this white paper?')) return;
-    try {
-      await API.deleteWhitePaper(id);
-      await loadAllData();
-      showMessage('White paper deleted successfully!');
-    } catch (error) {
-      showMessage('Error deleting white paper', 'error');
-    }
-  };
-
-  // Achievements handlers
-  const handleAchievementsUpdate = async (data) => {
-    try {
-      await API.updateAchievements(data);
-      await loadAllData();
-      showMessage('Achievements updated successfully!');
-      closeModal();
-    } catch (error) {
-      showMessage('Error updating achievements', 'error');
-    }
-  };
-
-  // Appointment handlers
-  const handleAppointmentUpdate = async (id, data) => {
-    try {
-      await API.updateAppointment(id, data);
-      await loadAllData();
-      showMessage('Appointment updated successfully!');
-      closeModal();
-    } catch (error) {
-      showMessage('Error updating appointment', 'error');
-    }
-  };
-
-  const handleAppointmentDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this appointment?')) return;
-    try {
-      await API.deleteAppointment(id);
-      await loadAllData();
-      showMessage('Appointment deleted successfully!');
-    } catch (error) {
-      showMessage('Error deleting appointment', 'error');
+      showMessage(`Error deleting ${section}`, 'error');
     }
   };
 
   // Modal handlers
   const openModal = (section, item = null) => {
     setEditingItem(item);
-    setActiveSection(section);
+    setEditingSection(section);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setEditingItem(null);
+    setEditingSection(null);
     setIsModalOpen(false);
+  };
+
+  const handleSaveFromModal = async (data) => {
+    try {
+      if (editingSection === 'profile') {
+        await API.updateProfile(data);
+      } else if (editingSection === 'experience') {
+        if (editingItem) {
+          await API.updateExperience(editingItem.id, data);
+        } else {
+          await API.createExperience(data);
+        }
+      } else if (editingSection === 'education') {
+        if (editingItem) {
+          await API.updateEducation(editingItem.id, data);
+        } else {
+          await API.createEducation(data);
+        }
+      } else if (editingSection === 'skills') {
+        if (editingItem) {
+          await API.updateSkillCategory(editingItem.id, data);
+        } else {
+          await API.createSkillCategory(data);
+        }
+      } else if (editingSection === 'ventures') {
+        if (editingItem) {
+          await API.updateVenture(editingItem.id, data);
+        } else {
+          await API.createVenture(data);
+        }
+      } else if (editingSection === 'whitepapers') {
+        if (editingItem) {
+          await API.updateWhitePaper(editingItem.id, data);
+        } else {
+          await API.createWhitePaper(data);
+        }
+      } else if (editingSection === 'achievements') {
+        await API.updateAchievements(data);
+      } else if (editingSection === 'appointments') {
+        await API.updateAppointment(editingItem.id, data);
+      }
+      
+      await loadAllData();
+      showMessage('Saved successfully!');
+      closeModal();
+    } catch (error) {
+      showMessage('Error saving', 'error');
+    }
   };
 
   if (!isAuthenticated) {
@@ -377,15 +234,15 @@ const AdminDashboard = () => {
         {/* Navigation */}
         <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
           {[
-            { id: 'overview', label: '📊 Overview', icon: '📊' },
-            { id: 'profile', label: '👤 Profile', icon: '👤' },
-            { id: 'experience', label: '💼 Experience', icon: '💼' },
-            { id: 'education', label: '🎓 Education', icon: '🎓' },
-            { id: 'skills', label: '🛠 Skills', icon: '🛠' },
-            { id: 'ventures', label: '🚀 Ventures', icon: '🚀' },
-            { id: 'achievements', label: '🏆 Achievements', icon: '🏆' },
-            { id: 'whitepapers', label: '📄 White Papers', icon: '📄' },
-            { id: 'appointments', label: '📅 Appointments', icon: '📅' },
+            { id: 'overview', label: '📊 Overview' },
+            { id: 'profile', label: '👤 Profile' },
+            { id: 'experience', label: '💼 Experience' },
+            { id: 'education', label: '🎓 Education' },
+            { id: 'skills', label: '🛠 Skills' },
+            { id: 'ventures', label: '🚀 Ventures' },
+            { id: 'achievements', label: '🏆 Achievements' },
+            { id: 'whitepapers', label: '📄 White Papers' },
+            { id: 'appointments', label: '📅 Appointments' },
           ].map((section) => (
             <button
               key={section.id}
@@ -411,15 +268,104 @@ const AdminDashboard = () => {
           </div>
         ) : (
           <div className="space-y-6">
-            {activeSection === 'overview' && <OverviewSection analytics={analytics} data={{ profile, experience, education, skills, ventures, achievements, whitePapers, appointments }} />}
-            {activeSection === 'profile' && <ProfileSection profile={profile} onUpdate={handleProfileUpdate} />}
-            {activeSection === 'experience' && <ExperienceSection experience={experience} onCreate={handleExperienceCreate} onUpdate={handleExperienceUpdate} onDelete={handleExperienceDelete} openModal={openModal} />}
-            {activeSection === 'education' && <EducationSection education={education} onCreate={handleEducationCreate} onUpdate={handleEducationUpdate} onDelete={handleEducationDelete} openModal={openModal} />}
-            {activeSection === 'skills' && <SkillsSection skills={skills} onCreate={handleSkillCreate} onUpdate={handleSkillUpdate} onDelete={handleSkillDelete} openModal={openModal} />}
-            {activeSection === 'ventures' && <VenturesSection ventures={ventures} onCreate={handleVentureCreate} onUpdate={handleVentureUpdate} onDelete={handleVentureDelete} openModal={openModal} />}
-            {activeSection === 'achievements' && <AchievementsSection achievements={achievements} onUpdate={handleAchievementsUpdate} openModal={openModal} />}
-            {activeSection === 'whitepapers' && <WhitePapersSection whitePapers={whitePapers} onCreate={handleWhitePaperCreate} onUpdate={handleWhitePaperUpdate} onDelete={handleWhitePaperDelete} openModal={openModal} />}
-            {activeSection === 'appointments' && <AppointmentsSection appointments={appointments} onUpdate={handleAppointmentUpdate} onDelete={handleAppointmentDelete} openModal={openModal} />}
+            {activeSection === 'overview' && (
+              <OverviewSection analytics={analytics} data={{ profile, experience, education, skills, ventures, achievements, whitePapers, appointments }} />
+            )}
+            {activeSection === 'profile' && (
+              <ProfileSection profile={profile} onUpdate={handleProfileUpdate} openModal={openModal} />
+            )}
+            {activeSection === 'experience' && (
+              <DataSection
+                title="💼 Work Experience"
+                data={experience}
+                onAdd={() => openModal('experience')}
+                onEdit={(item) => openModal('experience', item)}
+                onDelete={(id) => handleDelete('experience', id, API.deleteExperience)}
+                renderItem={(exp) => (
+                  <div>
+                    <h3 className="text-xl font-bold text-white">{exp.role}</h3>
+                    <p className="text-blue-400">{exp.company}</p>
+                    <p className="text-gray-400 text-sm">{exp.period} • {exp.location}</p>
+                  </div>
+                )}
+              />
+            )}
+            {activeSection === 'education' && (
+              <DataSection
+                title="🎓 Education"
+                data={education}
+                onAdd={() => openModal('education')}
+                onEdit={(item) => openModal('education', item)}
+                onDelete={(id) => handleDelete('education', id, API.deleteEducation)}
+                renderItem={(edu) => (
+                  <div>
+                    <h3 className="text-xl font-bold text-white">{edu.degree}</h3>
+                    <p className="text-blue-400">{edu.institution}</p>
+                    <p className="text-gray-400 text-sm">{edu.period} • {edu.location}</p>
+                  </div>
+                )}
+              />
+            )}
+            {activeSection === 'skills' && (
+              <DataSection
+                title="🛠 Skills & Technologies"
+                data={skills}
+                onAdd={() => openModal('skills')}
+                onEdit={(item) => openModal('skills', item)}
+                onDelete={(id) => handleDelete('skill category', id, API.deleteSkillCategory)}
+                renderItem={(category) => (
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-3">{category.category}</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {category.skills?.map((skill, idx) => (
+                        <span key={idx} className="px-3 py-1 bg-white/10 rounded-full text-sm">{skill.name} ({skill.level}%)</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              />
+            )}
+            {activeSection === 'ventures' && (
+              <DataSection
+                title="🚀 Ventures & Projects"
+                data={ventures}
+                onAdd={() => openModal('ventures')}
+                onEdit={(item) => openModal('ventures', item)}
+                onDelete={(id) => handleDelete('venture', id, API.deleteVenture)}
+                renderItem={(venture) => (
+                  <div>
+                    <h3 className="text-xl font-bold text-white">{venture.name}</h3>
+                    <p className="text-blue-400">{venture.role} • {venture.type}</p>
+                    <p className="text-gray-400 text-sm">{venture.period}</p>
+                  </div>
+                )}
+              />
+            )}
+            {activeSection === 'achievements' && (
+              <AchievementsSection achievements={achievements} openModal={openModal} />
+            )}
+            {activeSection === 'whitepapers' && (
+              <DataSection
+                title="📄 White Papers"
+                data={whitePapers}
+                onAdd={() => openModal('whitepapers')}
+                onEdit={(item) => openModal('whitepapers', item)}
+                onDelete={(id) => handleDelete('white paper', id, API.deleteWhitePaper)}
+                renderItem={(paper) => (
+                  <div>
+                    <h3 className="text-xl font-bold text-white">{paper.title}</h3>
+                    <p className="text-gray-400 text-sm">{paper.category} • {paper.publishedDate} • {paper.pages}</p>
+                  </div>
+                )}
+              />
+            )}
+            {activeSection === 'appointments' && (
+              <AppointmentsSection 
+                appointments={appointments}
+                openModal={openModal}
+                onDelete={(id) => handleDelete('appointment', id, API.deleteAppointment)}
+              />
+            )}
           </div>
         )}
       </div>
@@ -427,26 +373,17 @@ const AdminDashboard = () => {
       {/* Modal */}
       {isModalOpen && (
         <EditModal
-          section={activeSection}
+          section={editingSection}
           item={editingItem}
           onClose={closeModal}
-          onSave={(
-            activeSection === 'experience' ? (editingItem ? (data) => handleExperienceUpdate(editingItem.id, data) : handleExperienceCreate) :
-            activeSection === 'education' ? (editingItem ? (data) => handleEducationUpdate(editingItem.id, data) : handleEducationCreate) :
-            activeSection === 'skills' ? (editingItem ? (data) => handleSkillUpdate(editingItem.id, data) : handleSkillCreate) :
-            activeSection === 'ventures' ? (editingItem ? (data) => handleVentureUpdate(editingItem.id, data) : handleVentureCreate) :
-            activeSection === 'whitepapers' ? (editingItem ? (data) => handleWhitePaperUpdate(editingItem.id, data) : handleWhitePaperCreate) :
-            activeSection === 'appointments' ? (data) => handleAppointmentUpdate(editingItem.id, data) :
-            activeSection === 'achievements' ? handleAchievementsUpdate :
-            null
-          )}
+          onSave={handleSaveFromModal}
         />
       )}
     </div>
   );
 };
 
-// Component sections will be defined below
+// Overview Section
 const OverviewSection = ({ analytics, data }) => (
   <div>
     <h2 className="text-2xl font-bold mb-6">Dashboard Overview</h2>
@@ -467,15 +404,24 @@ const OverviewSection = ({ analytics, data }) => (
   </div>
 );
 
-const StatCard = ({ title, value, icon, color }) => (
-  <div className={`bg-gradient-to-br from-${color}-500/20 to-${color}-600/20 backdrop-blur-md border border-${color}-500/30 rounded-xl p-6`}>
-    <div className="flex items-center justify-between mb-2">
-      <span className="text-2xl">{icon}</span>
-      <span className={`text-3xl font-bold text-${color}-400`}>{value}</span>
+const StatCard = ({ title, value, icon, color }) => {
+  const colorClasses = {
+    blue: 'from-blue-500/20 to-blue-600/20 border-blue-500/30 text-blue-400',
+    green: 'from-green-500/20 to-green-600/20 border-green-500/30 text-green-400',
+    purple: 'from-purple-500/20 to-purple-600/20 border-purple-500/30 text-purple-400',
+    red: 'from-red-500/20 to-red-600/20 border-red-500/30 text-red-400',
+  };
+  
+  return (
+    <div className={`bg-gradient-to-br ${colorClasses[color]} backdrop-blur-md border rounded-xl p-6`}>
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-2xl">{icon}</span>
+        <span className="text-3xl font-bold">{value}</span>
+      </div>
+      <p className="text-gray-300 text-sm">{title}</p>
     </div>
-    <p className="text-gray-300 text-sm">{title}</p>
-  </div>
-);
+  );
+};
 
 const DataCard = ({ title, count, icon }) => (
   <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
@@ -490,13 +436,31 @@ const DataCard = ({ title, count, icon }) => (
 );
 
 // Profile Section
-const ProfileSection = ({ profile, onUpdate }) => {
+const ProfileSection = ({ profile, onUpdate, openModal }) => {
   const [formData, setFormData] = useState(profile || {});
+
+  useEffect(() => {
+    if (profile) setFormData(profile);
+  }, [profile]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onUpdate(formData);
   };
+
+  if (!profile) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-400 mb-4">No profile data found. The system will migrate data automatically on first page load.</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors"
+        >
+          Reload Page
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -504,41 +468,283 @@ const ProfileSection = ({ profile, onUpdate }) => {
       <form onSubmit={handleSubmit} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 space-y-4">
         <div>
           <label className="block text-sm font-medium mb-2">Name</label>
-          <input type="text" value={formData.name || ''} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white" required />
+          <input
+            type="text"
+            value={formData.name || ''}
+            onChange={(e) => setFormData({...formData, name: e.target.value})}
+            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
+            required
+          />
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">Title</label>
-          <input type="text" value={formData.title || ''} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white" required />
+          <input
+            type="text"
+            value={formData.title || ''}
+            onChange={(e) => setFormData({...formData, title: e.target.value})}
+            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
+            required
+          />
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">Location</label>
-          <input type="text" value={formData.location || ''} onChange={(e) => setFormData({...formData, location: e.target.value})} className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white" required />
+          <input
+            type="text"
+            value={formData.location || ''}
+            onChange={(e) => setFormData({...formData, location: e.target.value})}
+            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
+            required
+          />
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">Summary</label>
-          <textarea value={formData.summary || ''} onChange={(e) => setFormData({...formData, summary: e.target.value})} className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white h-24" required />
+          <textarea
+            value={formData.summary || ''}
+            onChange={(e) => setFormData({...formData, summary: e.target.value})}
+            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white h-24"
+            required
+          />
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">Image URL</label>
-          <input type="url" value={formData.image || ''} onChange={(e) => setFormData({...formData, image: e.target.value})} className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white" required />
+          <input
+            type="url"
+            value={formData.image || ''}
+            onChange={(e) => setFormData({...formData, image: e.target.value})}
+            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
+            required
+          />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium mb-2">LinkedIn URL</label>
-            <input type="url" value={formData.linkedin || ''} onChange={(e) => setFormData({...formData, linkedin: e.target.value})} className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white" />
+            <input
+              type="url"
+              value={formData.linkedin || ''}
+              onChange={(e) => setFormData({...formData, linkedin: e.target.value})}
+              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
+            />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">GitHub URL</label>
-            <input type="url" value={formData.github || ''} onChange={(e) => setFormData({...formData, github: e.target.value})} className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white" />
+            <input
+              type="url"
+              value={formData.github || ''}
+              onChange={(e) => setFormData({...formData, github: e.target.value})}
+              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
+            />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Email</label>
-            <input type="email" value={formData.email || ''} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white" />
+            <input
+              type="email"
+              value={formData.email || ''}
+              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
+            />
           </div>
         </div>
-        <button type="submit" className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors">
+        <button
+          type="submit"
+          className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors"
+        >
           Save Profile
         </button>
       </form>
     </div>
-  );\n};\n\n// Experience Section\nconst ExperienceSection = ({ experience, onCreate, onUpdate, onDelete, openModal }) => (\n  <div>\n    <div className=\"flex items-center justify-between mb-6\">\n      <h2 className=\"text-2xl font-bold\">\ud83d\udcbc Work Experience</h2>\n      <button onClick={() => openModal('experience')} className=\"px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg\">+ Add Experience</button>\n    </div>\n    <div className=\"space-y-4\">\n      {experience.map((exp) => (\n        <div key={exp.id} className=\"bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6\">\n          <div className=\"flex justify-between items-start mb-2\">\n            <div>\n              <h3 className=\"text-xl font-bold text-white\">{exp.role}</h3>\n              <p className=\"text-blue-400\">{exp.company}</p>\n              <p className=\"text-gray-400 text-sm\">{exp.period} • {exp.location}</p>\n            </div>\n            <div className=\"flex gap-2\">\n              <button onClick={() => openModal('experience', exp)} className=\"px-3 py-1 bg-blue-500/20 text-blue-400 rounded\">Edit</button>\n              <button onClick={() => onDelete(exp.id)} className=\"px-3 py-1 bg-red-500/20 text-red-400 rounded\">Delete</button>\n            </div>\n          </div>\n        </div>\n      ))}\n    </div>\n  </div>\n);\n\n// Education Section\nconst EducationSection = ({ education, onCreate, onUpdate, onDelete, openModal }) => (\n  <div>\n    <div className=\"flex items-center justify-between mb-6\">\n      <h2 className=\"text-2xl font-bold\">\ud83c\udf93 Education</h2>\n      <button onClick={() => openModal('education')} className=\"px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg\">+ Add Education</button>\n    </div>\n    <div className=\"space-y-4\">\n      {education.map((edu) => (\n        <div key={edu.id} className=\"bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6\">\n          <div className=\"flex justify-between items-start\">\n            <div>\n              <h3 className=\"text-xl font-bold text-white\">{edu.degree}</h3>\n              <p className=\"text-blue-400\">{edu.institution}</p>\n              <p className=\"text-gray-400 text-sm\">{edu.period} • {edu.location}</p>\n            </div>\n            <div className=\"flex gap-2\">\n              <button onClick={() => openModal('education', edu)} className=\"px-3 py-1 bg-blue-500/20 text-blue-400 rounded\">Edit</button>\n              <button onClick={() => onDelete(edu.id)} className=\"px-3 py-1 bg-red-500/20 text-red-400 rounded\">Delete</button>\n            </div>\n          </div>\n        </div>\n      ))}\n    </div>\n  </div>\n);\n\n// Skills Section\nconst SkillsSection = ({ skills, onCreate, onUpdate, onDelete, openModal }) => (\n  <div>\n    <div className=\"flex items-center justify-between mb-6\">\n      <h2 className=\"text-2xl font-bold\">\ud83d\udee0 Skills & Technologies</h2>\n      <button onClick={() => openModal('skills')} className=\"px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg\">+ Add Category</button>\n    </div>\n    <div className=\"space-y-4\">\n      {skills.map((category) => (\n        <div key={category.id} className=\"bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6\">\n          <div className=\"flex justify-between items-start mb-4\">\n            <h3 className=\"text-xl font-bold text-white\">{category.category}</h3>\n            <div className=\"flex gap-2\">\n              <button onClick={() => openModal('skills', category)} className=\"px-3 py-1 bg-blue-500/20 text-blue-400 rounded\">Edit</button>\n              <button onClick={() => onDelete(category.id)} className=\"px-3 py-1 bg-red-500/20 text-red-400 rounded\">Delete</button>\n            </div>\n          </div>\n          <div className=\"flex flex-wrap gap-2\">\n            {category.skills.map((skill, idx) => (\n              <span key={idx} className=\"px-3 py-1 bg-white/10 rounded-full text-sm\">{skill.name} ({skill.level}%)</span>\n            ))}\n          </div>\n        </div>\n      ))}\n    </div>\n  </div>\n);\n\n// Ventures Section\nconst VenturesSection = ({ ventures, onCreate, onUpdate, onDelete, openModal }) => (\n  <div>\n    <div className=\"flex items-center justify-between mb-6\">\n      <h2 className=\"text-2xl font-bold\">\ud83d\ude80 Ventures & Projects</h2>\n      <button onClick={() => openModal('ventures')} className=\"px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg\">+ Add Venture</button>\n    </div>\n    <div className=\"space-y-4\">\n      {ventures.map((venture) => (\n        <div key={venture.id} className=\"bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6\">\n          <div className=\"flex justify-between items-start\">\n            <div>\n              <h3 className=\"text-xl font-bold text-white\">{venture.name}</h3>\n              <p className=\"text-blue-400\">{venture.role} • {venture.type}</p>\n              <p className=\"text-gray-400 text-sm\">{venture.period}</p>\n            </div>\n            <div className=\"flex gap-2\">\n              <button onClick={() => openModal('ventures', venture)} className=\"px-3 py-1 bg-blue-500/20 text-blue-400 rounded\">Edit</button>\n              <button onClick={() => onDelete(venture.id)} className=\"px-3 py-1 bg-red-500/20 text-red-400 rounded\">Delete</button>\n            </div>\n          </div>\n        </div>\n      ))}\n    </div>\n  </div>\n);\n\n// White Papers Section\nconst WhitePapersSection = ({ whitePapers, onCreate, onUpdate, onDelete, openModal }) => (\n  <div>\n    <div className=\"flex items-center justify-between mb-6\">\n      <h2 className=\"text-2xl font-bold\">\ud83d\udcc4 White Papers</h2>\n      <button onClick={() => openModal('whitepapers')} className=\"px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg\">+ Add Paper</button>\n    </div>\n    <div className=\"space-y-4\">\n      {whitePapers.map((paper) => (\n        <div key={paper.id} className=\"bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6\">\n          <div className=\"flex justify-between items-start\">\n            <div>\n              <h3 className=\"text-xl font-bold text-white\">{paper.title}</h3>\n              <p className=\"text-gray-400 text-sm\">{paper.category} • {paper.publishedDate} • {paper.pages}</p>\n            </div>\n            <div className=\"flex gap-2\">\n              <button onClick={() => openModal('whitepapers', paper)} className=\"px-3 py-1 bg-blue-500/20 text-blue-400 rounded\">Edit</button>\n              <button onClick={() => onDelete(paper.id)} className=\"px-3 py-1 bg-red-500/20 text-red-400 rounded\">Delete</button>\n            </div>\n          </div>\n        </div>\n      ))}\n    </div>\n  </div>\n);\n\n// Achievements Section\nconst AchievementsSection = ({ achievements, onUpdate, openModal }) => (\n  <div>\n    <div className=\"flex items-center justify-between mb-6\">\n      <h2 className=\"text-2xl font-bold\">\ud83c\udfc6 Achievements</h2>\n      <button onClick={() => openModal('achievements', achievements)} className=\"px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg\">Edit All</button>\n    </div>\n    <div className=\"grid grid-cols-1 md:grid-cols-2 gap-6\">\n      <div className=\"bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6\">\n        <h3 className=\"text-lg font-bold mb-4\">Certificates ({achievements.certificates?.length || 0})</h3>\n        <div className=\"space-y-2\">\n          {achievements.certificates?.map((cert, idx) => (\n            <div key={idx} className=\"bg-white/5 p-3 rounded\">\n              <p className=\"font-medium\">{cert.name}</p>\n              <p className=\"text-sm text-gray-400\">{cert.issuer} • {cert.year}</p>\n            </div>\n          ))}\n        </div>\n      </div>\n      <div className=\"bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6\">\n        <h3 className=\"text-lg font-bold mb-4\">Hackathons ({achievements.hackathons?.length || 0})</h3>\n        <div className=\"space-y-2\">\n          {achievements.hackathons?.map((hack, idx) => (\n            <div key={idx} className=\"bg-white/5 p-3 rounded\">\n              <p className=\"font-medium\">{hack.event}</p>\n              <p className=\"text-sm text-gray-400\">{hack.year}</p>\n            </div>\n          ))}\n        </div>\n      </div>\n    </div>\n  </div>\n);\n\n// Appointments Section\nconst AppointmentsSection = ({ appointments, onUpdate, onDelete, openModal }) => (\n  <div>\n    <h2 className=\"text-2xl font-bold mb-6\">\ud83d\udcc5 Appointments</h2>\n    <div className=\"space-y-4\">\n      {appointments.map((apt) => (\n        <div key={apt.id} className=\"bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6\">\n          <div className=\"flex justify-between items-start\">\n            <div>\n              <h3 className=\"text-lg font-bold text-white\">{apt.name}</h3>\n              <p className=\"text-gray-400\">{apt.email}</p>\n              <p className=\"text-sm text-gray-500\">{apt.date} at {apt.time}</p>\n              <p className=\"text-sm text-gray-400 mt-2\">{apt.reason}</p>\n              <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs ${\n                apt.status === 'confirmed' ? 'bg-green-500/20 text-green-400' :\n                apt.status === 'cancelled' ? 'bg-red-500/20 text-red-400' :\n                'bg-yellow-500/20 text-yellow-400'\n              }`}>{apt.status}</span>\n            </div>\n            <div className=\"flex gap-2\">\n              <button onClick={() => openModal('appointments', apt)} className=\"px-3 py-1 bg-blue-500/20 text-blue-400 rounded\">Edit</button>\n              <button onClick={() => onDelete(apt.id)} className=\"px-3 py-1 bg-red-500/20 text-red-400 rounded\">Delete</button>\n            </div>\n          </div>\n        </div>\n      ))}\n    </div>\n  </div>\n);\n\n// Simple Edit Modal (placeholder - would need full implementation for each type)\nconst EditModal = ({ section, item, onClose, onSave }) => {\n  return (\n    <div className=\"fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4\">\n      <div className=\"bg-gray-900 border border-white/20 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto\">\n        <div className=\"flex justify-between items-center mb-6\">\n          <h3 className=\"text-2xl font-bold\">{item ? 'Edit' : 'Add'} {section}</h3>\n          <button onClick={onClose} className=\"text-gray-400 hover:text-white\">\u00d7</button>\n        </div>\n        <p className=\"text-gray-400\">Modal form for {section} will be implemented here</p>\n        <div className=\"mt-6 flex gap-3\">\n          <button onClick={onClose} className=\"px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg\">Cancel</button>\n          <button onClick={onClose} className=\"px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg\">Save</button>\n        </div>\n      </div>\n    </div>\n  );\n};\n\nexport default AdminDashboard;
+  );
+};
+
+// Generic Data Section Component
+const DataSection = ({ title, data, onAdd, onEdit, onDelete, renderItem }) => (
+  <div>
+    <div className="flex items-center justify-between mb-6">
+      <h2 className="text-2xl font-bold">{title}</h2>
+      <button
+        onClick={onAdd}
+        className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg transition-colors"
+      >
+        + Add New
+      </button>
+    </div>
+    <div className="space-y-4">
+      {data && data.length > 0 ? (
+        data.map((item) => (
+          <div key={item.id || item._id} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+            <div className="flex justify-between items-start">
+              {renderItem(item)}
+              <div className="flex gap-2 ml-4">
+                <button
+                  onClick={() => onEdit(item)}
+                  className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded hover:bg-blue-500/30 transition-colors"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => onDelete(item.id || item._id)}
+                  className="px-3 py-1 bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        ))
+      ) : (
+        <div className="text-center py-12 bg-white/5 rounded-xl">
+          <p className="text-gray-400">No entries yet. Click "Add New" to create one.</p>
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+// Achievements Section
+const AchievementsSection = ({ achievements, openModal }) => (
+  <div>
+    <div className="flex items-center justify-between mb-6">
+      <h2 className="text-2xl font-bold">🏆 Achievements</h2>
+      <button
+        onClick={() => openModal('achievements', achievements)}
+        className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
+      >
+        Edit All
+      </button>
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+        <h3 className="text-lg font-bold mb-4">Certificates ({achievements.certificates?.length || 0})</h3>
+        <div className="space-y-2">
+          {achievements.certificates?.map((cert, idx) => (
+            <div key={idx} className="bg-white/5 p-3 rounded">
+              <p className="font-medium">{cert.name}</p>
+              <p className="text-sm text-gray-400">{cert.issuer} • {cert.year}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+        <h3 className="text-lg font-bold mb-4">Hackathons ({achievements.hackathons?.length || 0})</h3>
+        <div className="space-y-2">
+          {achievements.hackathons?.map((hack, idx) => (
+            <div key={idx} className="bg-white/5 p-3 rounded">
+              <p className="font-medium">{hack.event}</p>
+              <p className="text-sm text-gray-400">{hack.year}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Appointments Section
+const AppointmentsSection = ({ appointments, openModal, onDelete }) => (
+  <div>
+    <h2 className="text-2xl font-bold mb-6">📅 Appointments</h2>
+    <div className="space-y-4">
+      {appointments && appointments.length > 0 ? (
+        appointments.map((apt) => (
+          <div key={apt.id || apt._id} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="text-lg font-bold text-white">{apt.name}</h3>
+                <p className="text-gray-400">{apt.email}</p>
+                <p className="text-sm text-gray-500">{apt.date} at {apt.time}</p>
+                <p className="text-sm text-gray-400 mt-2">{apt.reason}</p>
+                <span
+                  className={`inline-block mt-2 px-3 py-1 rounded-full text-xs ${
+                    apt.status === 'confirmed' ? 'bg-green-500/20 text-green-400' :
+                    apt.status === 'cancelled' ? 'bg-red-500/20 text-red-400' :
+                    'bg-yellow-500/20 text-yellow-400'
+                  }`}
+                >
+                  {apt.status}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => openModal('appointments', apt)}
+                  className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded hover:bg-blue-500/30 transition-colors"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => onDelete(apt.id || apt._id)}
+                  className="px-3 py-1 bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        ))
+      ) : (
+        <div className="text-center py-12 bg-white/5 rounded-xl">
+          <p className="text-gray-400">No appointments yet.</p>
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+// Edit Modal - This will be expanded with forms for each section
+const EditModal = ({ section, item, onClose, onSave }) => {
+  const [formData, setFormData] = useState(item || {});
+
+  useEffect(() => {
+    if (item) setFormData(item);
+  }, [item]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  const renderForm = () => {
+    // For now, a simple JSON editor - will be expanded
+    return (
+      <div>
+        <p className="text-gray-400 mb-4">Full form editing will be implemented. For now, you can edit profile directly in the Profile section.</p>
+        <p className="text-sm text-gray-500">Section: {section}</p>
+        <p className="text-sm text-gray-500">Mode: {item ? 'Edit' : 'Create'}</p>
+      </div>
+    );
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-gray-900 border border-white/20 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-2xl font-bold">{item ? 'Edit' : 'Add'} {section}</h3>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white text-2xl leading-none"
+          >
+            ×
+          </button>
+        </div>
+        <form onSubmit={handleSubmit}>
+          {renderForm()}
+          <div className="mt-6 flex gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;
