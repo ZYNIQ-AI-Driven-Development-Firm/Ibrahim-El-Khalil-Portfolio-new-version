@@ -22,6 +22,11 @@ const App = () => {
   const [loadingStep, setLoadingStep] = useState(0);
 
   useEffect(() => {
+    // Track visit analytics
+    import('./services/apiService').then(({ trackEvent }) => {
+      trackEvent('visit');
+    });
+
     const interval = setInterval(() => {
         setLoadingStep(prev => {
             const next = prev + 1;
