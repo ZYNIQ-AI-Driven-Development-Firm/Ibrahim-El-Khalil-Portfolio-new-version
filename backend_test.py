@@ -92,11 +92,12 @@ class PortfolioAPITester:
         
         # Test POST experience (create)
         new_experience = {
+            "role": "Test Position",
             "company": "Test Company",
-            "position": "Test Position",
-            "duration": "2024 - Present",
-            "description": "Test experience description",
-            "technologies": ["Python", "FastAPI", "React"]
+            "period": "2024 - Present",
+            "location": "Dubai, UAE",
+            "description": ["Test experience description", "Another responsibility"],
+            "projects": [{"name": "Test Project", "description": "Test project description"}]
         }
         success, created_exp = self.run_test("Create Experience", "POST", "api/experience", 200, new_experience)
         
@@ -106,11 +107,12 @@ class PortfolioAPITester:
             
             # Test PUT experience (update)
             updated_experience = {
+                "role": "Test Position Updated",
                 "company": "Test Company Updated",
-                "position": "Test Position Updated",
-                "duration": "2024 - Present",
-                "description": "Updated test experience description",
-                "technologies": ["Python", "FastAPI", "React", "MongoDB"]
+                "period": "2024 - Present",
+                "location": "Dubai, UAE",
+                "description": ["Updated test experience description", "Updated responsibility"],
+                "projects": [{"name": "Updated Test Project", "description": "Updated project description"}]
             }
             self.run_test(f"Update Experience {exp_id}", "PUT", f"api/experience/{exp_id}", 200, updated_experience)
             
