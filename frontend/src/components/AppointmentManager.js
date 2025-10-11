@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import BookmarkBar from './BookmarkBar';
+import SkillsPopup from './SkillsPopup';
 import { CloseIcon } from './icons';
 
 const AppointmentManager = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSkillsPopupOpen, setIsSkillsPopupOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
