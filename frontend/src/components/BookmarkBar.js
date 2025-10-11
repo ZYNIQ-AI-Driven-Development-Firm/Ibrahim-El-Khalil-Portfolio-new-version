@@ -112,7 +112,7 @@ const BookmarkBar = ({ onAppointmentClick, onSkillsClick }) => {
             {/* Tooltip - only show when hovered and extended */}
             {hoveredButton === button.id && (
               <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-3 bg-black text-white text-xs py-2 px-3 rounded whitespace-nowrap transition-all duration-300 z-10 animate-in fade-in slide-in-from-right-2">
-                Schedule a meeting with Ibrahim
+                {button.tooltip}
                 {/* Arrow pointing to button */}
                 <div className="absolute left-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-4 border-l-black border-t-2 border-t-transparent border-b-2 border-b-transparent"></div>
               </div>
