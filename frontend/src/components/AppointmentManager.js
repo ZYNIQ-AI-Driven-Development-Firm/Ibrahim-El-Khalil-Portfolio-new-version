@@ -76,19 +76,22 @@ const AppointmentManager = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Here you would typically send the appointment data to your backend
+    const { createAppointment } = await import('../services/apiService');
+    
     const appointmentData = {
       ...formData,
       date: selectedDate,
-      time: selectedTime,
-      timestamp: new Date().toISOString()
+      time: selectedTime
     };
 
-    console.log('Appointment booked:', appointmentData);
-    
-    // For now, just show success and reset
-    alert('Appointment booked successfully! You will receive a confirmation email shortly.');
-    handleClose();
+    try {
+      await createAppointment(appointmentData);
+      alert('Appointment booked successfully! You will receive a confirmation email shortly.');
+      handleClose();
+    } catch (error) {
+      console.error('Error booking appointment:', error);
+      alert('Error booking appointment. Please try again.');
+    }
   };
 
   const resetForm = () => {
