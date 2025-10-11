@@ -130,11 +130,12 @@ class PortfolioAPITester:
         
         # Test POST education (create)
         new_education = {
-            "institution": "Test University",
             "degree": "Test Degree",
+            "institution": "Test University",
+            "period": "2020-2024",
+            "location": "Dubai, UAE",
             "field": "Computer Science",
-            "duration": "2020-2024",
-            "description": "Test education description"
+            "details": ["Test education detail 1", "Test education detail 2"]
         }
         success, created_edu = self.run_test("Create Education", "POST", "api/education", 200, new_education)
         
@@ -144,11 +145,12 @@ class PortfolioAPITester:
             
             # Test PUT education (update)
             updated_education = {
-                "institution": "Test University Updated",
                 "degree": "Test Degree Updated",
+                "institution": "Test University Updated",
+                "period": "2020-2024",
+                "location": "Dubai, UAE",
                 "field": "Computer Science & AI",
-                "duration": "2020-2024",
-                "description": "Updated test education description"
+                "details": ["Updated test education detail 1", "Updated test education detail 2"]
             }
             self.run_test(f"Update Education {edu_id}", "PUT", f"api/education/{edu_id}", 200, updated_education)
             
