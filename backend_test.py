@@ -222,10 +222,9 @@ class PortfolioAPITester:
         new_appointment = {
             "name": "Test User",
             "email": "test@example.com",
-            "phone": "+1234567890",
+            "reason": "Test appointment reason",
             "date": "2024-12-25",
-            "time": "14:00",
-            "message": "Test appointment message"
+            "time": "14:00"
         }
         success, created_apt = self.run_test("Create Appointment", "POST", "api/appointments", 200, new_appointment)
         
