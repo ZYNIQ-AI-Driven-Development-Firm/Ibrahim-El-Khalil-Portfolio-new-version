@@ -28,6 +28,15 @@ const AiChat = () => {
 
   const messagesEndRef = useRef(null);
 
+  // Track AI chat session analytics
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      import('../services/apiService').then(({ trackEvent }) => {
+        trackEvent('ai_chat');
+      });
+    }
+  }, [isOpen, messages.length]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
