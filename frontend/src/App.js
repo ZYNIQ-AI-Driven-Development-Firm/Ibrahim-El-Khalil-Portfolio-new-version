@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Hero from './components/Hero';
 import Experience from './components/Experience';
-import Skills from './components/Skills';
 import Education from './components/Education';
 import Ventures from './components/Ventures';
 import OtherAchievements from './components/OtherAchievements';
