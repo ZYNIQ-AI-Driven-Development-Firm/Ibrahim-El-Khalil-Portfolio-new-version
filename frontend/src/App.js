@@ -23,6 +23,16 @@ const PortfolioPage = () => {
   const [loadingStep, setLoadingStep] = useState(0);
 
   useEffect(() => {
+    // Show loader for portfolio page
+    const loader = document.getElementById('loader');
+    const appContainer = document.getElementById('app-container');
+    if (loader) {
+      loader.style.display = 'flex';
+    }
+    if (appContainer) {
+      appContainer.classList.remove('loaded');
+    }
+
     // Track visit analytics
     import('./services/apiService').then(({ trackEvent }) => {
       trackEvent('visit');
