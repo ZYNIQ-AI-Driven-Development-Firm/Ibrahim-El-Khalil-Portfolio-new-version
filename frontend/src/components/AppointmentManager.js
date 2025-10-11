@@ -106,7 +106,16 @@ const AppointmentManager = () => {
   return (
     <>
       {/* Bookmark Bar */}
-      <BookmarkBar onAppointmentClick={handleAppointmentClick} />
+      <BookmarkBar 
+        onAppointmentClick={handleAppointmentClick}
+        onSkillsClick={handleSkillsClick}
+      />
+
+      {/* Skills Popup */}
+      <SkillsPopup 
+        isOpen={isSkillsPopupOpen}
+        onClose={() => setIsSkillsPopupOpen(false)}
+      />
 
       {/* Appointment Modal */}
       {isModalOpen && (
