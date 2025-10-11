@@ -169,7 +169,11 @@ class PortfolioAPITester:
         # Test POST skills (create)
         new_skill_category = {
             "category": "Test Category",
-            "skills": ["Test Skill 1", "Test Skill 2", "Test Skill 3"]
+            "skills": [
+                {"name": "Test Skill 1", "level": 85},
+                {"name": "Test Skill 2", "level": 90},
+                {"name": "Test Skill 3", "level": 75}
+            ]
         }
         success, created_skill = self.run_test("Create Skill Category", "POST", "api/skills", 200, new_skill_category)
         
@@ -180,7 +184,11 @@ class PortfolioAPITester:
             # Test PUT skills (update)
             updated_skill_category = {
                 "category": "Test Category Updated",
-                "skills": ["Test Skill 1 Updated", "Test Skill 2 Updated", "Test Skill 4"]
+                "skills": [
+                    {"name": "Test Skill 1 Updated", "level": 90},
+                    {"name": "Test Skill 2 Updated", "level": 95},
+                    {"name": "Test Skill 4", "level": 80}
+                ]
             }
             self.run_test(f"Update Skill Category {skill_id}", "PUT", f"api/skills/{skill_id}", 200, updated_skill_category)
             
