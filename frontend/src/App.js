@@ -111,26 +111,7 @@ const App = () => {
       <div>
         <Routes>
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/" element={
-            <>
-              {/* Loading Screen */}
-              {/* Main Portfolio */}
-              <main className="relative z-10 container mx-auto px-4 md:px-6 py-8 max-w-6xl">
-                <Hero />
-                <div className="space-y-12 mt-12">
-                  <Experience />
-                  <Ventures />
-                  <Education />
-                  <OtherAchievements />
-                </div>
-                <footer className="text-center pt-12 pb-6 text-sm text-slate-400">
-                    © 2025 IEK Portfolio By ZYNIQ. All rights reserved.
-                </footer>
-              </main>
-              <AiChat />
-              <AppointmentManager />
-            </>
-          } />
+          <Route path="/" element={<PortfolioPage />} />
         </Routes>
       </div>
     </Router>
