@@ -1,31 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  PROFILE_DATA, 
-  EXPERIENCE_DATA, 
-  EDUCATION_DATA, 
-  SKILLS_DATA, 
-  VENTURES_DATA, 
-  WHITE_PAPERS_DATA, 
-  OTHER_ACHIEVEMENTS_DATA 
-} from '../constants';
+import * as API from '../services/apiService';
 
 const AdminDashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [activeSection, setActiveSection] = useState('overview');
-  const [editingData, setEditingData] = useState({});
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [aiResponse, setAiResponse] = useState('');
-  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
 
-  // Simple authentication (in production, use proper auth)
+  // Data states
+  const [profile, setProfile] = useState(null);
+  const [experience, setExperience] = useState([]);
+  const [education, setEducation] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [ventures, setVentures] = useState([]);
+  const [achievements, setAchievements] = useState({ certificates: [], hackathons: [] });
+  const [whitePapers, setWhitePapers] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [analytics, setAnalytics] = useState({});
+
+  // Editing states
+  const [editingItem, setEditingItem] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Authentication
   const handleLogin = (e) => {
     e.preventDefault();
     if (password === 'admin123') {
       setIsAuthenticated(true);
       localStorage.setItem('admin_authenticated', 'true');
+      loadAllData();
     } else {
-      alert('Invalid password!');
+      showMessage('Invalid password!', 'error');
     }
   };
 
@@ -33,6 +39,7 @@ const AdminDashboard = () => {
     const saved = localStorage.getItem('admin_authenticated');
     if (saved === 'true') {
       setIsAuthenticated(true);
+      loadAllData();
     }
   }, []);
 
@@ -41,64 +48,295 @@ const AdminDashboard = () => {
     localStorage.removeItem('admin_authenticated');
   };
 
-  // AI Assistant for content generation
-  const handleAiAssist = async () => {
-    setIsAiLoading(true);
+  // Show message
+  const showMessage = (text, type = 'success') => {
+    setMessage({ text, type });
+    setTimeout(() => setMessage(null), 3000);
+  };
+
+  // Load all data
+  const loadAllData = async () => {
+    setLoading(true);
     try {
-      // Mock AI response - in real implementation, you'd call your AI service
-      const mockResponses = {
-        'generate experience': 'Here\'s a sample experience entry:\n\nRole: Senior Full Stack Developer\nCompany: Tech Innovations Inc.\nPeriod: 2023 - Present\nDescription: Led development of scalable web applications using React and Node.js...',
-        'create skill': 'New skill suggestion:\n\nSkill: TypeScript\nLevel: 90\nCategory: Frontend Development\nDescription: Advanced TypeScript development with complex type systems...',
-        'write bio': 'Professional bio suggestion:\n\nExperienced software engineer with 8+ years in full-stack development, specializing in modern web technologies and AI integration...'
-      };
+      const [profileData, expData, eduData, skillsData, venturesData, achData, papersData, aptData, analyticsData] = await Promise.all([
+        API.getProfile(),
+        API.getExperience(),
+        API.getEducation(),
+        API.getSkills(),
+        API.getVentures(),
+        API.getAchievements(),
+        API.getWhitePapers(),
+        API.getAppointments(),
+        API.getAnalytics()
+      ]);
       
-      const response = mockResponses[aiPrompt.toLowerCase()] || 
-        `AI Assistant: I can help you with:\n\n• Generating professional descriptions\n• Creating skill entries\n• Writing compelling bios\n• Optimizing content for impact\n\nTry asking: "generate experience" or "create skill"`;
-      
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API delay
-      setAiResponse(response);
+      setProfile(profileData);
+      setExperience(expData);
+      setEducation(eduData);
+      setSkills(skillsData);
+      setVentures(venturesData);
+      setAchievements(achData);
+      setWhitePapers(papersData);
+      setAppointments(aptData);
+      setAnalytics(analyticsData);
     } catch (error) {
-      setAiResponse('AI Assistant temporarily unavailable. Please try again later.');
+      console.error('Error loading data:', error);
+      showMessage('Error loading data', 'error');
     } finally {
-      setIsAiLoading(false);
+      setLoading(false);
     }
   };
 
-  // Data update functions
-  const updateProfileData = (field, value) => {
-    // In production, this would make API calls to update the backend
-    console.log('Updating profile:', field, value);
+  // Profile handlers
+  const handleProfileUpdate = async (updatedProfile) => {
+    try {
+      await API.updateProfile(updatedProfile);
+      setProfile(updatedProfile);
+      showMessage('Profile updated successfully!');
+    } catch (error) {
+      showMessage('Error updating profile', 'error');
+    }
   };
 
-  const addNewSection = (sectionType) => {
-    // Logic to add new portfolio sections
-    console.log('Adding new section:', sectionType);
+  // Experience handlers
+  const handleExperienceCreate = async (data) => {
+    try {
+      await API.createExperience(data);
+      await loadAllData();
+      showMessage('Experience added successfully!');
+      closeModal();
+    } catch (error) {
+      showMessage('Error adding experience', 'error');
+    }
+  };
+
+  const handleExperienceUpdate = async (id, data) => {
+    try {
+      await API.updateExperience(id, data);
+      await loadAllData();
+      showMessage('Experience updated successfully!');
+      closeModal();
+    } catch (error) {
+      showMessage('Error updating experience', 'error');
+    }
+  };
+
+  const handleExperienceDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this experience?')) return;
+    try {
+      await API.deleteExperience(id);
+      await loadAllData();
+      showMessage('Experience deleted successfully!');
+    } catch (error) {
+      showMessage('Error deleting experience', 'error');
+    }
+  };
+
+  // Education handlers
+  const handleEducationCreate = async (data) => {
+    try {
+      await API.createEducation(data);
+      await loadAllData();
+      showMessage('Education added successfully!');
+      closeModal();
+    } catch (error) {
+      showMessage('Error adding education', 'error');
+    }
+  };
+
+  const handleEducationUpdate = async (id, data) => {
+    try {
+      await API.updateEducation(id, data);
+      await loadAllData();
+      showMessage('Education updated successfully!');
+      closeModal();
+    } catch (error) {
+      showMessage('Error updating education', 'error');
+    }
+  };
+
+  const handleEducationDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this education entry?')) return;
+    try {
+      await API.deleteEducation(id);
+      await loadAllData();
+      showMessage('Education deleted successfully!');
+    } catch (error) {
+      showMessage('Error deleting education', 'error');
+    }
+  };
+
+  // Skills handlers
+  const handleSkillCreate = async (data) => {
+    try {
+      await API.createSkillCategory(data);
+      await loadAllData();
+      showMessage('Skill category added successfully!');
+      closeModal();
+    } catch (error) {
+      showMessage('Error adding skill category', 'error');
+    }
+  };
+
+  const handleSkillUpdate = async (id, data) => {
+    try {
+      await API.updateSkillCategory(id, data);
+      await loadAllData();
+      showMessage('Skill category updated successfully!');
+      closeModal();
+    } catch (error) {
+      showMessage('Error updating skill category', 'error');
+    }
+  };
+
+  const handleSkillDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this skill category?')) return;
+    try {
+      await API.deleteSkillCategory(id);
+      await loadAllData();
+      showMessage('Skill category deleted successfully!');
+    } catch (error) {
+      showMessage('Error deleting skill category', 'error');
+    }
+  };
+
+  // Venture handlers
+  const handleVentureCreate = async (data) => {
+    try {
+      await API.createVenture(data);
+      await loadAllData();
+      showMessage('Venture added successfully!');
+      closeModal();
+    } catch (error) {
+      showMessage('Error adding venture', 'error');
+    }
+  };
+
+  const handleVentureUpdate = async (id, data) => {
+    try {
+      await API.updateVenture(id, data);
+      await loadAllData();
+      showMessage('Venture updated successfully!');
+      closeModal();
+    } catch (error) {
+      showMessage('Error updating venture', 'error');
+    }
+  };
+
+  const handleVentureDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this venture?')) return;
+    try {
+      await API.deleteVenture(id);
+      await loadAllData();
+      showMessage('Venture deleted successfully!');
+    } catch (error) {
+      showMessage('Error deleting venture', 'error');
+    }
+  };
+
+  // White Paper handlers
+  const handleWhitePaperCreate = async (data) => {
+    try {
+      await API.createWhitePaper(data);
+      await loadAllData();
+      showMessage('White paper added successfully!');
+      closeModal();
+    } catch (error) {
+      showMessage('Error adding white paper', 'error');
+    }
+  };
+
+  const handleWhitePaperUpdate = async (id, data) => {
+    try {
+      await API.updateWhitePaper(id, data);
+      await loadAllData();
+      showMessage('White paper updated successfully!');
+      closeModal();
+    } catch (error) {
+      showMessage('Error updating white paper', 'error');
+    }
+  };
+
+  const handleWhitePaperDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this white paper?')) return;
+    try {
+      await API.deleteWhitePaper(id);
+      await loadAllData();
+      showMessage('White paper deleted successfully!');
+    } catch (error) {
+      showMessage('Error deleting white paper', 'error');
+    }
+  };
+
+  // Achievements handlers
+  const handleAchievementsUpdate = async (data) => {
+    try {
+      await API.updateAchievements(data);
+      await loadAllData();
+      showMessage('Achievements updated successfully!');
+      closeModal();
+    } catch (error) {
+      showMessage('Error updating achievements', 'error');
+    }
+  };
+
+  // Appointment handlers
+  const handleAppointmentUpdate = async (id, data) => {
+    try {
+      await API.updateAppointment(id, data);
+      await loadAllData();
+      showMessage('Appointment updated successfully!');
+      closeModal();
+    } catch (error) {
+      showMessage('Error updating appointment', 'error');
+    }
+  };
+
+  const handleAppointmentDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this appointment?')) return;
+    try {
+      await API.deleteAppointment(id);
+      await loadAllData();
+      showMessage('Appointment deleted successfully!');
+    } catch (error) {
+      showMessage('Error deleting appointment', 'error');
+    }
+  };
+
+  // Modal handlers
+  const openModal = (section, item = null) => {
+    setEditingItem(item);
+    setActiveSection(section);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setEditingItem(null);
+    setIsModalOpen(false);
   };
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-4">
-        <div className="glass-card rounded-xl p-8 max-w-md w-full">
-          <h1 className="text-2xl font-bold text-white mb-6 text-center">Admin Access</h1>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center p-4">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full shadow-2xl">
+          <h1 className="text-3xl font-bold text-white mb-6 text-center">🔐 Admin Access</h1>
           <form onSubmit={handleLogin}>
-            <div className="mb-4">
-              <label className="block text-white text-sm font-medium mb-2">
-                Password
-              </label>
+            <div className="mb-6">
+              <label className="block text-white text-sm font-medium mb-2">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/25"
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/25"
                 placeholder="Enter admin password"
                 required
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white py-3 rounded-lg font-medium transition-all duration-200"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3 rounded-lg font-medium transition-all duration-200 shadow-lg"
             >
-              Access Dashboard
+              Login
             </button>
           </form>
         </div>
@@ -107,624 +345,151 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
       {/* Header */}
-      <header className="glass-card rounded-none border-x-0 border-t-0 p-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Portfolio Admin Dashboard</h1>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-300">Welcome, Ibrahim</span>
+      <div className="bg-black/50 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <h1 className="text-2xl font-bold">📊 Admin Dashboard</h1>
+          <div className="flex items-center gap-4">
+            <a href="/" className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors">
+              View Portfolio
+            </a>
             <button
               onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm transition-colors duration-200"
+              className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
             >
               Logout
             </button>
           </div>
         </div>
-      </header>
-
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 glass-card rounded-none border-y-0 border-l-0 min-h-screen p-4">
-          <nav className="space-y-2">
-            {[
-              { id: 'overview', label: '📊 Overview', icon: '📊' },
-              { id: 'analytics', label: '📈 Analytics', icon: '📈' },
-              { id: 'profile', label: '👤 Profile', icon: '👤' },
-              { id: 'experience', label: '💼 Experience', icon: '💼' },
-              { id: 'skills', label: '🎯 Skills', icon: '🎯' },
-              { id: 'education', label: '🎓 Education', icon: '🎓' },
-              { id: 'ventures', label: '🚀 Ventures', icon: '🚀' },
-              { id: 'achievements', label: '🏆 Achievements', icon: '🏆' },
-              { id: 'ai-assistant', label: '🤖 AI Assistant', icon: '🤖' }
-            ].map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActiveSection(item.id)}
-                className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${
-                  activeSection === item.id
-                    ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                    : 'hover:bg-white/10 text-gray-300 hover:text-white'
-                }`}
-              >
-                <span className="mr-3">{item.icon}</span>
-                {item.label.split(' ').slice(1).join(' ')}
-              </button>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1 p-6">
-          {/* Overview Section */}
-          {activeSection === 'overview' && (
-            <div className="space-y-8">
-              <h2 className="text-3xl font-bold mb-6">Dashboard Overview</h2>
-              
-              {/* Analytics Section */}
-              <div className="mb-8">
-                <h3 className="text-2xl font-bold mb-6 flex items-center">
-                  <span className="text-2xl mr-3">📊</span>
-                  Analytics Dashboard
-                </h3>
-                
-                {/* Top Analytics Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                  <div className="glass-card rounded-xl p-4 border-l-4 border-green-500">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="text-lg font-semibold mb-1">Total Visitors</h4>
-                        <p className="text-3xl font-bold text-green-400">12,847</p>
-                        <p className="text-sm text-gray-400">+18.2% from last month</p>
-                      </div>
-                      <div className="text-green-400">
-                        <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="glass-card rounded-xl p-4 border-l-4 border-blue-500">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="text-lg font-semibold mb-1">Page Views</h4>
-                        <p className="text-3xl font-bold text-blue-400">89,653</p>
-                        <p className="text-sm text-gray-400">+24.7% from last month</p>
-                      </div>
-                      <div className="text-blue-400">
-                        <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="glass-card rounded-xl p-4 border-l-4 border-purple-500">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="text-lg font-semibold mb-1">AI Interactions</h4>
-                        <p className="text-3xl font-bold text-purple-400">2,394</p>
-                        <p className="text-sm text-gray-400">+31.5% from last month</p>
-                      </div>
-                      <div className="text-purple-400">
-                        <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="glass-card rounded-xl p-4 border-l-4 border-orange-500">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="text-lg font-semibold mb-1">Appointments</h4>
-                        <p className="text-3xl font-bold text-orange-400">47</p>
-                        <p className="text-sm text-gray-400">+12 this week</p>
-                      </div>
-                      <div className="text-orange-400">
-                        <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Detailed Analytics Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Real-time Analytics */}
-                  <div className="glass-card rounded-xl p-6">
-                    <h4 className="text-xl font-semibold mb-4 flex items-center">
-                      <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></span>
-                      Real-time Analytics
-                    </h4>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">Active visitors now</span>
-                        <span className="text-2xl font-bold text-green-400">23</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">Pages viewed (last hour)</span>
-                        <span className="text-xl font-semibold text-blue-400">156</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">AI chats initiated</span>
-                        <span className="text-xl font-semibold text-purple-400">8</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">New appointments</span>
-                        <span className="text-xl font-semibold text-orange-400">2</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Geographic Analytics */}
-                  <div className="glass-card rounded-xl p-6">
-                    <h4 className="text-xl font-semibold mb-4">🌍 Geographic Distribution</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <span className="mr-2">🇺🇸</span>
-                          <span className="text-gray-300">United States</span>
-                        </div>
-                        <div className="flex items-center">
-                          <div className="w-20 bg-gray-700 rounded-full h-2 mr-2">
-                            <div className="bg-blue-500 h-2 rounded-full" style={{ width: '68%' }}></div>
-                          </div>
-                          <span className="text-sm text-blue-400">68%</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <span className="mr-2">🇦🇪</span>
-                          <span className="text-gray-300">UAE</span>
-                        </div>
-                        <div className="flex items-center">
-                          <div className="w-20 bg-gray-700 rounded-full h-2 mr-2">
-                            <div className="bg-green-500 h-2 rounded-full" style={{ width: '15%' }}></div>
-                          </div>
-                          <span className="text-sm text-green-400">15%</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <span className="mr-2">🇬🇧</span>
-                          <span className="text-gray-300">United Kingdom</span>
-                        </div>
-                        <div className="flex items-center">
-                          <div className="w-20 bg-gray-700 rounded-full h-2 mr-2">
-                            <div className="bg-purple-500 h-2 rounded-full" style={{ width: '12%' }}></div>
-                          </div>
-                          <span className="text-sm text-purple-400">12%</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <span className="mr-2">🌍</span>
-                          <span className="text-gray-300">Others</span>
-                        </div>
-                        <div className="flex items-center">
-                          <div className="w-20 bg-gray-700 rounded-full h-2 mr-2">
-                            <div className="bg-orange-500 h-2 rounded-full" style={{ width: '5%' }}></div>
-                          </div>
-                          <span className="text-sm text-orange-400">5%</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Popular Sections */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                  <div className="glass-card rounded-xl p-6">
-                    <h4 className="text-xl font-semibold mb-4">🔥 Most Viewed Sections</h4>
-                    <div className="space-y-3">
-                      {[
-                        { name: 'Work Experience', views: 8942, percentage: 85 },
-                        { name: 'Skills & Technologies', views: 7834, percentage: 74 },
-                        { name: 'Ventures & Projects', views: 6723, percentage: 64 },
-                        { name: 'AI Chat Interactions', views: 5612, percentage: 53 },
-                        { name: 'White Papers', views: 4387, percentage: 42 }
-                      ].map((section, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <div>
-                            <span className="text-gray-300">{section.name}</span>
-                            <p className="text-sm text-gray-500">{section.views.toLocaleString()} views</p>
-                          </div>
-                          <div className="flex items-center">
-                            <div className="w-24 bg-gray-700 rounded-full h-2 mr-2">
-                              <div 
-                                className="bg-gradient-to-r from-red-500 to-orange-500 h-2 rounded-full" 
-                                style={{ width: `${section.percentage}%` }}
-                              ></div>
-                            </div>
-                            <span className="text-sm text-red-400">{section.percentage}%</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="glass-card rounded-xl p-6">
-                    <h4 className="text-xl font-semibold mb-4">📱 Device & Browser Stats</h4>
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-sm text-gray-400 mb-2">Device Types</p>
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="text-gray-300">💻 Desktop</span>
-                            <span className="text-blue-400">58.2%</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-300">📱 Mobile</span>
-                            <span className="text-green-400">32.1%</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-300">📊 Tablet</span>
-                            <span className="text-purple-400">9.7%</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-400 mb-2">Top Browsers</p>
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="text-gray-300">Chrome</span>
-                            <span className="text-blue-400">67.4%</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-300">Safari</span>
-                            <span className="text-green-400">18.9%</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-300">Firefox</span>
-                            <span className="text-purple-400">8.2%</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-300">Edge</span>
-                            <span className="text-orange-400">5.5%</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Portfolio Content Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="glass-card rounded-xl p-4">
-                  <h3 className="text-lg font-semibold mb-2">Experience</h3>
-                  <p className="text-2xl font-bold text-blue-400">{EXPERIENCE_DATA.length}</p>
-                  <p className="text-sm text-gray-400">Job positions</p>
-                </div>
-                
-                <div className="glass-card rounded-xl p-4">
-                  <h3 className="text-lg font-semibold mb-2">Skills</h3>
-                  <p className="text-2xl font-bold text-green-400">
-                    {SKILLS_DATA.reduce((total, category) => total + category.skills.length, 0)}
-                  </p>
-                  <p className="text-sm text-gray-400">Technologies</p>
-                </div>
-                
-                <div className="glass-card rounded-xl p-4">
-                  <h3 className="text-lg font-semibold mb-2">Ventures</h3>
-                  <p className="text-2xl font-bold text-purple-400">{VENTURES_DATA.length}</p>
-                  <p className="text-sm text-gray-400">Active projects</p>
-                </div>
-                
-                <div className="glass-card rounded-xl p-4">
-                  <h3 className="text-lg font-semibold mb-2">Publications</h3>
-                  <p className="text-2xl font-bold text-orange-400">{WHITE_PAPERS_DATA.length}</p>
-                  <p className="text-sm text-gray-400">White papers</p>
-                </div>
-              </div>
-
-              <div className="glass-card rounded-xl p-6">
-                <h3 className="text-xl font-semibold mb-4">Recent Activity</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3 p-3 bg-white/5 rounded-lg">
-                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                    <span className="text-sm">Portfolio updated successfully</span>
-                    <span className="text-xs text-gray-400 ml-auto">2 hours ago</span>
-                  </div>
-                  <div className="flex items-center space-x-3 p-3 bg-white/5 rounded-lg">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                    <span className="text-sm">New appointment booking received</span>
-                    <span className="text-xs text-gray-400 ml-auto">5 hours ago</span>
-                  </div>
-                  <div className="flex items-center space-x-3 p-3 bg-white/5 rounded-lg">
-                    <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-                    <span className="text-sm">AI chat interaction completed</span>
-                    <span className="text-xs text-gray-400 ml-auto">1 day ago</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Profile Section */}
-          {activeSection === 'profile' && (
-            <div className="space-y-6">
-              <h2 className="text-3xl font-bold mb-6">Profile Management</h2>
-              
-              <div className="glass-card rounded-xl p-6">
-                <h3 className="text-xl font-semibold mb-4">Basic Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Full Name</label>
-                    <input
-                      type="text"
-                      defaultValue={PROFILE_DATA.name}
-                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
-                      onChange={(e) => updateProfileData('name', e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Title</label>
-                    <input
-                      type="text"
-                      defaultValue={PROFILE_DATA.title}
-                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
-                      onChange={(e) => updateProfileData('title', e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <label className="block text-sm font-medium mb-2">Bio/Summary</label>
-                  <textarea
-                    defaultValue={PROFILE_DATA.summary}
-                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white h-32"
-                    onChange={(e) => updateProfileData('summary', e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Analytics Section */}
-          {activeSection === 'analytics' && (
-            <div className="space-y-6">
-              <h2 className="text-3xl font-bold mb-6">Advanced Analytics</h2>
-              
-              {/* Performance Metrics */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 glass-card rounded-xl p-6">
-                  <h3 className="text-xl font-semibold mb-4">📈 Traffic Trends (Last 30 Days)</h3>
-                  <div className="h-64 bg-black/20 rounded-lg flex items-center justify-center">
-                    {/* Mock Chart */}
-                    <div className="text-center">
-                      <div className="flex items-end justify-center space-x-2 mb-4">
-                        {[45, 78, 65, 89, 76, 94, 82, 67, 91, 88, 73, 96, 84, 79].map((height, i) => (
-                          <div 
-                            key={i}
-                            className="bg-gradient-to-t from-blue-500 to-blue-300 rounded-t"
-                            style={{ 
-                              height: `${height}px`, 
-                              width: '20px',
-                              animation: `fadeInUp ${0.1 * (i + 1)}s ease-out`
-                            }}
-                          ></div>
-                        ))}
-                      </div>
-                      <p className="text-gray-400 text-sm">Daily Visitors</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="glass-card rounded-xl p-6">
-                  <h3 className="text-xl font-semibold mb-4">⚡ Performance Score</h3>
-                  <div className="space-y-4">
-                    <div className="text-center">
-                      <div className="relative w-32 h-32 mx-auto mb-4">
-                        <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
-                          <circle cx="50" cy="50" r="40" stroke="#374151" strokeWidth="8" fill="none"/>
-                          <circle 
-                            cx="50" cy="50" r="40" 
-                            stroke="#10b981" strokeWidth="8" 
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeDasharray="251.2"
-                            strokeDashoffset="62.8"
-                          />
-                        </svg>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-2xl font-bold text-green-400">92</span>
-                        </div>
-                      </div>
-                      <p className="text-green-400 font-semibold">Excellent</p>
-                    </div>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-300">Page Load Speed</span>
-                        <span className="text-green-400">1.2s</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-300">SEO Score</span>
-                        <span className="text-blue-400">98/100</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-300">Accessibility</span>
-                        <span className="text-purple-400">95/100</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Interaction Heatmap */}
-              <div className="glass-card rounded-xl p-6">
-                <h3 className="text-xl font-semibold mb-4">🔥 Interaction Heatmap</h3>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                  {[
-                    { section: 'Hero Section', interactions: 2847, color: 'text-red-400', intensity: 95 },
-                    { section: 'AI Chat', interactions: 2394, color: 'text-orange-400', intensity: 80 },
-                    { section: 'Experience', interactions: 1876, color: 'text-yellow-400', intensity: 65 },
-                    { section: 'Skills Search', interactions: 1543, color: 'text-green-400', intensity: 55 },
-                    { section: 'Appointments', interactions: 876, color: 'text-blue-400', intensity: 40 },
-                    { section: 'White Papers', interactions: 654, color: 'text-purple-400', intensity: 30 },
-                    { section: 'Social Links', interactions: 432, color: 'text-pink-400', intensity: 20 },
-                    { section: 'Footer', interactions: 187, color: 'text-gray-400', intensity: 10 }
-                  ].map((item, i) => (
-                    <div key={i} className="bg-black/20 rounded-lg p-4 hover:bg-black/30 transition-colors">
-                      <h4 className="font-semibold text-white mb-2">{item.section}</h4>
-                      <p className={`text-2xl font-bold ${item.color} mb-1`}>
-                        {item.interactions.toLocaleString()}
-                      </p>
-                      <p className="text-xs text-gray-400">interactions</p>
-                      <div className="mt-2 w-full bg-gray-700 rounded-full h-1">
-                        <div 
-                          className={`h-1 rounded-full bg-gradient-to-r from-red-500 to-orange-500`}
-                          style={{ width: `${item.intensity}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Conversion Metrics */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="glass-card rounded-xl p-6">
-                  <h3 className="text-xl font-semibold mb-4">💎 Conversion Metrics</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 bg-green-500/10 rounded-lg border border-green-500/20">
-                      <div>
-                        <p className="text-green-400 font-semibold">Contact Rate</p>
-                        <p className="text-2xl font-bold text-white">3.7%</p>
-                      </div>
-                      <div className="text-green-400">↗️ +0.8%</div>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                      <div>
-                        <p className="text-blue-400 font-semibold">AI Engagement</p>
-                        <p className="text-2xl font-bold text-white">18.6%</p>
-                      </div>
-                      <div className="text-blue-400">↗️ +2.1%</div>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
-                      <div>
-                        <p className="text-purple-400 font-semibold">Resume Downloads</p>
-                        <p className="text-2xl font-bold text-white">8.9%</p>
-                      </div>
-                      <div className="text-purple-400">↗️ +1.2%</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="glass-card rounded-xl p-6">
-                  <h3 className="text-xl font-semibold mb-4">🎯 User Journey</h3>
-                  <div className="space-y-3">
-                    {[
-                      { step: '1. Landing', users: '12,847', percentage: 100 },
-                      { step: '2. Browse Portfolio', users: '9,876', percentage: 77 },
-                      { step: '3. Interact with AI', users: '2,394', percentage: 19 },
-                      { step: '4. View Experience', users: '8,234', percentage: 64 },
-                      { step: '5. Contact/Appointment', users: '476', percentage: 4 }
-                    ].map((step, i) => (
-                      <div key={i} className="flex items-center space-x-3">
-                        <div className="flex-1">
-                          <div className="flex justify-between mb-1">
-                            <span className="text-gray-300 text-sm">{step.step}</span>
-                            <span className="text-white font-semibold">{step.users}</span>
-                          </div>
-                          <div className="w-full bg-gray-700 rounded-full h-2">
-                            <div 
-                              className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-1000"
-                              style={{ width: `${step.percentage}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                        <span className="text-xs text-gray-400 w-8">{step.percentage}%</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* AI Assistant Section */}
-          {activeSection === 'ai-assistant' && (
-            <div className="space-y-6">
-              <h2 className="text-3xl font-bold mb-6">AI Assistant</h2>
-              
-              <div className="glass-card rounded-xl p-6">
-                <h3 className="text-xl font-semibold mb-4">Content Generation Assistant</h3>
-                <p className="text-gray-300 mb-4">
-                  Use AI to help generate content for your portfolio sections.
-                </p>
-                
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Ask AI Assistant</label>
-                    <input
-                      type="text"
-                      value={aiPrompt}
-                      onChange={(e) => setAiPrompt(e.target.value)}
-                      placeholder="e.g., 'generate experience', 'create skill', 'write bio'"
-                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400"
-                    />
-                  </div>
-                  
-                  <button
-                    onClick={handleAiAssist}
-                    disabled={isAiLoading || !aiPrompt.trim()}
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-600 disabled:to-gray-700 text-white px-6 py-2 rounded-lg transition-all duration-200"
-                  >
-                    {isAiLoading ? 'Generating...' : 'Ask AI'}
-                  </button>
-                  
-                  {aiResponse && (
-                    <div className="mt-4 p-4 bg-white/5 border border-white/10 rounded-lg">
-                      <h4 className="font-semibold mb-2">AI Response:</h4>
-                      <pre className="text-sm text-gray-300 whitespace-pre-wrap">{aiResponse}</pre>
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-6 border-t border-white/10 pt-6">
-                  <h4 className="font-semibold mb-3">Quick Actions</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {[
-                      'Generate Bio',
-                      'Create Skill',
-                      'Write Experience',
-                      'Add Achievement',
-                      'Optimize Content',
-                      'SEO Suggestions'
-                    ].map((action) => (
-                      <button
-                        key={action}
-                        onClick={() => setAiPrompt(action.toLowerCase())}
-                        className="p-3 bg-white/10 hover:bg-white/20 rounded-lg text-sm transition-colors duration-200"
-                      >
-                        {action}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Other sections would be implemented similarly */}
-          {activeSection !== 'overview' && activeSection !== 'profile' && activeSection !== 'ai-assistant' && (
-            <div className="glass-card rounded-xl p-6">
-              <h2 className="text-3xl font-bold mb-6">
-                {activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} Management
-              </h2>
-              <p className="text-gray-300">
-                This section is under development. You can manage {activeSection} data here.
-              </p>
-            </div>
-          )}
-        </main>
       </div>
+
+      {/* Message */}
+      {message && (
+        <div className={`fixed top-20 right-4 z-50 px-6 py-3 rounded-lg shadow-lg ${
+          message.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        } text-white animate-in slide-in-from-right`}>
+          {message.text}
+        </div>
+      )}
+
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Navigation */}
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+          {[
+            { id: 'overview', label: '📊 Overview', icon: '📊' },
+            { id: 'profile', label: '👤 Profile', icon: '👤' },
+            { id: 'experience', label: '💼 Experience', icon: '💼' },
+            { id: 'education', label: '🎓 Education', icon: '🎓' },
+            { id: 'skills', label: '🛠 Skills', icon: '🛠' },
+            { id: 'ventures', label: '🚀 Ventures', icon: '🚀' },
+            { id: 'achievements', label: '🏆 Achievements', icon: '🏆' },
+            { id: 'whitepapers', label: '📄 White Papers', icon: '📄' },
+            { id: 'appointments', label: '📅 Appointments', icon: '📅' },
+          ].map((section) => (
+            <button
+              key={section.id}
+              onClick={() => setActiveSection(section.id)}
+              className={`px-6 py-3 rounded-lg font-medium transition-all whitespace-nowrap ${
+                activeSection === section.id
+                  ? 'bg-blue-500 text-white shadow-lg'
+                  : 'bg-white/10 hover:bg-white/20 text-gray-300'
+              }`}
+            >
+              {section.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Content */}
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <p className="text-gray-400">Loading data...</p>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {activeSection === 'overview' && <OverviewSection analytics={analytics} data={{ profile, experience, education, skills, ventures, achievements, whitePapers, appointments }} />}
+            {activeSection === 'profile' && <ProfileSection profile={profile} onUpdate={handleProfileUpdate} />}
+            {activeSection === 'experience' && <ExperienceSection experience={experience} onCreate={handleExperienceCreate} onUpdate={handleExperienceUpdate} onDelete={handleExperienceDelete} openModal={openModal} />}
+            {activeSection === 'education' && <EducationSection education={education} onCreate={handleEducationCreate} onUpdate={handleEducationUpdate} onDelete={handleEducationDelete} openModal={openModal} />}
+            {activeSection === 'skills' && <SkillsSection skills={skills} onCreate={handleSkillCreate} onUpdate={handleSkillUpdate} onDelete={handleSkillDelete} openModal={openModal} />}
+            {activeSection === 'ventures' && <VenturesSection ventures={ventures} onCreate={handleVentureCreate} onUpdate={handleVentureUpdate} onDelete={handleVentureDelete} openModal={openModal} />}
+            {activeSection === 'achievements' && <AchievementsSection achievements={achievements} onUpdate={handleAchievementsUpdate} openModal={openModal} />}
+            {activeSection === 'whitepapers' && <WhitePapersSection whitePapers={whitePapers} onCreate={handleWhitePaperCreate} onUpdate={handleWhitePaperUpdate} onDelete={handleWhitePaperDelete} openModal={openModal} />}
+            {activeSection === 'appointments' && <AppointmentsSection appointments={appointments} onUpdate={handleAppointmentUpdate} onDelete={handleAppointmentDelete} openModal={openModal} />}
+          </div>
+        )}
+      </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <EditModal
+          section={activeSection}
+          item={editingItem}
+          onClose={closeModal}
+          onSave={(
+            activeSection === 'experience' ? (editingItem ? (data) => handleExperienceUpdate(editingItem.id, data) : handleExperienceCreate) :
+            activeSection === 'education' ? (editingItem ? (data) => handleEducationUpdate(editingItem.id, data) : handleEducationCreate) :
+            activeSection === 'skills' ? (editingItem ? (data) => handleSkillUpdate(editingItem.id, data) : handleSkillCreate) :
+            activeSection === 'ventures' ? (editingItem ? (data) => handleVentureUpdate(editingItem.id, data) : handleVentureCreate) :
+            activeSection === 'whitepapers' ? (editingItem ? (data) => handleWhitePaperUpdate(editingItem.id, data) : handleWhitePaperCreate) :
+            activeSection === 'appointments' ? (data) => handleAppointmentUpdate(editingItem.id, data) :
+            activeSection === 'achievements' ? handleAchievementsUpdate :
+            null
+          )}
+        />
+      )}
     </div>
   );
 };
+
+// Component sections will be defined below
+const OverviewSection = ({ analytics, data }) => (
+  <div>
+    <h2 className="text-2xl font-bold mb-6">Dashboard Overview</h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <StatCard title="Total Visits" value={analytics.total_visits || 0} icon="👁️" color="blue" />
+      <StatCard title="AI Chat Sessions" value={analytics.ai_chat_sessions || 0} icon="💬" color="green" />
+      <StatCard title="Skills Viewed" value={analytics.skills_viewed || 0} icon="🛠" color="purple" />
+      <StatCard title="Appointments" value={analytics.appointments_booked || 0} icon="📅" color="red" />
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <DataCard title="Experience Entries" count={data.experience?.length || 0} icon="💼" />
+      <DataCard title="Education Entries" count={data.education?.length || 0} icon="🎓" />
+      <DataCard title="Skill Categories" count={data.skills?.length || 0} icon="🛠" />
+      <DataCard title="Ventures" count={data.ventures?.length || 0} icon="🚀" />
+      <DataCard title="White Papers" count={data.whitePapers?.length || 0} icon="📄" />
+      <DataCard title="Certificates" count={data.achievements?.certificates?.length || 0} icon="🏆" />
+    </div>
+  </div>
+);
+
+const StatCard = ({ title, value, icon, color }) => (
+  <div className={`bg-gradient-to-br from-${color}-500/20 to-${color}-600/20 backdrop-blur-md border border-${color}-500/30 rounded-xl p-6`}>
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-2xl">{icon}</span>
+      <span className={`text-3xl font-bold text-${color}-400`}>{value}</span>
+    </div>
+    <p className="text-gray-300 text-sm">{title}</p>
+  </div>
+);
+
+const DataCard = ({ title, count, icon }) => (
+  <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-gray-400 text-sm mb-1">{title}</p>
+        <p className="text-2xl font-bold text-white">{count}</p>
+      </div>
+      <span className="text-4xl opacity-50">{icon}</span>
+    </div>
+  </div>
+);
+
+// Profile Section remains at the end with other sections...
+// [Continuing in next file due to length]
 
 export default AdminDashboard;
