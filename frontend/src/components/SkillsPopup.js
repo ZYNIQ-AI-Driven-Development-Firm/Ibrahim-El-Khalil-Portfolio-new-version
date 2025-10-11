@@ -5,6 +5,15 @@ import { SearchIcon } from './icons';
 const SkillsPopup = ({ isOpen, onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Track skills view analytics
+  useEffect(() => {
+    if (isOpen) {
+      import('../services/apiService').then(({ trackEvent }) => {
+        trackEvent('skills_view');
+      });
+    }
+  }, [isOpen]);
+
   // Filter skills based on search term
   const filteredSkills = useMemo(() => {
     if (!searchTerm.trim()) {
