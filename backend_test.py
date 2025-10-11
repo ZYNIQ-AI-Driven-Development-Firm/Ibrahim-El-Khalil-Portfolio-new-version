@@ -73,7 +73,11 @@ class PortfolioAPITester:
                 "name": "Ibrahim El Khalil - Test Updated",
                 "title": "Senior Software Engineer & AI Specialist - Updated",
                 "location": "Dubai, UAE - Updated",
-                "summary": "Test updated summary for profile"
+                "summary": "Test updated summary for profile",
+                "image": "https://example.com/test-image.jpg",
+                "linkedin": "https://linkedin.com/in/test",
+                "github": "https://github.com/test",
+                "email": "test@example.com"
             }
             self.run_test("Update Profile", "PUT", "api/profile", 200, updated_profile)
 
