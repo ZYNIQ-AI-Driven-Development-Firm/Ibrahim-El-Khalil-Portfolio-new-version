@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const BookmarkBar = ({ onAppointmentClick }) => {
+const BookmarkBar = ({ onAppointmentClick, onSkillsClick }) => {
   const [hoveredButton, setHoveredButton] = useState(null);
 
   const bookmarkButtons = [
@@ -18,7 +18,8 @@ const BookmarkBar = ({ onAppointmentClick }) => {
       color: 'from-blue-600 to-indigo-700',
       hoverColor: 'from-blue-700 to-indigo-800',
       onClick: onAppointmentClick,
-      notification: true
+      notification: true,
+      tooltip: 'Schedule a meeting with Ibrahim'
     },
     {
       id: 'skills',
@@ -39,8 +40,9 @@ const BookmarkBar = ({ onAppointmentClick }) => {
       ),
       color: 'from-green-600 to-emerald-700',
       hoverColor: 'from-green-700 to-emerald-800',
-      onClick: () => {}, // Will be passed from parent
-      notification: false
+      onClick: onSkillsClick,
+      notification: false,
+      tooltip: 'View technical skills and proficiency'
     }
   ];
 
