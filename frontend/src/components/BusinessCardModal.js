@@ -307,14 +307,14 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
                       </div>
 
                       {/* QR Code Area (placeholder) */}
-                      <div className="flex items-end justify-between pt-4 border-t border-cyan-500/30">
+                      <div className="flex items-end justify-between pt-4 border-t border-red-500/30">
                         <div className="text-xs text-gray-400">
-                          <div className="text-cyan-400 font-semibold mb-1">Scan to connect</div>
+                          <div className="text-red-400 font-semibold mb-1">Scan to connect</div>
                           <div className="w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center">
                             <div className="text-2xl">📱</div>
                           </div>
                         </div>
-                        <div className="text-xs text-cyan-400 opacity-70 animate-pulse">
+                        <div className="text-xs text-red-400 opacity-70 animate-pulse">
                           ← Click to flip back
                         </div>
                       </div>
