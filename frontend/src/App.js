@@ -8,8 +8,7 @@ import OtherAchievements from './components/OtherAchievements';
 import AiChat from './components/AiChat';
 import AppointmentManager from './components/AppointmentManager';
 import AdminDashboard from './components/AdminDashboard';
-import BusinessCardModal from './components/BusinessCardModal';
-import { PROFILE_DATA, SOCIAL_LINKS } from './constants';
+import BusinessCardPage from './components/BusinessCardPage';
 
 const loadingSteps = [
     "Initializing Interface...",
