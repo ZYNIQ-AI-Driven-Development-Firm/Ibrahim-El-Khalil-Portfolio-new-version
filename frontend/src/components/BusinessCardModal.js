@@ -144,12 +144,12 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.8 }}
-                            className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500"
+                            className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-red-500 to-red-600"
                             style={{ fontFamily: 'Orbitron, sans-serif' }}
                           >
                             PORTFOLIO
                           </motion.div>
-                          <div className="text-xs text-blue-400 mt-1">Digital Presence</div>
+                          <div className="text-xs text-red-400 mt-1">Digital Presence</div>
                         </div>
                       </div>
 
