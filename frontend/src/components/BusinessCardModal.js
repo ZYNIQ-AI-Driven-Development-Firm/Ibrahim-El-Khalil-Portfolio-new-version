@@ -128,7 +128,7 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
                           whileHover={{ scale: 1.1, rotateZ: 5 }}
                           transition={{ type: 'spring', stiffness: 300 }}
                         >
-                          <div className="w-24 h-24 rounded-2xl overflow-hidden border-4 border-blue-500/50 shadow-2xl transform rotate-3">
+                          <div className="w-24 h-24 rounded-2xl overflow-hidden border-4 border-red-500/50 shadow-2xl transform rotate-3">
                             <img
                               src={profileData.image}
                               alt={profileData.name}
