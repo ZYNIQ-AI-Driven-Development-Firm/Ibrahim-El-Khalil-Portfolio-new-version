@@ -45,8 +45,11 @@ const PortfolioPage = () => {
             const next = prev + 1;
             if (next >= loadingSteps.length) {
                 clearInterval(interval);
-                // Wait a bit before fading out the loader
-                setTimeout(() => setLoading(false), 500);
+                // Wait a bit before showing business card
+                setTimeout(() => {
+                  setLoading(false);
+                  setShowBusinessCard(true);
+                }, 500);
                 return prev; // Don't increment beyond array bounds
             }
             return next;
