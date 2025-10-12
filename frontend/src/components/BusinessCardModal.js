@@ -162,7 +162,7 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
                           className="text-4xl font-bold text-white"
                           style={{ 
                             fontFamily: 'Orbitron, sans-serif',
-                            textShadow: '0 0 30px rgba(0, 212, 255, 0.5)'
+                            textShadow: '0 0 30px rgba(255, 0, 0, 0.5)'
                           }}
                         >
                           {profileData.name}
