@@ -142,7 +142,7 @@ const App = () => {
         
         <Routes>
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/" element={<PortfolioPage />} />
+          <Route path="/" element={<PortfolioPage setShowBusinessCard={setShowBusinessCard} />} />
         </Routes>
       </div>
     </Router>
