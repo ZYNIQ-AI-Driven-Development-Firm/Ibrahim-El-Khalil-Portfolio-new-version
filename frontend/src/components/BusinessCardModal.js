@@ -110,9 +110,9 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
                     <div className="absolute inset-0 opacity-10">
                       <svg width="100%" height="100%">
                         <pattern id="circuit" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-                          <path d="M10 10 L90 10 L90 90 L10 90 Z" stroke="#00d4ff" strokeWidth="0.5" fill="none" />
-                          <circle cx="10" cy="10" r="2" fill="#00d4ff" />
-                          <circle cx="90" cy="90" r="2" fill="#00d4ff" />
+                          <path d="M10 10 L90 10 L90 90 L10 90 Z" stroke="#ff0000" strokeWidth="0.5" fill="none" />
+                          <circle cx="10" cy="10" r="2" fill="#ff0000" />
+                          <circle cx="90" cy="90" r="2" fill="#ff0000" />
                         </pattern>
                         <rect width="100%" height="100%" fill="url(#circuit)" />
                       </svg>
