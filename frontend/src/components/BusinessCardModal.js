@@ -171,7 +171,7 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 1.1 }}
-                          className="text-lg text-blue-300 font-medium"
+                          className="text-lg text-red-300 font-medium"
                         >
                           {profileData.title}
                         </motion.p>
