@@ -356,7 +356,7 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.5 }}
             onClick={onClose}
-            className="absolute bottom-20 px-12 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105"
+            className="absolute bottom-20 left-1/2 transform -translate-x-1/2 px-12 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-full shadow-2xl transition-all duration-300"
             style={{ fontFamily: 'Orbitron, sans-serif' }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
