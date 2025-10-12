@@ -57,10 +57,11 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
             ))}
           </div>
 
-          {/* Card Container with Perspective */}
-          <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '2000px' }}>
-            {/* 3D Card */}
-            <motion.div
+          {/* Card Container with Perspective - Centered */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="relative pointer-events-auto" style={{ perspective: '2000px' }}>
+              {/* 3D Card */}
+              <motion.div
               initial={{ scale: 0.5, rotateY: -180, opacity: 0 }}
               animate={{ scale: 1, rotateY: 0, opacity: 1 }}
               transition={{ 
