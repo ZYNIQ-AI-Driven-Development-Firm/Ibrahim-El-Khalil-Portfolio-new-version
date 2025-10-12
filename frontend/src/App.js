@@ -117,6 +117,7 @@ const PortfolioPage = () => {
 };
 
 const App = () => {
+  const [showBusinessCard, setShowBusinessCard] = useState(false);
   
   return (
     <Router>
