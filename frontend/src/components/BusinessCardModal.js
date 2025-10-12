@@ -330,7 +330,7 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
 
             {/* Floating Elements */}
             <motion.div
-              className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"
+              className="absolute -top-20 -right-20 w-40 h-40 bg-red-500/10 rounded-full blur-3xl"
               animate={{
                 scale: [1, 1.2, 1],
                 opacity: [0.3, 0.6, 0.3],
@@ -338,7 +338,7 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
               transition={{ duration: 4, repeat: Infinity }}
             />
             <motion.div
-              className="absolute -bottom-20 -left-20 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl"
+              className="absolute -bottom-20 -left-20 w-40 h-40 bg-red-700/10 rounded-full blur-3xl"
               animate={{
                 scale: [1.2, 1, 1.2],
                 opacity: [0.6, 0.3, 0.6],
