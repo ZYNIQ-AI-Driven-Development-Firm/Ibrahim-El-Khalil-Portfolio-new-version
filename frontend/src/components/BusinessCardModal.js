@@ -96,15 +96,15 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
                   <div
                     className="relative w-[600px] h-[340px] rounded-3xl overflow-hidden"
                     style={{
-                      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+                      background: 'linear-gradient(135deg, #1a0000 0%, #330000 50%, #000000 100%)',
                       boxShadow: showGlow 
-                        ? '0 30px 60px rgba(0, 140, 255, 0.4), 0 0 80px rgba(0, 140, 255, 0.2)'
-                        : '0 30px 60px rgba(0, 0, 0, 0.5), 0 0 80px rgba(0, 140, 255, 0.1)',
+                        ? '0 30px 60px rgba(255, 0, 0, 0.4), 0 0 80px rgba(255, 0, 0, 0.3)'
+                        : '0 30px 60px rgba(0, 0, 0, 0.5), 0 0 80px rgba(255, 0, 0, 0.1)',
                       transition: 'box-shadow 3s ease-in-out',
                     }}
                   >
                     {/* Card Border Glow */}
-                    <div className="absolute inset-0 rounded-3xl border-2 border-blue-500/30" />
+                    <div className="absolute inset-0 rounded-3xl border-2 border-red-500/40" />
                     
                     {/* Animated Circuit Pattern */}
                     <div className="absolute inset-0 opacity-10">
