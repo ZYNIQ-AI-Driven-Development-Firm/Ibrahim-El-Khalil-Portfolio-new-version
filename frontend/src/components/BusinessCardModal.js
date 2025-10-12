@@ -374,7 +374,7 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 2 }}
-            className="absolute top-10 text-center"
+            className="absolute top-10 left-1/2 transform -translate-x-1/2 text-center"
           >
             <p className="text-gray-400 text-sm">Click the card to see contact information</p>
           </motion.div>
