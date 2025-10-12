@@ -28,14 +28,17 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+          className="fixed inset-0 z-[200]"
           style={{
             background: 'linear-gradient(135deg, #000000 0%, #1a0000 50%, #330000 100%)',
-            backdropFilter: 'blur(20px)'
+            backdropFilter: 'blur(20px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}
         >
           {/* Animated Background Particles */}
-          <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {[...Array(20)].map((_, i) => (
               <motion.div
                 key={i}
@@ -58,8 +61,7 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
           </div>
 
           {/* Card Container with Perspective - Centered */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="relative pointer-events-auto" style={{ perspective: '2000px' }}>
+          <div className="relative" style={{ perspective: '2000px' }}>
               {/* 3D Card */}
               <motion.div
               initial={{ scale: 0.5, rotateY: -180, opacity: 0 }}
