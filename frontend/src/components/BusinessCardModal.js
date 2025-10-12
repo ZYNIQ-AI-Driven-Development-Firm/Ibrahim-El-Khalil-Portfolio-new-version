@@ -231,12 +231,12 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
                   <div
                     className="relative w-[600px] h-[340px] rounded-3xl overflow-hidden"
                     style={{
-                      background: 'linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%)',
+                      background: 'linear-gradient(135deg, #330000 0%, #1a0000 50%, #000000 100%)',
                       boxShadow: '0 30px 60px rgba(0, 0, 0, 0.5)',
                     }}
                   >
                     {/* Card Border */}
-                    <div className="absolute inset-0 rounded-3xl border-2 border-cyan-500/30" />
+                    <div className="absolute inset-0 rounded-3xl border-2 border-red-500/40" />
                     
                     {/* Back Content */}
                     <div className="relative h-full p-10 flex flex-col justify-between">
