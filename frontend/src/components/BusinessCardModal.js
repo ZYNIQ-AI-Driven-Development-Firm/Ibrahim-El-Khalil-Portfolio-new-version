@@ -214,8 +214,8 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
                     </div>
 
                     {/* Corner Accent */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-transparent rounded-bl-full" />
-                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-cyan-500/20 to-transparent rounded-tr-full" />
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-500/20 to-transparent rounded-bl-full" />
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-red-700/20 to-transparent rounded-tr-full" />
                   </div>
                 </div>
 
