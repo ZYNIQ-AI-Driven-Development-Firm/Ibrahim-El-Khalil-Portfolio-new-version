@@ -329,23 +329,24 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
               </motion.div>
             </motion.div>
 
-            {/* Floating Elements */}
-            <motion.div
-              className="absolute -top-20 -right-20 w-40 h-40 bg-red-500/10 rounded-full blur-3xl"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.3, 0.6, 0.3],
-              }}
-              transition={{ duration: 4, repeat: Infinity }}
-            />
-            <motion.div
-              className="absolute -bottom-20 -left-20 w-40 h-40 bg-red-700/10 rounded-full blur-3xl"
-              animate={{
-                scale: [1.2, 1, 1.2],
-                opacity: [0.6, 0.3, 0.6],
-              }}
-              transition={{ duration: 4, repeat: Infinity, delay: 2 }}
-            />
+              {/* Floating Elements */}
+              <motion.div
+                className="absolute -top-20 -right-20 w-40 h-40 bg-red-500/10 rounded-full blur-3xl"
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [0.3, 0.6, 0.3],
+                }}
+                transition={{ duration: 4, repeat: Infinity }}
+              />
+              <motion.div
+                className="absolute -bottom-20 -left-20 w-40 h-40 bg-red-700/10 rounded-full blur-3xl"
+                animate={{
+                  scale: [1.2, 1, 1.2],
+                  opacity: [0.6, 0.3, 0.6],
+                }}
+                transition={{ duration: 4, repeat: Infinity, delay: 2 }}
+              />
+            </div>
           </div>
 
           {/* Enter Portfolio Button */}
