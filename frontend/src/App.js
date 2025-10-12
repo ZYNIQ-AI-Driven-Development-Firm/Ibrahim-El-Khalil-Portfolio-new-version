@@ -19,7 +19,7 @@ const loadingSteps = [
 ];
 
 // Portfolio component with loading logic
-const PortfolioPage = ({ setShowBusinessCard }) => {
+const PortfolioPage = () => {
   const [loading, setLoading] = useState(true);
   const [loadingStep, setLoadingStep] = useState(0);
 
@@ -44,10 +44,9 @@ const PortfolioPage = ({ setShowBusinessCard }) => {
             const next = prev + 1;
             if (next >= loadingSteps.length) {
                 clearInterval(interval);
-                // Wait a bit before showing business card
+                // Wait a bit before hiding loader
                 setTimeout(() => {
                   setLoading(false);
-                  setShowBusinessCard(true);
                 }, 500);
                 return prev; // Don't increment beyond array bounds
             }
