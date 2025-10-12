@@ -30,7 +30,7 @@ const BusinessCardModal = ({ isOpen, onClose, profileData }) => {
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[200] flex items-center justify-center p-4"
           style={{
-            background: 'linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #0f3460 100%)',
+            background: 'linear-gradient(135deg, #000000 0%, #1a0000 50%, #330000 100%)',
             backdropFilter: 'blur(20px)'
           }}
         >
