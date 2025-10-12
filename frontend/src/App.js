@@ -119,31 +119,13 @@ const PortfolioPage = ({ setShowBusinessCard }) => {
 };
 
 const App = () => {
-  const [showBusinessCard, setShowBusinessCard] = useState(false);
-  
-  // Prepare profile data for business card
-  const profileData = {
-    ...PROFILE_DATA,
-    linkedin: SOCIAL_LINKS.linkedin,
-    github: SOCIAL_LINKS.github,
-    email: SOCIAL_LINKS.email,
-  };
-
   return (
     <Router>
-      <div>
-        {/* Business Card Modal */}
-        <BusinessCardModal
-          isOpen={showBusinessCard}
-          onClose={() => setShowBusinessCard(false)}
-          profileData={profileData}
-        />
-        
-        <Routes>
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/" element={<PortfolioPage setShowBusinessCard={setShowBusinessCard} />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/" element={<BusinessCardPage />} />
+        <Route path="/portfolio" element={<PortfolioPage />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+      </Routes>
     </Router>
   );
 };
