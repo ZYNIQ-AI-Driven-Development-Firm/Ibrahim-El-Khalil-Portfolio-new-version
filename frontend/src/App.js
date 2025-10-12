@@ -20,7 +20,7 @@ const loadingSteps = [
 ];
 
 // Portfolio component with loading logic
-const PortfolioPage = () => {
+const PortfolioPage = ({ setShowBusinessCard }) => {
   const [loading, setLoading] = useState(true);
   const [loadingStep, setLoadingStep] = useState(0);
 
