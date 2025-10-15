@@ -36,12 +36,19 @@ from models import (
 
 app = FastAPI(title="Ibrahim El Khalil Portfolio API")
 
-# Enable CORS
+# Enable CORS with explicit origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001", 
+        "https://khalilpreview.space",
+        "https://www.khalilpreview.space",
+        "https://portfolio-frontend-71372052711.us-central1.run.app",
+        "https://portfolio-frontend-hgf2k2ko2a-uc.a.run.app"
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -64,6 +71,18 @@ def read_root():
 @app.get("/api/health")
 def health_check():
     return {"status": "healthy", "service": "portfolio-backend"}
+
+# Handle preflight OPTIONS requests explicitly
+@app.options("/{full_path:path}")
+def handle_options(full_path: str):
+    """Handle preflight OPTIONS requests"""
+    from fastapi import Response
+    response = Response()
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Max-Age"] = "86400"
+    return response
 
 # ==================== PROFILE ====================
 @app.get("/api/profile")
