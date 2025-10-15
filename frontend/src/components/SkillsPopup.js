@@ -136,7 +136,7 @@ const SkillsPopup = ({ isOpen, onClose }) => {
           {searchTerm && (
             <div className="mt-3 text-sm text-gray-400">
             Found {filteredSkills.reduce((total, category) => total + category.skills.length, 0)} skills
-            {filteredSkills.length !== skillsData.length && ` in ${filteredSkills.length} categories`}
+            {filteredSkills.length !== SKILLS_DATA.length && ` in ${filteredSkills.length} categories`}
             </div>
           )}
         </div>
