@@ -262,236 +262,168 @@ const AdminDashboard = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-red-900 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
         
-        {/* Animated Background Elements */}
+        {/* Dark Professional Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-950 to-black"></div>
+        
+        {/* Subtle Grid Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="h-full w-full bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+        </div>
+        
+        {/* Minimal Corporate Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Floating Orbs */}
-          <div className="absolute top-20 left-20 w-32 h-32 bg-red-500/10 rounded-full blur-xl animate-pulse" 
-               style={{animationDuration: '4s', animationDelay: '0s'}} />
-          <div className="absolute top-40 right-32 w-24 h-24 bg-red-600/15 rounded-full blur-lg animate-pulse" 
-               style={{animationDuration: '3s', animationDelay: '1s'}} />
-          <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-slate-500/8 rounded-full blur-2xl animate-pulse" 
-               style={{animationDuration: '5s', animationDelay: '2s'}} />
-          <div className="absolute top-1/3 right-20 w-28 h-28 bg-red-700/12 rounded-full blur-xl animate-pulse" 
-               style={{animationDuration: '3.5s', animationDelay: '0.5s'}} />
+          {/* Corporate Red Accents */}
+          <div className="absolute top-10 left-10 w-1 h-20 bg-gradient-to-b from-red-600/50 to-transparent"></div>
+          <div className="absolute top-10 left-10 w-20 h-1 bg-gradient-to-r from-red-600/50 to-transparent"></div>
+          <div className="absolute bottom-10 right-10 w-1 h-20 bg-gradient-to-t from-red-600/50 to-transparent"></div>
+          <div className="absolute bottom-10 right-10 w-20 h-1 bg-gradient-to-l from-red-600/50 to-transparent"></div>
           
-          {/* Floating Geometric Shapes */}
-          <div className="absolute top-16 left-1/3 w-16 h-16 border border-red-400/20 rotate-45 animate-spin" 
-               style={{animationDuration: '20s'}} />
-          <div className="absolute bottom-20 right-1/4 w-12 h-12 border border-red-500/15 animate-spin" 
-               style={{animationDuration: '25s', animationDirection: 'reverse'}} />
-          <div className="absolute top-1/2 left-16 w-8 h-8 bg-gradient-to-r from-red-400/10 to-red-600/10 transform rotate-45 animate-bounce" 
-               style={{animationDuration: '6s'}} />
-               
-          {/* Subtle Moving Gradient Lines */}
-          <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-red-400/30 to-transparent animate-pulse" 
-               style={{animationDuration: '4s'}} />
-          <div className="absolute bottom-0 right-0 w-full h-0.5 bg-gradient-to-l from-transparent via-red-500/20 to-transparent animate-pulse" 
-               style={{animationDuration: '5s', animationDelay: '2s'}} />
-               
-          {/* Floating Dots */}
-          <div className="absolute top-1/4 left-1/2 w-2 h-2 bg-red-400/40 rounded-full animate-ping" 
-               style={{animationDuration: '3s', animationDelay: '1s'}} />
-          <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-red-500/50 rounded-full animate-ping" 
-               style={{animationDuration: '4s', animationDelay: '2.5s'}} />
-          <div className="absolute top-2/3 right-1/3 w-1.5 h-1.5 bg-slate-400/30 rounded-full animate-ping" 
-               style={{animationDuration: '3.5s', animationDelay: '0.8s'}} />
-               
-          {/* Additional Subtle Moving Elements */}
-          <div className="absolute top-12 right-12 w-6 h-6 border-2 border-red-300/20 rounded-full"
-               style={{
-                 animation: 'slowFloat 7s ease-in-out infinite',
-                 animationDelay: '1s'
-               }} />
-          <div className="absolute bottom-16 left-12 w-4 h-4 border border-red-400/15 transform rotate-45"
-               style={{
-                 animation: 'gentleSway 9s ease-in-out infinite',
-                 animationDelay: '3s'
-               }} />
-          <div className="absolute top-1/3 left-8 w-1 h-8 bg-gradient-to-b from-red-400/20 to-transparent"
-               style={{
-                 animation: 'slowFloat 6s ease-in-out infinite',
-                 animationDelay: '2s'
-               }} />
-          <div className="absolute bottom-1/4 right-8 w-8 h-1 bg-gradient-to-r from-red-500/15 to-transparent"
-               style={{
-                 animation: 'gentleSway 8s ease-in-out infinite',
-                 animationDelay: '4s'
-               }} />
-          
-          {/* Subtle Moving Background Pattern */}
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-radial from-red-500/10 to-transparent rounded-full"
-                 style={{
-                   animation: 'slowFloat 8s ease-in-out infinite',
-                   animationDelay: '0s'
-                 }} />
-            <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-gradient-radial from-red-600/8 to-transparent rounded-full"
-                 style={{
-                   animation: 'slowFloat 10s ease-in-out infinite reverse',
-                   animationDelay: '2s'
-                 }} />
-            <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-gradient-radial from-slate-500/6 to-transparent rounded-full"
-                 style={{
-                   animation: 'gentleSway 12s ease-in-out infinite',
-                   animationDelay: '4s'
-                 }} />
-          </div>
+          {/* Minimal Geometric Elements */}
+          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-red-500/30 transform rotate-45"></div>
+          <div className="absolute bottom-1/3 right-1/3 w-2 h-2 bg-red-500/30 transform rotate-45"></div>
+          <div className="absolute top-2/3 left-1/2 w-1 h-1 bg-red-600/40"></div>
         </div>
 
-        {/* Custom CSS Animations */}
-        <style jsx>{`
-          @keyframes slowFloat {
-            0%, 100% { transform: translateY(0px) translateX(0px); }
-            50% { transform: translateY(-30px) translateX(15px); }
-          }
+        <div className="relative z-10 w-full max-w-md">
+          {/* Glassmorphism Card */}
+          <div className="bg-red-900/20 backdrop-blur-2xl border border-red-500/30 rounded-2xl p-8 shadow-2xl shadow-black/50 relative overflow-hidden">
+            
+            {/* Glassmorphism Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-red-900/20 pointer-events-none"></div>
+            
+            {/* Inner Content */}
+            <div className="relative z-10">
+              <div className="text-center mb-8">
+                {/* Corporate Icon */}
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-red-600/80 backdrop-blur-md rounded-xl mb-6 shadow-2xl border border-red-500/50">
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                
+                <h1 className="text-2xl font-bold text-white mb-2 tracking-wide">
+                  ADMIN PORTAL
+                </h1>
+                <p className="text-gray-400 text-sm font-medium">Secure Administrative Access</p>
+                
+                {/* Corporate Line */}
+                <div className="w-12 h-0.5 bg-red-500 mx-auto mt-4"></div>
+              </div>
           
-          @keyframes gentleSway {
-            0%, 100% { transform: translateX(0px) scale(1); }
-            33% { transform: translateX(20px) scale(1.05); }
-            66% { transform: translateX(-15px) scale(0.95); }
-          }
+              {/* Security Status */}
+              {isBlocked && (
+                <div className="mb-6 p-4 bg-red-900/30 backdrop-blur-md border border-red-500/50 rounded-lg">
+                  <p className="text-red-300 text-sm text-center flex items-center justify-center gap-2 font-medium">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
+                    </svg>
+                    ACCESS BLOCKED - {Math.ceil(blockTimeRemaining / 60000)} MIN REMAINING
+                  </p>
+                </div>
+              )}
+              
+              {failedAttempts > 0 && !isBlocked && (
+                <div className="mb-6 p-4 bg-yellow-900/20 backdrop-blur-md border border-yellow-500/30 rounded-lg">
+                  <p className="text-yellow-300 text-sm text-center flex items-center justify-center gap-2 font-medium">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                    FAILED ATTEMPTS: {failedAttempts}/3
+                  </p>
+                </div>
+              )}
           
-          @keyframes cardFloat {
-            0%, 100% { 
-              transform: translateY(0px) scale(1);
-              box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.2);
-            }
-            50% { 
-              transform: translateY(-8px) scale(1.01);
-              box-shadow: 0 35px 60px -12px rgba(239, 68, 68, 0.3);
-            }
-          }
-          
-          .bg-gradient-radial {
-            background: radial-gradient(circle, var(--tw-gradient-stops));
-          }
-        `}</style>
-
-        <div className="bg-slate-800/50 backdrop-blur-xl border border-red-500/30 rounded-3xl p-10 max-w-lg w-full shadow-2xl shadow-red-900/20 relative z-10"
-             style={{
-               animation: 'cardFloat 6s ease-in-out infinite'
-             }}>
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl mb-4 shadow-lg">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-red-400 to-red-500 bg-clip-text text-transparent mb-2">
-              Admin Portal
-            </h1>
-            <p className="text-slate-400 text-sm">Secure access to dashboard controls</p>
-          </div>
-          
-          {/* Security Status */}
-          {isBlocked && (
-            <div className="mb-6 p-4 bg-gradient-to-r from-red-900/30 to-pink-900/30 border border-red-400/30 rounded-2xl backdrop-blur-sm">
-              <p className="text-red-300 text-sm text-center flex items-center justify-center gap-2 font-medium">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
-                </svg>
-                Access blocked for {Math.ceil(blockTimeRemaining / 60000)} minutes
-              </p>
-            </div>
-          )}
-          
-          {failedAttempts > 0 && !isBlocked && (
-            <div className="mb-6 p-4 bg-gradient-to-r from-amber-900/30 to-orange-900/30 border border-amber-400/30 rounded-2xl backdrop-blur-sm">
-              <p className="text-amber-300 text-sm text-center flex items-center justify-center gap-2 font-medium">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                {failedAttempts}/3 failed attempts. {3 - failedAttempts} remaining.
-              </p>
-            </div>
-          )}
-          
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label className="block text-slate-300 text-sm font-semibold mb-3 tracking-wide">
-                ADMIN PASSWORD
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full px-6 py-4 pr-14 bg-slate-800/80 border-2 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-4 transition-all duration-300 backdrop-blur-sm ${
-                    isBlocked 
-                      ? 'border-red-500/50 focus:border-red-400/50 focus:ring-red-500/20' 
-                      : 'border-red-500/30 focus:border-red-400/60 focus:ring-red-500/20 hover:border-red-400/50'
-                  }`}
-                  placeholder="Enter your secure password"
-                  disabled={isBlocked}
-                  required
-                />
+              <form onSubmit={handleLogin} className="space-y-6">
+                <div>
+                  <label className="block text-gray-300 text-xs font-bold mb-3 tracking-widest uppercase">
+                    Access Code
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className={`w-full px-4 py-4 pr-12 bg-black/60 backdrop-blur-md border-2 rounded-lg text-white placeholder-gray-500 focus:outline-none transition-all duration-300 font-mono ${
+                        isBlocked 
+                          ? 'border-red-500/70 focus:border-red-400 focus:ring-2 focus:ring-red-500/20' 
+                          : 'border-red-500/50 focus:border-red-400 focus:ring-2 focus:ring-red-500/30 hover:border-red-400/70'
+                      }`}
+                      placeholder="••••••••••••"
+                      disabled={isBlocked}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-red-400 transition-colors duration-200 p-1"
+                      disabled={isBlocked}
+                    >
+                      {showPassword ? (
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                        </svg>
+                      ) : (
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                </div>
                 <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-400 transition-colors duration-200 p-1 rounded-lg hover:bg-red-500/10"
+                  type="submit"
                   disabled={isBlocked}
+                  className={`w-full py-4 rounded-lg font-bold text-sm tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-3 ${
+                    isBlocked
+                      ? 'bg-gray-800/80 cursor-not-allowed text-gray-500 border border-gray-600'
+                      : 'bg-red-600/90 hover:bg-red-500 text-white border border-red-500/50 backdrop-blur-md shadow-lg shadow-red-500/25 hover:shadow-red-500/40'
+                  }`}
                 >
-                  {showPassword ? (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                    </svg>
+                  {isBlocked ? (
+                    <>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                      ACCESS DENIED
+                    </>
                   ) : (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
+                    <>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                      </svg>
+                      Authenticate
+                    </>
                   )}
+                </button>
+              </form>
+              
+              {/* Footer */}
+              <div className="mt-8 text-center">
+                <div className="flex items-center justify-center gap-2 text-gray-500 text-xs mb-4">
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                  <span className="font-mono tracking-wider">SECURE CONNECTION ACTIVE</span>
+                </div>
+                <p className="text-gray-600 text-xs tracking-wide">
+                  Administrative Portal • Authorized Personnel Only
+                </p>
+              </div>
+              
+              {/* Return to Portfolio Button */}
+              <div className="mt-6">
+                <button
+                  onClick={() => window.location.href = '/'}
+                  className="w-full bg-gray-900/80 hover:bg-gray-800/80 backdrop-blur-md border border-gray-600/50 hover:border-gray-500/50 text-gray-300 hover:text-white py-3 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm tracking-wide"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  RETURN TO PORTFOLIO
                 </button>
               </div>
             </div>
-            <button
-              type="submit"
-              disabled={isBlocked}
-              className={`w-full py-4 rounded-2xl font-bold text-lg tracking-wide transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 transform hover:scale-[1.02] active:scale-[0.98] ${
-                isBlocked
-                  ? 'bg-slate-700 cursor-not-allowed text-slate-500 shadow-none'
-                  : 'bg-gradient-to-r from-red-600 via-red-500 to-red-700 hover:from-red-500 hover:via-red-400 hover:to-red-600 text-white shadow-red-500/25 hover:shadow-red-500/40'
-              }`}
-            >
-              {isBlocked ? (
-                <>
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                  ACCESS BLOCKED
-                </>
-              ) : (
-                <>
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                  </svg>
-                  ENTER DASHBOARD
-                </>
-              )}
-            </button>
-          </form>
-          
-          {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-slate-500 text-xs">
-              Secure Admin Portal • Protected by Advanced Authentication
-            </p>
-          </div>
-          
-          {/* Return to Portfolio Button */}
-          <div className="mt-6 text-center">
-            <button
-              onClick={() => window.location.href = '/'}
-              className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white py-3 rounded-lg font-medium transition-all duration-200 shadow-lg flex items-center justify-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              Return to Portfolio
-            </button>
-            <p className="text-gray-400 text-sm mt-2">Go back to the main portfolio page</p>
           </div>
         </div>
       </div>
