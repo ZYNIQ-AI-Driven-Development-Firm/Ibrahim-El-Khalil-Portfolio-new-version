@@ -278,3 +278,8 @@ export const updateTheme = async (themeData) => {
     body: JSON.stringify(themeData),
   });
 };
+
+// ==================== SYSTEM STATUS ====================
+export const getSystemStatus = async () => {
+  return await apiCall('/api/system-status');
+};

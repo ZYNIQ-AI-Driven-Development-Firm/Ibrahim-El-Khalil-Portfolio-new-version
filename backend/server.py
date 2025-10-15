@@ -72,6 +72,112 @@ def read_root():
 def health_check():
     return {"status": "healthy", "service": "portfolio-backend"}
 
+@app.get("/api/system-status")
+def system_status():
+    """Get comprehensive system status for admin dashboard"""
+    import datetime
+    from pymongo.errors import ServerSelectionTimeoutError
+    
+    try:
+        # Test database connection
+        db_status = {"connected": False, "error": None, "collections": {}}
+        try:
+            # Test connection with a simple operation
+            db.admin.command('ismaster')
+            db_status["connected"] = True
+            
+            # Get collection stats
+            collections_info = {
+                "profile": {"count": 0, "last_modified": None},
+                "experience": {"count": 0, "last_modified": None},
+                "education": {"count": 0, "last_modified": None},
+                "skills": {"count": 0, "last_modified": None},
+                "ventures": {"count": 0, "last_modified": None},
+                "achievements": {"count": 0, "last_modified": None},
+                "whitepapers": {"count": 0, "last_modified": None},
+                "appointments": {"count": 0, "last_modified": None},
+            }
+            
+            # Get document counts and last modified dates
+            collections_info["profile"]["count"] = profile_collection.count_documents({})
+            collections_info["experience"]["count"] = experience_collection.count_documents({})
+            collections_info["education"]["count"] = education_collection.count_documents({})
+            collections_info["skills"]["count"] = skills_collection.count_documents({})
+            collections_info["ventures"]["count"] = ventures_collection.count_documents({})
+            collections_info["achievements"]["count"] = achievements_collection.count_documents({})
+            collections_info["whitepapers"]["count"] = whitepapers_collection.count_documents({})
+            collections_info["appointments"]["count"] = appointments_collection.count_documents({})
+            
+            # Get last modified dates (if documents have timestamps)
+            for coll_name, collection in [
+                ("profile", profile_collection),
+                ("experience", experience_collection),
+                ("education", education_collection),
+                ("skills", skills_collection),
+                ("ventures", ventures_collection),
+                ("achievements", achievements_collection),
+                ("whitepapers", whitepapers_collection),
+                ("appointments", appointments_collection),
+            ]:
+                try:
+                    # Try to find the most recent document (works if there's a created_at or _id field)
+                    latest_doc = collection.find_one({}, sort=[("_id", -1)])
+                    if latest_doc and "_id" in latest_doc:
+                        # Extract timestamp from MongoDB ObjectId
+                        collections_info[coll_name]["last_modified"] = latest_doc["_id"].generation_time.isoformat()
+                except Exception:
+                    collections_info[coll_name]["last_modified"] = "Unknown"
+            
+            db_status["collections"] = collections_info
+            
+        except ServerSelectionTimeoutError as e:
+            db_status["connected"] = False
+            db_status["error"] = "Connection timeout"
+        except Exception as e:
+            db_status["connected"] = False
+            db_status["error"] = str(e)
+        
+        # Backend status
+        backend_status = {
+            "status": "healthy",
+            "timestamp": datetime.datetime.utcnow().isoformat(),
+            "uptime": "Available", # Could implement actual uptime tracking
+            "version": "1.0.0",
+            "environment": {
+                "has_gemini_api": bool(os.getenv('GEMINI_API_KEY')),
+                "has_mongo_uri": bool(os.getenv('MONGODB_URI')),
+                "port": os.getenv('PORT', '8001')
+            }
+        }
+        
+        # Overall system health
+        overall_status = "healthy" if db_status["connected"] else "degraded"
+        if not backend_status["environment"]["has_gemini_api"]:
+            overall_status = "warning"
+        if not backend_status["environment"]["has_mongo_uri"]:
+            overall_status = "error"
+        
+        return {
+            "overall_status": overall_status,
+            "timestamp": datetime.datetime.utcnow().isoformat(),
+            "database": db_status,
+            "backend": backend_status,
+            "api_endpoints": {
+                "total_endpoints": 25,  # Approximate count
+                "authenticated_endpoints": 8,
+                "public_endpoints": 17
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "overall_status": "error",
+            "timestamp": datetime.datetime.utcnow().isoformat(),
+            "error": f"System status check failed: {str(e)}",
+            "database": {"connected": False, "error": "Unknown"},
+            "backend": {"status": "error"}
+        }
+
 # Handle preflight OPTIONS requests explicitly
 @app.options("/{full_path:path}")
 def handle_options(full_path: str):

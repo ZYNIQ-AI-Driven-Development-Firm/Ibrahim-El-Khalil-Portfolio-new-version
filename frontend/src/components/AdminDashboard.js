@@ -27,6 +27,7 @@ const AdminDashboard = () => {
   const [analytics, setAnalytics] = useState({});
   const [envVars, setEnvVars] = useState({});
   const [aiInstructions, setAiInstructions] = useState('');
+  const [systemStatus, setSystemStatus] = useState(null);
 
   // Editing states
   const [editingItem, setEditingItem] = useState(null);
@@ -144,7 +145,7 @@ const AdminDashboard = () => {
   const loadAllData = async () => {
     setLoading(true);
     try {
-      const [profileData, expData, eduData, skillsData, venturesData, achData, papersData, aptData, analyticsData] = await Promise.all([
+      const [profileData, expData, eduData, skillsData, venturesData, achData, papersData, aptData, analyticsData, statusData] = await Promise.all([
         API.getProfile().catch(() => null),
         API.getExperience(),
         API.getEducation(),
@@ -153,7 +154,8 @@ const AdminDashboard = () => {
         API.getAchievements(),
         API.getWhitePapers(),
         API.getAppointments(),
-        API.getAnalytics()
+        API.getAnalytics(),
+        API.getSystemStatus().catch(() => null)
       ]);
       
       setProfile(profileData);
@@ -165,6 +167,7 @@ const AdminDashboard = () => {
       setWhitePapers(papersData);
       setAppointments(aptData);
       setAnalytics(analyticsData);
+      setSystemStatus(statusData);
     } catch (error) {
       console.error('Error loading data:', error);
       showMessage('Error loading data', 'error');
@@ -389,6 +392,7 @@ const AdminDashboard = () => {
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {[
             { id: 'overview', label: 'Overview', icon: '📊' },
+            { id: 'status', label: 'System Status', icon: '🔍' },
             { id: 'profile', label: 'Profile', icon: '👤' },
             { id: 'experience', label: 'Experience', icon: '💼' },
             { id: 'education', label: 'Education', icon: '🎓' },
@@ -479,6 +483,13 @@ const AdminDashboard = () => {
           ) : (
             <div className="space-y-6">{activeSection === 'overview' && (
                 <OverviewSection analytics={analytics} data={{ profile, experience, education, skills, ventures, achievements, whitePapers, appointments }} />
+              )}
+              {activeSection === 'status' && (
+                <SystemStatusSection 
+                  systemStatus={systemStatus}
+                  loadAllData={loadAllData}
+                  showMessage={showMessage}
+                />
               )}
               {activeSection === 'profile' && (
                 <ProfileSection profile={profile} onUpdate={handleProfileUpdate} openModal={openModal} />
@@ -2295,6 +2306,261 @@ Remember to maintain a conversational tone while being informative and respectfu
           <p className="text-blue-400 text-sm">
             💡 <strong>Tip:</strong> Include specific information about your expertise, personality traits, and how you want the AI to guide visitors through your portfolio. The more detailed, the better the AI will represent you.
           </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// System Status Section
+const SystemStatusSection = ({ systemStatus, loadAllData, showMessage }) => {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await loadAllData();
+      showMessage('System status refreshed successfully!');
+    } catch (error) {
+      showMessage('Error refreshing system status', 'error');
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'healthy': return 'text-green-400 bg-green-500/20 border-green-500/30';
+      case 'warning': return 'text-yellow-400 bg-yellow-500/20 border-yellow-500/30';
+      case 'degraded': return 'text-orange-400 bg-orange-500/20 border-orange-500/30';
+      case 'error': return 'text-red-400 bg-red-500/20 border-red-500/30';
+      default: return 'text-gray-400 bg-gray-500/20 border-gray-500/30';
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'healthy': return '✅';
+      case 'warning': return '⚠️';
+      case 'degraded': return '🟡';
+      case 'error': return '❌';
+      default: return '❓';
+    }
+  };
+
+  if (!systemStatus) {
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">🔍 System Status</h2>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors flex items-center gap-2"
+          >
+            {refreshing ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            )}
+            {refreshing ? 'Refreshing...' : 'Refresh Status'}
+          </button>
+        </div>
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading system status...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold">🔍 System Status</h2>
+          <p className="text-gray-400 mt-1">Monitor database connection and system health</p>
+        </div>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors flex items-center gap-2"
+        >
+          {refreshing ? (
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          ) : (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          )}
+          {refreshing ? 'Refreshing...' : 'Refresh Status'}
+        </button>
+      </div>
+
+      {/* Overall Status */}
+      <div className={`mb-6 p-4 rounded-xl border ${getStatusColor(systemStatus.overall_status)}`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">{getStatusIcon(systemStatus.overall_status)}</span>
+            <div>
+              <h3 className="text-lg font-bold">Overall System Status</h3>
+              <p className="text-sm opacity-75 capitalize">{systemStatus.overall_status}</p>
+            </div>
+          </div>
+          <div className="text-right text-sm opacity-75">
+            <p>Last checked:</p>
+            <p>{new Date(systemStatus.timestamp).toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Database Status */}
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <span className="text-xl">🗄️</span>
+            Database Connection
+            <span className={`px-2 py-1 rounded-full text-xs ${systemStatus.database.connected ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+              {systemStatus.database.connected ? 'Connected' : 'Disconnected'}
+            </span>
+          </h3>
+          
+          {systemStatus.database.connected ? (
+            <div className="space-y-3">
+              <div className="text-sm text-gray-400 mb-3">Collection Status:</div>
+              <div className="grid grid-cols-2 gap-3">
+                {Object.entries(systemStatus.database.collections || {}).map(([collection, info]) => (
+                  <div key={collection} className="bg-white/5 p-3 rounded-lg">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="font-medium capitalize">{collection}</span>
+                      <span className="text-xs bg-blue-500/30 text-blue-400 px-2 py-1 rounded-full">
+                        {info.count}
+                      </span>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {info.last_modified ? (
+                        <>Modified: {new Date(info.last_modified).toLocaleDateString()}</>
+                      ) : (
+                        'No timestamp'
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="text-red-400 bg-red-500/10 p-3 rounded-lg">
+              <p className="font-medium">Connection Failed</p>
+              <p className="text-sm opacity-75">{systemStatus.database.error || 'Unknown error'}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Backend Status */}
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <span className="text-xl">⚙️</span>
+            Backend Service
+            <span className={`px-2 py-1 rounded-full text-xs ${systemStatus.backend?.status === 'healthy' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+              {systemStatus.backend?.status || 'Unknown'}
+            </span>
+          </h3>
+          
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 gap-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-400">Version:</span>
+                <span>{systemStatus.backend?.version || 'Unknown'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Port:</span>
+                <span>{systemStatus.backend?.environment?.port || 'Unknown'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Uptime:</span>
+                <span>{systemStatus.backend?.uptime || 'Unknown'}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-white/10">
+            <div className="text-sm text-gray-400 mb-2">Environment Configuration:</div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span>Gemini API Key</span>
+                <span className={`px-2 py-1 rounded-full text-xs ${systemStatus.backend?.environment?.has_gemini_api ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                  {systemStatus.backend?.environment?.has_gemini_api ? '✓ Configured' : '✗ Missing'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>MongoDB URI</span>
+                <span className={`px-2 py-1 rounded-full text-xs ${systemStatus.backend?.environment?.has_mongo_uri ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                  {systemStatus.backend?.environment?.has_mongo_uri ? '✓ Configured' : '✗ Missing'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* API Endpoints Status */}
+      <div className="mt-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+        <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+          <span className="text-xl">🔗</span>
+          API Endpoints
+        </h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-blue-400">{systemStatus.api_endpoints?.total_endpoints || 0}</div>
+            <div className="text-sm text-gray-400">Total Endpoints</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-green-400">{systemStatus.api_endpoints?.public_endpoints || 0}</div>
+            <div className="text-sm text-gray-400">Public Endpoints</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-yellow-400">{systemStatus.api_endpoints?.authenticated_endpoints || 0}</div>
+            <div className="text-sm text-gray-400">Admin Endpoints</div>
+          </div>
+        </div>
+      </div>
+
+      {/* System Information */}
+      <div className="mt-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
+        <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+          <span className="text-xl">📊</span>
+          System Information
+        </h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="font-medium mb-2">Database Collections Summary</h4>
+            <div className="text-sm space-y-1">
+              {systemStatus.database.collections && Object.entries(systemStatus.database.collections).map(([name, info]) => (
+                <div key={name} className="flex justify-between">
+                  <span className="capitalize">{name}:</span>
+                  <span className="text-blue-400">{info.count} documents</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <h4 className="font-medium mb-2">Recent Activity</h4>
+            <div className="text-sm space-y-1 text-gray-400">
+              <div>• System last checked at {new Date(systemStatus.timestamp).toLocaleString()}</div>
+              <div>• Database connection: {systemStatus.database.connected ? 'Active' : 'Failed'}</div>
+              <div>• Backend service: {systemStatus.backend?.status || 'Unknown'}</div>
+              {systemStatus.error && (
+                <div className="text-red-400">• Error: {systemStatus.error}</div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
