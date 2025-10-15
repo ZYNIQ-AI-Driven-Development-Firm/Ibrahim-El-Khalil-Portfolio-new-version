@@ -3411,6 +3411,7 @@ const SystemStatusSection = ({ systemStatus, loadAllData, showMessage }) => {
           </div>
         </div>
       </div>
+      </div>
     </div>
   );
 };

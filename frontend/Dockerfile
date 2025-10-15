@@ -17,11 +17,9 @@ COPY .env* ./
 # Copy source code
 COPY . .
 
-# Accept build arguments
-ARG GEMINI_API_KEY
+# Accept build arguments (non-sensitive data)
 ARG REACT_APP_BACKEND_URL
 # Use build args if provided, otherwise use .env file
-ENV REACT_APP_GEMINI_API_KEY=${GEMINI_API_KEY:-}
 ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL:-}
 
 # Build the app
