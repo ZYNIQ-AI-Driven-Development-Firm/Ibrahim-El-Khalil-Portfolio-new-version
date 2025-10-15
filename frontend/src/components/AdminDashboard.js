@@ -262,31 +262,36 @@ const AdminDashboard = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center p-4">
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full shadow-2xl">
-          <h1 className="text-3xl font-bold text-white mb-6 text-center flex items-center justify-center gap-3">
-            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-            Admin Access
-          </h1>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+        <div className="bg-slate-800/50 backdrop-blur-xl border border-purple-500/30 rounded-3xl p-10 max-w-lg w-full shadow-2xl shadow-purple-900/20">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl mb-4 shadow-lg">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+              Admin Portal
+            </h1>
+            <p className="text-slate-400 text-sm">Secure access to dashboard controls</p>
+          </div>
           
           {/* Security Status */}
           {isBlocked && (
-            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
-              <p className="text-red-400 text-sm text-center flex items-center justify-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="mb-6 p-4 bg-gradient-to-r from-red-900/30 to-pink-900/30 border border-red-400/30 rounded-2xl backdrop-blur-sm">
+              <p className="text-red-300 text-sm text-center flex items-center justify-center gap-2 font-medium">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
                 </svg>
-                Login blocked for {Math.ceil(blockTimeRemaining / 60000)} minutes
+                Access blocked for {Math.ceil(blockTimeRemaining / 60000)} minutes
               </p>
             </div>
           )}
           
           {failedAttempts > 0 && !isBlocked && (
-            <div className="mb-4 p-3 bg-yellow-500/20 border border-yellow-500/30 rounded-lg">
-              <p className="text-yellow-400 text-sm text-center flex items-center justify-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="mb-6 p-4 bg-gradient-to-r from-amber-900/30 to-orange-900/30 border border-amber-400/30 rounded-2xl backdrop-blur-sm">
+              <p className="text-amber-300 text-sm text-center flex items-center justify-center gap-2 font-medium">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
                 {failedAttempts}/3 failed attempts. {3 - failedAttempts} remaining.
@@ -294,35 +299,37 @@ const AdminDashboard = () => {
             </div>
           )}
           
-          <form onSubmit={handleLogin}>
-            <div className="mb-6">
-              <label className="block text-white text-sm font-medium mb-2">Password</label>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-slate-300 text-sm font-semibold mb-3 tracking-wide">
+                ADMIN PASSWORD
+              </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full px-4 py-3 pr-12 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                  className={`w-full px-6 py-4 pr-14 bg-slate-800/80 border-2 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-4 transition-all duration-300 backdrop-blur-sm ${
                     isBlocked 
-                      ? 'border-primary-500/50 focus:border-primary-500/50 focus:ring-red-500/25' 
-                      : 'border-white/20 focus:border-blue-500/50 focus:ring-blue-500/25'
+                      ? 'border-red-500/50 focus:border-red-400/50 focus:ring-red-500/20' 
+                      : 'border-purple-500/30 focus:border-purple-400/60 focus:ring-purple-500/20 hover:border-purple-400/50'
                   }`}
-                  placeholder="Enter admin password"
+                  placeholder="Enter your secure password"
                   disabled={isBlocked}
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-400 transition-colors duration-200 p-1 rounded-lg hover:bg-purple-500/10"
                   disabled={isBlocked}
                 >
                   {showPassword ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
                     </svg>
                   ) : (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
@@ -333,24 +340,36 @@ const AdminDashboard = () => {
             <button
               type="submit"
               disabled={isBlocked}
-              className={`w-full py-3 rounded-lg font-medium transition-all duration-200 shadow-lg flex items-center justify-center gap-2 ${
+              className={`w-full py-4 rounded-2xl font-bold text-lg tracking-wide transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 transform hover:scale-[1.02] active:scale-[0.98] ${
                 isBlocked
-                  ? 'bg-gray-600 cursor-not-allowed text-gray-400'
-                  : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white'
+                  ? 'bg-slate-700 cursor-not-allowed text-slate-500 shadow-none'
+                  : 'bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 hover:from-purple-500 hover:via-purple-400 hover:to-pink-400 text-white shadow-purple-500/25 hover:shadow-purple-500/40'
               }`}
             >
               {isBlocked ? (
                 <>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
-                  Blocked
+                  ACCESS BLOCKED
                 </>
               ) : (
-                'Login'
+                <>
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                  </svg>
+                  ENTER DASHBOARD
+                </>
               )}
             </button>
           </form>
+          
+          {/* Footer */}
+          <div className="mt-8 text-center">
+            <p className="text-slate-500 text-xs">
+              Secure Admin Portal • Protected by Advanced Authentication
+            </p>
+          </div>
           
           {/* Return to Portfolio Button */}
           <div className="mt-6 text-center">
@@ -1536,14 +1555,15 @@ const EditModal = ({ section, item, onClose, onSave }) => {
           <select
             value={formData.type || ''}
             onChange={(e) => handleChange('type', e.target.value)}
-            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
+            className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+            style={{backgroundColor: '#1f2937', color: 'white'}}
           >
-            <option value="">Select type</option>
-            <option value="Startup">Startup</option>
-            <option value="Freelance">Freelance</option>
-            <option value="Open Source">Open Source</option>
-            <option value="Personal Project">Personal Project</option>
-            <option value="Consulting">Consulting</option>
+            <option value="" style={{backgroundColor: '#1f2937', color: 'white'}}>Select type</option>
+            <option value="Startup" style={{backgroundColor: '#1f2937', color: 'white'}}>Startup</option>
+            <option value="Freelance" style={{backgroundColor: '#1f2937', color: 'white'}}>Freelance</option>
+            <option value="Open Source" style={{backgroundColor: '#1f2937', color: 'white'}}>Open Source</option>
+            <option value="Personal Project" style={{backgroundColor: '#1f2937', color: 'white'}}>Personal Project</option>
+            <option value="Consulting" style={{backgroundColor: '#1f2937', color: 'white'}}>Consulting</option>
           </select>
         </div>
       </div>
@@ -1853,11 +1873,12 @@ const EditModal = ({ section, item, onClose, onSave }) => {
         <select
           value={formData.status || 'pending'}
           onChange={(e) => handleChange('status', e.target.value)}
-          className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
+          className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+          style={{backgroundColor: '#1f2937', color: 'white'}}
         >
-          <option value="pending">Pending</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="pending" style={{backgroundColor: '#1f2937', color: 'white'}}>Pending</option>
+          <option value="confirmed" style={{backgroundColor: '#1f2937', color: 'white'}}>Confirmed</option>
+          <option value="cancelled" style={{backgroundColor: '#1f2937', color: 'white'}}>Cancelled</option>
         </select>
       </div>
     </div>
@@ -2355,14 +2376,15 @@ const ThemeSection = ({ showMessage }) => {
                 <select
                   value={theme.borderRadius}
                   onChange={(e) => handleColorChange('borderRadius', e.target.value)}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:border-red-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-red-500"
+                  style={{backgroundColor: '#1f2937', color: 'white'}}
                 >
-                  <option value="0">Sharp (0px)</option>
-                  <option value="0.25rem">Small (4px)</option>
-                  <option value="0.5rem">Medium (8px)</option>
-                  <option value="0.75rem">Large (12px)</option>
-                  <option value="1rem">XL (16px)</option>
-                  <option value="1.5rem">2XL (24px)</option>
+                  <option value="0" style={{backgroundColor: '#1f2937', color: 'white'}}>Sharp (0px)</option>
+                  <option value="0.25rem" style={{backgroundColor: '#1f2937', color: 'white'}}>Small (4px)</option>
+                  <option value="0.5rem" style={{backgroundColor: '#1f2937', color: 'white'}}>Medium (8px)</option>
+                  <option value="0.75rem" style={{backgroundColor: '#1f2937', color: 'white'}}>Large (12px)</option>
+                  <option value="1rem" style={{backgroundColor: '#1f2937', color: 'white'}}>XL (16px)</option>
+                  <option value="1.5rem" style={{backgroundColor: '#1f2937', color: 'white'}}>2XL (24px)</option>
                 </select>
               </div>
 
@@ -2375,12 +2397,13 @@ const ThemeSection = ({ showMessage }) => {
                 <select
                   value={theme.fontSize}
                   onChange={(e) => handleColorChange('fontSize', e.target.value)}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:border-red-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-red-500"
+                  style={{backgroundColor: '#1f2937', color: 'white'}}
                 >
-                  <option value="small">Small</option>
-                  <option value="medium">Medium</option>
-                  <option value="large">Large</option>
-                  <option value="xl">Extra Large</option>
+                  <option value="small" style={{backgroundColor: '#1f2937', color: 'white'}}>Small</option>
+                  <option value="medium" style={{backgroundColor: '#1f2937', color: 'white'}}>Medium</option>
+                  <option value="large" style={{backgroundColor: '#1f2937', color: 'white'}}>Large</option>
+                  <option value="xl" style={{backgroundColor: '#1f2937', color: 'white'}}>Extra Large</option>
                 </select>
               </div>
 
@@ -2393,12 +2416,13 @@ const ThemeSection = ({ showMessage }) => {
                 <select
                   value={theme.spacing}
                   onChange={(e) => handleColorChange('spacing', e.target.value)}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:border-red-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-red-500"
+                  style={{backgroundColor: '#1f2937', color: 'white'}}
                 >
-                  <option value="compact">Compact</option>
-                  <option value="normal">Normal</option>
-                  <option value="relaxed">Relaxed</option>
-                  <option value="loose">Loose</option>
+                  <option value="compact" style={{backgroundColor: '#1f2937', color: 'white'}}>Compact</option>
+                  <option value="normal" style={{backgroundColor: '#1f2937', color: 'white'}}>Normal</option>
+                  <option value="relaxed" style={{backgroundColor: '#1f2937', color: 'white'}}>Relaxed</option>
+                  <option value="loose" style={{backgroundColor: '#1f2937', color: 'white'}}>Loose</option>
                 </select>
               </div>
             </div>
@@ -2422,13 +2446,14 @@ const ThemeSection = ({ showMessage }) => {
                 <select
                   value={theme.shadowIntensity}
                   onChange={(e) => handleColorChange('shadowIntensity', e.target.value)}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:border-red-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-red-500"
+                  style={{backgroundColor: '#1f2937', color: 'white'}}
                 >
-                  <option value="none">None</option>
-                  <option value="subtle">Subtle</option>
-                  <option value="medium">Medium</option>
-                  <option value="strong">Strong</option>
-                  <option value="dramatic">Dramatic</option>
+                  <option value="none" style={{backgroundColor: '#1f2937', color: 'white'}}>None</option>
+                  <option value="subtle" style={{backgroundColor: '#1f2937', color: 'white'}}>Subtle</option>
+                  <option value="medium" style={{backgroundColor: '#1f2937', color: 'white'}}>Medium</option>
+                  <option value="strong" style={{backgroundColor: '#1f2937', color: 'white'}}>Strong</option>
+                  <option value="dramatic" style={{backgroundColor: '#1f2937', color: 'white'}}>Dramatic</option>
                 </select>
               </div>
 
@@ -2441,12 +2466,13 @@ const ThemeSection = ({ showMessage }) => {
                 <select
                   value={theme.animationSpeed}
                   onChange={(e) => handleColorChange('animationSpeed', e.target.value)}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:border-red-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-red-500"
+                  style={{backgroundColor: '#1f2937', color: 'white'}}
                 >
-                  <option value="slow">Slow (0.5s)</option>
-                  <option value="normal">Normal (0.3s)</option>
-                  <option value="fast">Fast (0.15s)</option>
-                  <option value="instant">Instant (0s)</option>
+                  <option value="slow" style={{backgroundColor: '#1f2937', color: 'white'}}>Slow (0.5s)</option>
+                  <option value="normal" style={{backgroundColor: '#1f2937', color: 'white'}}>Normal (0.3s)</option>
+                  <option value="fast" style={{backgroundColor: '#1f2937', color: 'white'}}>Fast (0.15s)</option>
+                  <option value="instant" style={{backgroundColor: '#1f2937', color: 'white'}}>Instant (0s)</option>
                 </select>
               </div>
 
@@ -2459,12 +2485,13 @@ const ThemeSection = ({ showMessage }) => {
                 <select
                   value={theme.gradientStyle}
                   onChange={(e) => handleColorChange('gradientStyle', e.target.value)}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:border-red-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-red-500"
+                  style={{backgroundColor: '#1f2937', color: 'white'}}
                 >
-                  <option value="linear">Linear</option>
-                  <option value="radial">Radial</option>
-                  <option value="conic">Conic</option>
-                  <option value="none">None</option>
+                  <option value="linear" style={{backgroundColor: '#1f2937', color: 'white'}}>Linear</option>
+                  <option value="radial" style={{backgroundColor: '#1f2937', color: 'white'}}>Radial</option>
+                  <option value="conic" style={{backgroundColor: '#1f2937', color: 'white'}}>Conic</option>
+                  <option value="none" style={{backgroundColor: '#1f2937', color: 'white'}}>None</option>
                 </select>
               </div>
             </div>
