@@ -20,11 +20,24 @@ declare var SpeechRecognition: { new(): SpeechRecognition };
 declare var webkitSpeechRecognition: { new(): SpeechRecognition };
 
 
-const CrackSVG: React.FC<{style?: React.CSSProperties}> = ({style}) => (
-    <div className="crack-effect" style={style}>
-        <svg viewBox="0 0 200 200" preserveAspectRatio="none">
-            <path d="M20 20 L180 180" stroke="rgba(234, 35, 35, 0.6)" strokeWidth="1" />
-            <path d="M20 180 L180 20" stroke="rgba(234, 35, 35, 0.6)" strokeWidth="0.5" />
+const PatternSVG: React.FC<{style?: React.CSSProperties}> = ({style}) => (
+    <div className="absolute inset-0 overflow-hidden rounded-lg opacity-30" style={style}>
+        <svg viewBox="0 0 400 400" className="w-full h-full">
+            {/* Circuit board pattern */}
+            <defs>
+                <pattern id="circuit" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M0 20h40M20 0v40" stroke="rgba(59, 130, 246, 0.3)" strokeWidth="0.5" fill="none"/>
+                    <circle cx="20" cy="20" r="2" fill="rgba(59, 130, 246, 0.5)"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#circuit)"/>
+            {/* Flowing lines */}
+            <path d="M0 100 Q100 50 200 100 T400 100" stroke="rgba(59, 130, 246, 0.4)" strokeWidth="1" fill="none">
+                <animate attributeName="stroke-dasharray" values="0 200;200 200;400 0" dur="3s" repeatCount="indefinite"/>
+            </path>
+            <path d="M0 200 Q100 150 200 200 T400 200" stroke="rgba(34, 197, 94, 0.3)" strokeWidth="0.8" fill="none">
+                <animate attributeName="stroke-dasharray" values="400 0;200 200;0 400" dur="4s" repeatCount="indefinite"/>
+            </path>
         </svg>
     </div>
 );
@@ -256,16 +269,17 @@ const AiChat: React.FC = () => {
     <>
         <div className="fixed bottom-6 right-6 z-50 group">
             <div className={`relative flex items-center justify-end transition-all duration-300 ease-in-out w-16 h-16 ${!isOpen && 'group-hover:w-44'}`}>
-                <div className="absolute right-0 flex items-center justify-center w-16 h-16 bg-slate-800/80 backdrop-blur-sm rounded-full shadow-lg cursor-pointer border border-white/10" onClick={() => openChat(isVoiceMode)}>
-                     <BotIcon className="w-8 h-8 text-white" />
+                <div className="absolute right-0 flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 backdrop-blur-sm rounded-full shadow-lg cursor-pointer border border-blue-400/30 hover:from-blue-500 hover:to-blue-600 transition-all duration-300 hover:scale-110 hover:shadow-blue-500/25 hover:shadow-2xl" onClick={() => openChat(isVoiceMode)}>
+                     <BotIcon className="w-8 h-8 text-white drop-shadow-sm" />
+                     <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 to-purple-400/20 animate-pulse"></div>
                 </div>
                 {!isOpen && (
                     <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 mr-[4.5rem] gap-2">
-                        <button className="flex items-center justify-center w-12 h-12 bg-slate-700/80 backdrop-blur-sm rounded-full shadow-md hover:bg-[#EA2323]/80" title="Text Chat" onClick={() => openChat(false)}>
-                            <SendIcon className="w-6 h-6 rotate-[-45deg]" />
+                        <button className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-emerald-600 to-emerald-700 backdrop-blur-sm rounded-full shadow-md hover:from-emerald-500 hover:to-emerald-600 border border-emerald-400/30 transition-all duration-200 hover:scale-105" title="Text Chat" onClick={() => openChat(false)}>
+                            <SendIcon className="w-6 h-6 rotate-[-45deg] text-white" />
                         </button>
-                        <button className="flex items-center justify-center w-12 h-12 bg-slate-700/80 backdrop-blur-sm rounded-full shadow-md hover:bg-[#EA2323]/80" title="Voice Chat" onClick={() => openChat(true)}>
-                            <MicrophoneIcon className="w-6 h-6" />
+                        <button className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-700 backdrop-blur-sm rounded-full shadow-md hover:from-purple-500 hover:to-purple-600 border border-purple-400/30 transition-all duration-200 hover:scale-105" title="Voice Chat" onClick={() => openChat(true)}>
+                            <MicrophoneIcon className="w-6 h-6 text-white" />
                         </button>
                     </div>
                 )}
@@ -273,8 +287,8 @@ const AiChat: React.FC = () => {
         </div>
 
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-full max-w-md h-[70vh] max-h-[600px] glass-card rounded-lg shadow-xl flex flex-col z-40">
-           <CrackSVG />
+        <div className="fixed bottom-24 right-6 w-full max-w-md h-[70vh] max-h-[600px] glass-card rounded-lg shadow-xl flex flex-col z-40 relative">
+           <PatternSVG />
            {showConfirmation && (
                 <div className="absolute inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center rounded-lg">
                     <div className="glass-card p-6 rounded-lg text-center">
@@ -287,31 +301,32 @@ const AiChat: React.FC = () => {
                     </div>
                 </div>
             )}
-          <header className="p-4 border-b border-white/10 flex justify-between items-center">
+          <header className="p-4 border-b border-blue-400/20 flex justify-between items-center bg-gradient-to-r from-blue-900/30 to-purple-900/30 relative z-10">
             <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <BotIcon className="w-5 h-5 text-blue-400" />
                 <span>Ask me about Ibrahim</span>
-                {isSpeaking && <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>}
+                {isSpeaking && <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>}
             </h2>
-            <button onClick={handleCloseChat} className="text-gray-400 hover:text-white">
+            <button onClick={handleCloseChat} className="text-gray-400 hover:text-white transition-colors duration-200 hover:bg-white/10 rounded-full p-1">
               <CloseIcon className="w-5 h-5" />
             </button>
           </header>
           
-          <div className="flex-1 p-4 overflow-y-auto bg-black/20">
+          <div className="flex-1 p-4 overflow-y-auto bg-black/20 backdrop-blur-sm relative z-10">
             <div className="space-y-4">
               {messages.map((message, index) => (
                 <div key={index} className={`flex items-start gap-3 ${message.sender === MessageSender.USER ? 'justify-end' : ''}`}>
-                  {message.sender === MessageSender.AI && <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-700/80 flex items-center justify-center"><BotIcon className="w-5 h-5 text-slate-300" /></span>}
-                  <div className={`p-3 rounded-lg max-w-xs md:max-w-md ${message.sender === MessageSender.USER ? 'bg-[#EA2323] text-white' : 'bg-slate-700/80 text-slate-200'} prose prose-sm prose-invert`}>
+                  {message.sender === MessageSender.AI && <span className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-center border border-blue-400/30"><BotIcon className="w-5 h-5 text-white" /></span>}
+                  <div className={`p-3 rounded-lg max-w-xs md:max-w-md ${message.sender === MessageSender.USER ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white border border-emerald-400/30' : 'bg-slate-700/90 text-slate-200 border border-slate-500/30'} prose prose-sm prose-invert shadow-lg`}>
                       <ReactMarkdown>{message.text || " "}</ReactMarkdown>
                   </div>
-                  {message.sender === MessageSender.USER && <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-700/80 flex items-center justify-center"><UserIcon className="w-5 h-5 text-slate-300" /></span>}
+                  {message.sender === MessageSender.USER && <span className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-700 flex items-center justify-center border border-emerald-400/30"><UserIcon className="w-5 h-5 text-white" /></span>}
                 </div>
               ))}
               {isLoading && (
                   <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-700/80 flex items-center justify-center"><BotIcon className="w-5 h-5 text-slate-300 animate-pulse" /></span>
-                      <div className="p-3 rounded-lg bg-slate-700/80 text-gray-400 flex items-center">
+                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-center border border-blue-400/30"><BotIcon className="w-5 h-5 text-white animate-pulse" /></span>
+                      <div className="p-3 rounded-lg bg-slate-700/90 text-gray-400 flex items-center border border-slate-500/30 shadow-lg">
                           <span>AI is thinking...</span>
                       </div>
                   </div>
@@ -332,14 +347,14 @@ const AiChat: React.FC = () => {
             </div>
           )}
 
-          <footer className="p-4 border-t border-white/10">
+          <footer className="p-4 border-t border-blue-400/20 bg-gradient-to-r from-blue-900/20 to-purple-900/20 relative z-10">
             { isVoiceMode ? (
                 <div className="flex items-center justify-center gap-4">
-                    <button onClick={() => setIsVoiceMode(false)} className="text-gray-400 hover:text-white" title="Switch to Text Mode"><SendIcon className="w-6 h-6 rotate-[-45deg]" /></button>
+                    <button onClick={() => setIsVoiceMode(false)} className="text-gray-400 hover:text-white transition-colors duration-200 hover:bg-white/10 rounded-full p-2" title="Switch to Text Mode"><SendIcon className="w-6 h-6 rotate-[-45deg]" /></button>
                     <button 
                         onClick={toggleListen}
                         disabled={isSpeaking}
-                        className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${isListening ? 'bg-red-500 animate-pulse' : 'bg-[#EA2323] hover:bg-red-500'} disabled:bg-slate-600 disabled:cursor-not-allowed`}
+                        className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200 ${isListening ? 'bg-gradient-to-r from-red-500 to-red-600 animate-pulse shadow-red-500/30 shadow-2xl' : 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600'} disabled:bg-slate-600 disabled:cursor-not-allowed border border-purple-400/30`}
                     >
                         <MicrophoneIcon className="w-8 h-8 text-white" />
                     </button>
@@ -352,13 +367,13 @@ const AiChat: React.FC = () => {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask a question..."
-                    className="flex-1 p-2 bg-slate-700/80 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EA2323] text-white"
+                    className="flex-1 p-2 bg-slate-700/90 border border-slate-500/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 text-white placeholder-gray-400 transition-colors duration-200"
                     disabled={isLoading}
                   />
-                   <button onClick={() => setIsVoiceMode(true)} type="button" className="text-gray-400 hover:text-white p-2" title="Switch to Voice Mode">
+                   <button onClick={() => setIsVoiceMode(true)} type="button" className="text-gray-400 hover:text-white p-2 transition-colors duration-200 hover:bg-white/10 rounded-full" title="Switch to Voice Mode">
                         <MicrophoneIcon className="w-5 h-5" />
                     </button>
-                  <button type="submit" disabled={isLoading || !input.trim()} className="bg-[#EA2323] text-white p-2 rounded-lg disabled:bg-slate-600 disabled:cursor-not-allowed hover:bg-red-500 transition-colors">
+                  <button type="submit" disabled={isLoading || !input.trim()} className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white p-2 rounded-lg disabled:bg-slate-600 disabled:cursor-not-allowed transition-all duration-200 border border-blue-400/30">
                     <SendIcon className="w-5 h-5" />
                   </button>
                 </form>

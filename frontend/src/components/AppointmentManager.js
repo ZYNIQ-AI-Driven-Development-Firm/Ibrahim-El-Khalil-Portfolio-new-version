@@ -6,9 +6,11 @@ import { CloseIcon } from './icons';
 const AppointmentManager = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSkillsPopupOpen, setIsSkillsPopupOpen] = useState(false);
+  const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -75,22 +77,28 @@ const AppointmentManager = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    const { createAppointment } = await import('../services/apiService');
-    
-    const appointmentData = {
-      ...formData,
-      date: selectedDate,
-      time: selectedTime
-    };
-
     try {
+      const { createAppointment } = await import('../services/apiService');
+      
+      const appointmentData = {
+        ...formData,
+        date: selectedDate,
+        time: selectedTime
+      };
+
       await createAppointment(appointmentData);
-      alert('Appointment booked successfully! You will receive a confirmation email shortly.');
-      handleClose();
+      
+      // Show success popup
+      setIsModalOpen(false);
+      setIsSuccessPopupOpen(true);
+      resetForm();
     } catch (error) {
       console.error('Error booking appointment:', error);
       alert('Error booking appointment. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -266,14 +274,50 @@ const AppointmentManager = () => {
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-2 rounded-lg transition-all duration-200 font-medium"
+                      disabled={isSubmitting}
+                      className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white py-2 rounded-lg transition-all duration-200 font-medium"
                     >
-                      Book Meeting
+                      {isSubmitting ? 'Booking...' : 'Book Meeting'}
                     </button>
                   </div>
                 </form>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Success Popup */}
+      {isSuccessPopupOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="glass-card rounded-xl p-8 max-w-md w-full text-center">
+            <div className="mb-6">
+              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg 
+                  className="w-8 h-8 text-white" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M5 13l4 4L19 7" 
+                  />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">Appointment Booked Successfully!</h2>
+              <p className="text-gray-300 text-lg leading-relaxed">
+                You will be contacted before the meeting time by email. You need to confirm that.
+              </p>
+            </div>
+            <button
+              onClick={() => setIsSuccessPopupOpen(false)}
+              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 rounded-lg transition-all duration-200 font-medium"
+            >
+              Got it!
+            </button>
           </div>
         </div>
       )}

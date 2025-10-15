@@ -13,14 +13,22 @@
             --color-cloudy: rgba(203, 213, 225, 0.1);
             --color-white: #FFFFFF;
             --color-red: #EA2323;
+            /* Dynamic theme colors - Will be set by JS */
+            --color-primary: 239 68 68;
+            --color-secondary: 220 38 38;
+            --color-accent: 153 27 27;
+            /* Background colors */
+            --bg-start: 15 15 35;     /* #0f0f23 */
+            --bg-end: 26 26 46;       /* #1a1a2e */
         }
 
         body {
-            background-color: var(--color-black);
+            background: linear-gradient(135deg, rgb(var(--bg-start)) 0%, rgb(var(--bg-end)) 100%);
             color: var(--color-white);
             font-family: 'Roboto', sans-serif;
             margin: 0;
             overflow-x: hidden;
+            min-height: 100vh;
         }
 
         h1, h2, h3, h4, h5, h6 {
@@ -79,7 +87,7 @@
             left: 0;
             height: 100%;
             width: 0;
-            background-color: var(--color-red);
+            background-color: rgb(var(--color-primary));
             border-radius: 9999px;
             transition: width 0.5s ease-in-out;
         }

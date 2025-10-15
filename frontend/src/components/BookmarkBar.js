@@ -48,7 +48,7 @@ const BookmarkBar = ({ onAppointmentClick, onSkillsClick }) => {
 
   return (
     <div className="fixed right-0 top-1/2 transform -translate-y-1/2 z-40">
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-3">
         {bookmarkButtons.map((button, index) => (
           <div
             key={button.id}
@@ -56,65 +56,55 @@ const BookmarkBar = ({ onAppointmentClick, onSkillsClick }) => {
             onMouseEnter={() => setHoveredButton(button.id)}
             onMouseLeave={() => setHoveredButton(null)}
           >
-            {/* Main Bookmark Button */}
+            {/* Main Bookmark Button - Rectangular, Transparent, Thin */}
             <div 
-              className={`relative bg-gradient-to-l ${
-                hoveredButton === button.id ? button.hoverColor : button.color
-              } text-white cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl overflow-hidden border border-white/20 shadow-2xl`}
+              className={`relative backdrop-blur-md cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl border flex flex-col items-center justify-center rounded-l-xl overflow-hidden ${
+                hoveredButton === button.id 
+                  ? button.color.replace('from', 'bg').split(' ')[0].replace('bg-blue-600', 'bg-blue-500/30').replace('bg-green-600', 'bg-green-500/30') + ' border-white/30'
+                  : 'bg-black/20 border-white/20 hover:bg-black/30 hover:border-white/30'
+              }`}
               onClick={button.onClick}
               style={{
-                clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%)',
-                paddingLeft: '16px',
-                paddingRight: hoveredButton === button.id ? '28px' : '20px',
+                paddingLeft: '8px',
+                paddingRight: '8px',
                 paddingTop: '12px',
                 paddingBottom: '12px',
-                width: hoveredButton === button.id ? '140px' : '60px',
-                transform: hoveredButton === button.id ? 'translateX(0)' : 'translateX(calc(100% - 45px))'
+                width: '48px',
+                minHeight: '100px'
               }}
             >
-              <div className="flex items-center space-x-2">
+              {/* Subtle gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 pointer-events-none"></div>
+
+              <div className="relative flex flex-col items-center gap-2 z-10">
                 <div className="relative flex-shrink-0">
-                  {button.icon}
+                  <div className="w-[16px] h-[16px] text-white/80 group-hover:text-white transition-colors">
+                    {button.icon}
+                  </div>
                   
                   {/* Notification dot */}
                   {button.notification && (
-                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
                   )}
                 </div>
                 <span 
-                  className={`text-sm font-medium whitespace-nowrap transition-opacity duration-300 ${
-                    hoveredButton === button.id ? 'opacity-100' : 'opacity-0'
-                  }`}
-                  style={{
-                    transform: hoveredButton === button.id ? 'translateX(0)' : 'translateX(calc(100% - 45px))'
-                  }}
+                  className="text-white/70 group-hover:text-white text-[9px] font-medium tracking-widest transition-colors"
+                  style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
                 >
-                  {button.label}
+                  {button.label === 'Book Meeting' ? 'MEET' : button.label === 'Skills & Tech' ? 'SKILLS' : button.label}
                 </span>
               </div>
-              
-              {/* Bookmark perforations - only show when hovered */}
-              {hoveredButton === button.id && (
-                <>
-                  <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
-                    <div className="w-1 h-1 bg-white/30 rounded-full"></div>
-                  </div>
-                  <div className="absolute left-2 top-1/3 transform -translate-y-1/2">
-                    <div className="w-0.5 h-0.5 bg-white/20 rounded-full"></div>
-                  </div>
-                  <div className="absolute left-2 bottom-1/3 transform translate-y-1/2">
-                    <div className="w-0.5 h-0.5 bg-white/20 rounded-full"></div>
-                  </div>
-                </>
-              )}
+
+              {/* Subtle glow on hover */}
+              <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none ${
+                button.id === 'appointment' ? 'bg-gradient-to-br from-blue-500/10 to-indigo-500/10' : 'bg-gradient-to-br from-green-500/10 to-emerald-500/10'
+              }`}></div>
             </div>
             
-            {/* Tooltip - only show when hovered and extended */}
+            {/* Tooltip - show on hover */}
             {hoveredButton === button.id && (
-              <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-3 bg-black text-white text-xs py-2 px-3 rounded whitespace-nowrap transition-all duration-300 z-10 animate-in fade-in slide-in-from-right-2">
+              <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-3 bg-black/90 backdrop-blur-sm text-white text-xs py-1.5 px-3 rounded-lg whitespace-nowrap transition-all duration-300 z-10 shadow-lg border border-white/10">
                 {button.tooltip}
-                {/* Arrow pointing to button */}
-                <div className="absolute left-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-4 border-l-black border-t-2 border-t-transparent border-b-2 border-b-transparent"></div>
               </div>
             )}
           </div>

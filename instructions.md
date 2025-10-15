@@ -36,6 +36,7 @@ This is an interactive portfolio application with:
    - Auto-migration from constants.js to MongoDB
    - Analytics tracking API
    - Appointments API
+   - Resume generation endpoint (`/api/generate_resume`) with PDF support
 
 4. **Admin Dashboard - PARTIAL**
    - ✅ Login system (password: pass@123)
@@ -530,6 +531,7 @@ After completing tasks, test the following:
 - [ ] (Repeat for all other endpoints)
 - [ ] GET `/api/analytics` - returns tracking data
 - [ ] POST `/api/analytics/track` - increments counter
+- [ ] POST `/api/generate_resume` - generates PDF resume
 
 ---
 

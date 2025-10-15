@@ -16,7 +16,7 @@ export const EXPERIENCE_DATA = [
   {
     role: 'Senior API Engineer',
     company: 'FirstGroup for Shory KSA',
-    period: 'Jul 2023 - Present',
+    period: 'Jul 2025 - Sep 2025',
     location: 'Abu Dhabi, UAE',
     description: [
       'Led the architecture and development of the new API infrastructure for the KSA market launch.',
@@ -33,7 +33,7 @@ export const EXPERIENCE_DATA = [
   {
     role: 'Senior Backend Developer',
     company: 'Skyloov',
-    period: 'Jul 2023 - Jul 2023',
+    period: 'Jul 2023 - Jan 2025',
     location: 'Dubai, UAE',
     description: [
       'Developed Python-based API (RESTful Web Service) utilizing Django, Flask, SQL Alchemy, and PostgreSQL, within a Kubernetes environment.',
@@ -44,7 +44,7 @@ export const EXPERIENCE_DATA = [
   {
     role: 'Senior Backend Developer',
     company: 'Pixel',
-    period: 'Aug 2022 - Jul 2023',
+    period: 'Aug 2021 - Jul 2023',
     location: 'Istanbul, Turkey',
     description: [
       'Led digital transformation for 5 real estate firms, increasing operational efficiency by 25%.',
@@ -55,7 +55,7 @@ export const EXPERIENCE_DATA = [
   {
     role: 'Lead Backend Developer',
     company: 'FineTech Kio',
-    period: 'Jun 2019 - Jun 2022',
+    period: 'Jun 2018 - Jun 2021',
     location: 'Mostaganem, Algeria',
     description: [
       'Developed, tested, and debugged software tools for clients and internal customers.',
@@ -67,7 +67,7 @@ export const EXPERIENCE_DATA = [
 
 export const EDUCATION_DATA = [
   {
-    degree: 'BTS Diploma',
+    degree: 'Senior Technician in industrial automation & regulation / Equivalents Bachelors Degree',
     institution: 'INSFP de Mostaganem',
     period: '09/2016 - 09/2019',
     location: 'Algeria',
@@ -79,7 +79,7 @@ export const EDUCATION_DATA = [
     ],
   },
   {
-    degree: '3rd Year High School Student',
+    degree: 'High school Diploma in Electrical and Math Engineering',
     institution: 'Ibno Rostom High School',
     period: '09/2012 - 09/2015',
     location: 'Algeria',
@@ -115,37 +115,37 @@ export const OTHER_ACHIEVEMENTS_DATA = {
   hackathons: [
     {
       year: '2019',
-      event: 'Mostacamp',
+      event: 'Mostacamp Technical Mentor',
       description: 'National Startup Weekend, Coach and Mentor'
     },
     {
       year: '2019',
-      event: 'IBDAE',
+      event: 'IBDAE Technical Mentor',
       description: 'National Startup Weekend, Coach and Mentor'
     },
     {
       year: '2018',
-      event: 'Leapfrog Hack',
+      event: 'Leapfrog Hack 🥉(3rd Place)',
       description: 'Largest Hackathon in Africa, "Divona Challenge", Algiers'
     },
     {
       year: '2018',
-      event: 'Hack! T',
+      event: 'Hack! IT 🥈(2nd Place)',
       description: 'Algiers smart city'
     },
     {
       year: '2018',
-      event: 'Make OH / IO',
+      event: 'Make OH / IO 🥇(1st Place)',
       description: 'Online hackathon'
     },
     {
-      year: '2017',
-      event: 'Start-up Weekend',
+      year: '2017', 
+      event: 'Start-up Weekend 🥇(1st Place)',
       description: 'Entrepreneurship and innovation event'
     },
     {
       year: '2017',
-      event: 'Hack4Algeria',
+      event: 'Hack4Algeria 🥈(2nd Place)',
       description: 'Sylabs Algiers'
     },
   ]
@@ -235,7 +235,7 @@ export const VENTURES_DATA = [
   {
     name: 'Preview-Lab',
     role: 'Founder',
-    period: '2024 - Present',
+    period: '2019 - Present',
     type: 'Software Research Lab',
     description: 'A cutting-edge software research laboratory focused on experimental technologies and innovative development methodologies.',
     achievements: [
@@ -249,7 +249,7 @@ export const VENTURES_DATA = [
   {
     name: 'ZYNIQ',
     role: 'Founder',
-    period: '2023 - Present', 
+    period: '2024 - Present', 
     type: 'AI Driven Development Firm',
     description: 'An AI-driven development firm specializing in intelligent automation and next-generation software solutions.',
     achievements: [
@@ -263,7 +263,7 @@ export const VENTURES_DATA = [
   {
     name: 'AuraliX',
     role: 'Founder',
-    period: '2023 - Present',
+    period: '2025 - Present',
     type: 'Decentralized Multi-Agent Framework',
     description: 'AuraliX is a decentralized, multi-agent framework designed for autonomous system coordination and intelligent distributed computing.',
     achievements: [
@@ -283,13 +283,13 @@ Location: Dubai, UAE
 Experience: 7+ years in backend development and AI systems
 
 Current Role:
-Senior API Engineer at FirstGroup for Shory KSA (Jul 2023 - Present)
+Senior API Engineer at FirstGroup for Shory KSA (Jul 2025 - Sep 2025)
 - Leading API infrastructure development for KSA market launch
 - Designing scalable microservices using Python, FastAPI, and Docker
 - Managing cloud resources on AWS and GCP
 
 Previous Experience:
-1. Senior Backend Developer at Skyloov (Jul 2023)
+1. Senior Backend Developer at Skyloov (Jul 2023 - Jan 2025)
    - Developed Python APIs using Django, Flask, PostgreSQL
    - Managed 4 microservices handling 100,000+ daily requests
    - Implemented AWS services (DynamoDB, Lambda, S3)
@@ -299,13 +299,14 @@ Previous Experience:
    - Increased operational efficiency by 25%
    - Developed SaaS solution impacting 100+ projects
 
-3. Lead Backend Developer at FineTech Kio (Jun 2019 - Jun 2022)
+3. Lead Backend Developer at FineTech Kio (Jun 2018 - Jun 2022)
    - Developed software tools for clients and internal customers
    - Led team of 3 developers in microservices architecture
 
 Ventures:
-- Co-Founder & CTO of AdvancedPython.ai (2023-Present): AI platform for Python development
-- Founder of PythonGuide.net (2022-Present): Educational platform for Python developers
+- Founder of Preview-Lab: Software research lab focused on experimental technologies
+- Founder of ZYNIQ: AI-driven development firm specializing in intelligent automation
+- Founder of AuraliX: Decentralized multi-agent framework for autonomous systems
 
 Education:
 Bachelor of Computer Science from American University of the Middle East (2017-2021)

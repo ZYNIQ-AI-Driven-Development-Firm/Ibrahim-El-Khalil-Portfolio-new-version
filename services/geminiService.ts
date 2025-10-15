@@ -2,7 +2,7 @@
 import { GoogleGenAI, Content } from "@google/genai";
 import { RESUME_DATA_FOR_AI } from '../constants';
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = process.env.GEMINI_API_KEY;
 
 if (!API_KEY) {
   // A friendly message for the developer if the API key is missing.

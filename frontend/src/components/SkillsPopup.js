@@ -135,8 +135,8 @@ const SkillsPopup = ({ isOpen, onClose }) => {
           {/* Results Count */}
           {searchTerm && (
             <div className="mt-3 text-sm text-gray-400">
-              Found {filteredSkills.reduce((total, category) => total + category.skills.length, 0)} skills
-              {filteredSkills.length !== SKILLS_DATA.length && ` in ${filteredSkills.length} categories`}
+            Found {filteredSkills.reduce((total, category) => total + category.skills.length, 0)} skills
+            {filteredSkills.length !== skillsData.length && ` in ${filteredSkills.length} categories`}
             </div>
           )}
         </div>
@@ -226,7 +226,7 @@ const SkillsPopup = ({ isOpen, onClose }) => {
         {/* Footer */}
         <div className="sticky bottom-0 bg-gradient-to-r from-gray-900/95 to-black/95 backdrop-blur-md border-t border-white/10 p-4 text-center">
           <p className="text-gray-400 text-sm">
-            Total: <span className="text-white font-semibold">{SKILLS_DATA.reduce((total, cat) => total + cat.skills.length, 0)}</span> skills across <span className="text-white font-semibold">{SKILLS_DATA.length}</span> categories
+            Total: <span className="text-white font-semibold">{skillsData.reduce((total, cat) => total + cat.skills.length, 0)}</span> skills across <span className="text-white font-semibold">{skillsData.length}</span> categories
           </p>
         </div>
       </div>

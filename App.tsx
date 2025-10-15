@@ -77,8 +77,8 @@ const App: React.FC = () => {
       <main className="relative z-10 container mx-auto px-4 md:px-8 py-12">
         <Hero />
         <div className="space-y-16 mt-16">
-          <Experience />
           <Ventures />
+          <Experience />
           <Skills />
           <Education />
         </div>

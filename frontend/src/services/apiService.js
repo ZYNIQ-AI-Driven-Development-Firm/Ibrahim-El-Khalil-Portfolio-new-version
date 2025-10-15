@@ -266,3 +266,15 @@ export const trackEvent = async (eventType) => {
     console.warn('Analytics tracking failed:', error);
   }
 };
+
+// ==================== THEME ====================
+export const getTheme = async () => {
+  return await apiCall('/api/theme');
+};
+
+export const updateTheme = async (themeData) => {
+  return await apiCall('/api/theme', {
+    method: 'POST',
+    body: JSON.stringify(themeData),
+  });
+};

@@ -3,11 +3,24 @@ import { streamChatMessage } from '../services/geminiService';
 import { SendIcon, BotIcon, UserIcon, CloseIcon, MicrophoneIcon } from './icons';
 import ReactMarkdown from 'react-markdown';
 
-const CrackSVG = ({style}) => (
-    <div className="crack-effect" style={style}>
-        <svg viewBox="0 0 200 200" preserveAspectRatio="none">
-            <path d="M20 20 L180 180" stroke="rgba(234, 35, 35, 0.6)" strokeWidth="1" />
-            <path d="M20 180 L180 20" stroke="rgba(234, 35, 35, 0.6)" strokeWidth="0.5" />
+const PatternSVG = ({style}) => (
+    <div className="absolute inset-0 overflow-hidden rounded-lg opacity-30" style={style}>
+        <svg viewBox="0 0 400 400" className="w-full h-full">
+            {/* Circuit board pattern */}
+            <defs>
+                <pattern id="circuit" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M0 20h40M20 0v40" stroke="rgba(59, 130, 246, 0.3)" strokeWidth="0.5" fill="none"/>
+                    <circle cx="20" cy="20" r="2" fill="rgba(59, 130, 246, 0.5)"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#circuit)"/>
+            {/* Flowing lines */}
+            <path d="M0 100 Q100 50 200 100 T400 100" stroke="rgba(59, 130, 246, 0.4)" strokeWidth="1" fill="none">
+                <animate attributeName="stroke-dasharray" values="0 200;200 200;400 0" dur="3s" repeatCount="indefinite"/>
+            </path>
+            <path d="M0 200 Q100 150 200 200 T400 200" stroke="rgba(34, 197, 94, 0.3)" strokeWidth="0.8" fill="none">
+                <animate attributeName="stroke-dasharray" values="400 0;200 200;0 400" dur="4s" repeatCount="indefinite"/>
+            </path>
         </svg>
     </div>
 );
@@ -36,6 +49,13 @@ const AiChat = () => {
       });
     }
   }, [isOpen, messages.length]);
+
+  // open chat from external buttons (dashboard)
+  useEffect(() => {
+    const handler = () => setIsOpen(true);
+    window.addEventListener('openAiChat', handler);
+    return () => window.removeEventListener('openAiChat', handler);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -203,34 +223,32 @@ const AiChat = () => {
 
   if (!isOpen) {
     return (
-      <div className="fixed bottom-4 right-4 z-50 group">
+      <div className="fixed bottom-6 right-0 z-50 group">
         <div 
-          className="relative w-14 h-14 bg-gradient-to-br from-purple-600 via-red-500 to-orange-500 hover:from-purple-700 hover:via-red-600 hover:to-orange-600 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer flex items-center justify-center transform hover:scale-105 hover:rotate-3"
+          className="relative w-12 h-28 bg-black/20 backdrop-blur-md hover:bg-black/30 border border-white/20 hover:border-white/30 rounded-l-xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer flex flex-col items-center justify-center gap-2 overflow-hidden"
           onClick={() => setIsOpen(true)}
         >
-          {/* AI Brain Icon */}
-          <div className="relative">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
-              <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2Z" fill="currentColor"/>
-              <path d="M21 9C21 10.1 20.1 11 19 11C17.9 11 17 10.1 17 9C17 7.9 17.9 7 19 7C20.1 7 21 7.9 21 9Z" fill="currentColor"/>
-              <path d="M7 9C7 10.1 6.1 11 5 11C3.9 11 3 10.1 3 9C3 7.9 3.9 7 5 7C6.1 7 7 7.9 7 9Z" fill="currentColor"/>
-              <path d="M12 22C10.9 22 10 21.1 10 20C10 18.9 10.9 18 12 18C13.1 18 14 18.9 14 20C14 21.1 13.1 22 12 22Z" fill="currentColor"/>
-              <path d="M12 8L5 9L12 12L19 9L12 8Z" fill="currentColor" opacity="0.7"/>
-              <path d="M12 12L5 15L12 18L19 15L12 12Z" fill="currentColor" opacity="0.5"/>
-            </svg>
-            
-            {/* Animated dots */}
-            <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
-            <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></div>
-          </div>
+          {/* Subtle gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 pointer-events-none"></div>
           
-          {/* Glowing effect */}
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-red-500 to-orange-500 rounded-2xl blur opacity-30 animate-pulse"></div>
+          {/* Bot Icon and Vertical Text */}
+          <div className="relative flex flex-col items-center gap-2 z-10">
+            <BotIcon className="w-5 h-5 text-white/80 group-hover:text-white drop-shadow-sm transition-colors" />
+            <span 
+              className="text-white/70 group-hover:text-white font-medium drop-shadow-sm text-[10px] tracking-widest transition-colors"
+              style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+            >
+              CHAT
+            </span>
+          </div>
+
+          {/* Subtle glow on hover */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-blue-500/10 to-purple-500/10 pointer-events-none"></div>
         </div>
         
         {/* Tooltip */}
-        <div className="absolute bottom-16 right-0 bg-black text-white text-sm py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
-          Chat with AI about Ibrahim
+        <div className="absolute bottom-1/2 translate-y-1/2 right-full mr-2 bg-black/90 backdrop-blur-sm text-white text-xs py-1.5 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap shadow-lg border border-white/10">
+          Chat with AI
         </div>
       </div>
     );
@@ -240,26 +258,26 @@ const AiChat = () => {
     <>
       {/* Confirmation Modal */}
       {showConfirmation && (
-        <div className="fixed bottom-24 right-6 w-full max-w-md h-[70vh] max-h-[600px] glass-card rounded-lg shadow-xl flex flex-col z-40">
+        <div className="fixed bottom-24 right-2 w-[calc(100vw-1rem)] sm:w-full max-w-md h-[70vh] max-h-[600px] glass-card rounded-lg shadow-xl flex flex-col z-40">
           <div className="p-4 text-center">
             <h3 className="text-lg font-semibold text-white mb-2">Start AI Chat?</h3>
             <p className="text-gray-300 text-sm mb-4">This will connect you with an AI assistant to learn more about Ibrahim El Khalil's professional background.</p>
             <div className="flex gap-2">
               <button onClick={() => setShowConfirmation(false)} className="px-4 py-2 rounded bg-slate-600 hover:bg-slate-500 transition-colors">Continue Chat</button>
-              <button onClick={() => { setShowConfirmation(false); setIsOpen(false); }} className="px-4 py-2 rounded bg-red-600 hover:bg-red-500 transition-colors">Cancel</button>
+              <button onClick={() => { setShowConfirmation(false); setIsOpen(false); }} className="px-4 py-2 rounded bg-primary-600 hover:bg-primary-500 transition-colors">Cancel</button>
             </div>
           </div>
         </div>
       )}
 
       {/* Main Chat Window */}
-      <div className="fixed bottom-4 right-4 w-80 h-[500px] glass-card rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden">
-        <CrackSVG />
+      <div className="fixed bottom-4 right-2 w-[calc(100vw-1rem)] sm:w-80 h-[500px] glass-card rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden">
+        <PatternSVG />
         
         {/* Header */}
-        <div className="relative z-10 flex items-center justify-between p-4 border-b border-white/10">
+        <div className="relative z-10 flex items-center justify-between p-4 border-b border-blue-400/20 bg-gradient-to-r from-blue-900/30 to-purple-900/30">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center border border-blue-400/30">
               <BotIcon className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -272,7 +290,7 @@ const AiChat = () => {
               onClick={handleVoiceToggle}
               className={`p-2 rounded-lg transition-colors duration-200 ${
                 isVoiceMode 
-                  ? 'bg-red-500/20 text-red-400' 
+                  ? 'bg-purple-500/30 text-purple-400 border border-purple-400/30' 
                   : 'text-gray-400 hover:text-white hover:bg-white/5'
               }`}
               aria-label="Toggle voice mode"
@@ -315,10 +333,10 @@ const AiChat = () => {
               className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div className={`flex items-start space-x-2 max-w-[85%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 border ${
                   message.sender === 'user' 
-                    ? 'bg-blue-500' 
-                    : 'bg-gradient-to-br from-red-500 to-red-600'
+                    ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 border-emerald-400/30' 
+                    : 'bg-gradient-to-r from-blue-600 to-blue-700 border-blue-400/30'
                 }`}>
                   {message.sender === 'user' ? (
                     <UserIcon className="w-3 h-3 text-white" />
@@ -326,10 +344,10 @@ const AiChat = () => {
                     <BotIcon className="w-3 h-3 text-white" />
                   )}
                 </div>
-                <div className={`rounded-2xl px-3 py-2 text-sm ${
+                <div className={`rounded-2xl px-3 py-2 text-sm shadow-lg border ${
                   message.sender === 'user'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white/10 text-gray-100'
+                    ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white border-emerald-400/30'
+                    : 'bg-slate-700/90 text-slate-200 border-slate-500/30'
                 }`}>
                   {message.sender === 'ai' ? (
                     <ReactMarkdown className="prose prose-sm prose-invert max-w-none">
@@ -346,14 +364,14 @@ const AiChat = () => {
           {isLoading && (
             <div className="flex justify-start">
               <div className="flex items-start space-x-2">
-                <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center">
-                  <BotIcon className="w-3 h-3 text-white" />
+                <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center border border-blue-400/30">
+                  <BotIcon className="w-3 h-3 text-white animate-pulse" />
                 </div>
-                <div className="bg-white/10 rounded-2xl px-3 py-2">
+                <div className="bg-slate-700/90 rounded-2xl px-3 py-2 shadow-lg border border-slate-500/30">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                   </div>
                 </div>
               </div>
@@ -389,7 +407,7 @@ const AiChat = () => {
                 value={input}
                 onChange={handleInputChange}
                 placeholder={isListening ? "Listening..." : "Ask me anything about Ibrahim..."}
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/25 transition-all duration-200"
+                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-primary-500/50 focus:ring-1 focus:ring-primary-500/25 transition-all duration-200"
                 disabled={isLoading || isListening}
               />
               {isVoiceMode && (
@@ -398,7 +416,7 @@ const AiChat = () => {
                   onClick={isListening ? stopListening : startListening}
                   className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-lg transition-colors duration-200 ${
                     isListening 
-                      ? 'bg-red-500 text-white animate-pulse' 
+                      ? 'bg-primary-500 text-white animate-pulse' 
                       : 'text-gray-400 hover:text-white'
                   }`}
                   disabled={isLoading}
@@ -410,7 +428,7 @@ const AiChat = () => {
             <button
               type="submit"
               disabled={!input.trim() || isLoading || isListening}
-              className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-xl px-4 py-3 transition-all duration-200 flex items-center justify-center"
+              className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-xl px-4 py-3 transition-all duration-200 flex items-center justify-center"
             >
               <SendIcon className="w-4 h-4" />
             </button>

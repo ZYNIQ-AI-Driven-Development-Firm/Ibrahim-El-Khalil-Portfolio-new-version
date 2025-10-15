@@ -1,21 +1,59 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { RESUME_DATA_FOR_AI } from '../constants';
 
-const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+// For Create React App, we need to use REACT_APP_ prefix
+const API_KEY = process.env.REACT_APP_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
 
 if (!API_KEY) {
   console.error("Gemini API key is missing. Please set the REACT_APP_GEMINI_API_KEY environment variable.");
 }
 
-const genAI = new GoogleGenerativeAI(API_KEY || 'demo-key');
+const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
 
-const systemInstruction = `You are a helpful, friendly, and professional AI assistant for Ibrahim El Khalil's portfolio. Your purpose is to answer questions about his skills, experience, and professional background.
-You MUST base your answers ONLY on the resume information provided below.
-Do not invent or assume any details.
-If a question is outside this scope (e.g., "what's the weather like?") or asks for personal opinions, politely decline and steer the conversation back to Ibrahim's professional qualifications.
-Keep your answers concise, professional, and helpful. You can use markdown for formatting lists.
+// Cache for AI instructions
+let cachedInstructions = null;
+let instructionsLoadTime = null;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-Resume Information:
+// Fetch AI instructions from backend
+const fetchAIInstructions = async () => {
+  // Return cached instructions if still valid
+  if (cachedInstructions && instructionsLoadTime && (Date.now() - instructionsLoadTime < CACHE_DURATION)) {
+    return cachedInstructions;
+  }
+
+  try {
+    const response = await fetch('/api/ai-instructions');
+    if (response.ok) {
+      const data = await response.json();
+      cachedInstructions = data.instructions;
+      instructionsLoadTime = Date.now();
+      return cachedInstructions;
+    }
+  } catch (error) {
+    console.error('Error fetching AI instructions:', error);
+  }
+
+  // Fallback to default instructions
+  return `You are Ibrahim El Khalil's AI assistant, helping visitors learn about his portfolio and capabilities.
+
+Key Guidelines:
+- Be professional, friendly, and helpful
+- Provide accurate information about Ibrahim's experience, skills, and projects
+- Guide users to relevant sections of the portfolio
+- Answer questions about his work, education, and achievements
+- If you don't know something, be honest and suggest contacting Ibrahim directly
+
+Remember to maintain a conversational tone while being informative and respectful.`;
+};
+
+// Build system instruction with resume data
+const buildSystemInstruction = async () => {
+  const customInstructions = await fetchAIInstructions();
+  
+  return `${customInstructions}
+
+Resume Information (Use this as your knowledge base):
 ${RESUME_DATA_FOR_AI}
 
 When answering:
@@ -26,16 +64,19 @@ When answering:
 5. If someone asks how to contact Ibrahim, mention the LinkedIn and email options available on the portfolio
 6. Always stay within the scope of the provided resume information
 `;
+};
 
 export const streamChatMessage = async (message, onChunk) => {
-  if (!API_KEY) {
+  if (!API_KEY || !genAI) {
     onChunk("Error: Gemini API key is not configured. Please contact the site owner.");
     return;
   }
 
   try {
+    const systemInstruction = await buildSystemInstruction();
+    
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
+      model: "gemini-2.5-pro",
       systemInstruction: systemInstruction
     });
 
