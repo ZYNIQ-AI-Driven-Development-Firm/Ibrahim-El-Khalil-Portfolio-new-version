@@ -79,11 +79,11 @@ jobs:
             --region $REGION \
             --platform managed \
             --allow-unauthenticated \
-            --memory 256Mi \
+            --memory 512Mi \
             --cpu 1 \
             --max-instances 10 \
             --port 80 \
-            --set-env-vars REACT_APP_API_URL=${{ steps.backend-url.outputs.url }}/api,REACT_APP_BACKEND_URL=${{ steps.backend-url.outputs.url }},REACT_APP_GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+            --timeout 300
 
       - name: Get Frontend URL
         run: |
