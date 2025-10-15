@@ -186,33 +186,44 @@ const Hero = () => {
               <button
                 onClick={async () => {
                   const base = (process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001');
-                  const endpoint = `${base}/api/generate_resume`;
+                  const endpoint = `${base}/api/generate_ats_resume`;
                   try {
-                    const res = await fetch(endpoint, { method: 'POST' });
+                    const res = await fetch(endpoint, { 
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        job_description: "General Software Developer position requiring full-stack development skills",
+                        target_role: "Software Developer"
+                      })
+                    });
                     if (!res.ok) {
                       const txt = await res.text().catch(() => '');
                       console.error('Resume API error', res.status, txt);
-                      alert('Resume generation failed');
+                      alert('AI Resume generation failed');
                       return;
                     }
 
-                    const contentDisposition = res.headers.get('content-disposition') || '';
-                    let filename = 'resume.pdf';
-                    const match = contentDisposition.match(/filename\*=UTF-8''(.+)$|filename="?([^";]+)"?/i);
-                    if (match) {
-                      filename = decodeURIComponent(match[1] || match[2] || filename);
+                    const data = await res.json();
+                    if (data.success && data.pdf_url) {
+                      // Download the generated PDF
+                      const pdfRes = await fetch(data.pdf_url);
+                      const blob = await pdfRes.blob();
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url; 
+                      a.download = 'AI_Enhanced_Resume.pdf'; 
+                      document.body.appendChild(a);
+                      a.click();
+                      a.remove();
+                      setTimeout(() => URL.revokeObjectURL(url), 1000);
+                    } else {
+                      alert('AI Resume generation failed: ' + (data.error || 'Unknown error'));
                     }
-
-                    const blob = await res.blob();
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url; a.download = filename; document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                    setTimeout(() => URL.revokeObjectURL(url), 1000);
                   } catch (e) {
                     console.error(e);
-                    alert('Resume generation failed');
+                    alert('AI Resume generation failed');
                   }
                 }}
                 className="group p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 hover:scale-105 relative"
@@ -223,7 +234,7 @@ const Hero = () => {
                 </svg>
                 {/* Tooltip */}
                 <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black/80 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  Generate Resume
+                  AI-Enhanced Resume
                 </span>
               </button>
             </div>

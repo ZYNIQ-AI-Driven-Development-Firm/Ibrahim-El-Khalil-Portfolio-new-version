@@ -978,7 +978,7 @@ def generate_resume():
         # Build HTML resume
         html_parts = []
         html_parts.append('<!doctype html><html><head><meta charset="utf-8"><title>Resume</title>')
-        html_parts.append('<style>body{font-family:Arial,Helvetica,sans-serif;padding:20px;color:#111} h1{color:#b91c1c} .section{margin-top:18px} .muted{color:#555}</style>')
+        html_parts.append('<style>body{font-family:Arial,Helvetica,sans-serif;padding:20px;color:#111;line-height:1.4} h1{color:#2563eb;font-size:28px;margin-bottom:5px} h2{color:#1f2937;font-size:18px;margin-top:20px;margin-bottom:10px;border-bottom:2px solid #e5e7eb;padding-bottom:5px} .section{margin-top:18px} .muted{color:#6b7280;font-size:14px} .contact{color:#374151;margin-bottom:15px} .experience-item,.education-item{margin-bottom:15px} .skills-grid{display:flex;flex-wrap:wrap;gap:8px} .skill-tag{background-color:#f3f4f6;padding:4px 8px;border-radius:4px;font-size:12px;color:#374151}</style>')
         html_parts.append('</head><body>')
         html_parts.append(f"<h1>{profile.get('name','')}</h1>")
         html_parts.append(f"<div class=\"muted\">{profile.get('title','')}</div>")
@@ -1046,6 +1046,324 @@ def generate_resume():
         raise HTTPException(status_code=503, detail=str(re))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Resume generation failed: {str(e)}")
+
+# ==================== AI-ENHANCED ATS RESUME GENERATION ====================
+@app.post("/api/generate_ats_resume")
+async def generate_ats_resume(request: dict):
+    """Generate an ATS-friendly resume using AI to optimize content and structure."""
+    try:
+        # Get job description from request (optional)
+        job_description = request.get('job_description', '')
+        target_role = request.get('target_role', 'Software Engineer')
+        
+        # Import Gemini API
+        import google.generativeai as genai
+        
+        # Configure Gemini
+        api_key = os.getenv('GEMINI_API_KEY')
+        if not api_key:
+            raise HTTPException(status_code=503, detail="Gemini API key not configured")
+        
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-pro')
+        
+        # Gather data from database
+        def safe_find_one(coll):
+            try:
+                return coll.find_one({}) or {}
+            except Exception:
+                return {}
+
+        def safe_find_list(coll):
+            try:
+                return list(coll.find({}))
+            except Exception:
+                return []
+
+        profile = safe_find_one(profile_collection)
+        experiences = safe_find_list(experience_collection)
+        education = safe_find_list(education_collection)
+        skills = safe_find_list(skills_collection)
+        ventures = safe_find_list(ventures_collection)
+
+        # Prepare data for AI analysis
+        profile_data = {
+            "profile": profile,
+            "experiences": experiences,
+            "education": education,
+            "skills": skills,
+            "ventures": ventures
+        }
+
+        # Create AI prompt for ATS optimization
+        ai_prompt = f"""
+You are an expert resume writer and ATS (Applicant Tracking System) specialist. 
+Create an ATS-friendly, professionally optimized resume based on the provided data.
+
+TARGET ROLE: {target_role}
+JOB DESCRIPTION: {job_description if job_description else 'General software engineering position'}
+
+CANDIDATE DATA:
+{str(profile_data)}
+
+REQUIREMENTS:
+1. Create an ATS-friendly format with clear sections
+2. Use standard section headers (Summary, Experience, Education, Skills)
+3. Include relevant keywords from the job description
+4. Prioritize most relevant experience and skills
+5. Use action verbs and quantifiable achievements
+6. Keep descriptions concise but impactful
+7. Ensure proper formatting for ATS parsing
+8. Optimize content for the target role
+
+OUTPUT FORMAT:
+Return a JSON object with the following structure:
+{{
+    "name": "Full Name",
+    "title": "Professional Title",
+    "contact": {{
+        "email": "email",
+        "phone": "phone",
+        "location": "location",
+        "linkedin": "linkedin_url",
+        "github": "github_url"
+    }},
+    "summary": "Professional summary optimized for ATS (2-3 sentences)",
+    "experience": [
+        {{
+            "title": "Job Title",
+            "company": "Company Name",
+            "duration": "Start Date - End Date",
+            "achievements": [
+                "Achievement 1 with metrics",
+                "Achievement 2 with metrics"
+            ]
+        }}
+    ],
+    "education": [
+        {{
+            "degree": "Degree Name",
+            "institution": "Institution Name",
+            "year": "Graduation Year"
+        }}
+    ],
+    "skills": {{
+        "technical": ["skill1", "skill2"],
+        "languages": ["language1", "language2"],
+        "tools": ["tool1", "tool2"]
+    }},
+    "keywords": ["relevant", "ats", "keywords"]
+}}
+
+Focus on relevance, impact, and ATS compatibility. Remove unnecessary information and highlight the most valuable content.
+"""
+
+        # Get AI response
+        response = model.generate_content(ai_prompt)
+        
+        # Parse AI response
+        import json
+        import re
+        
+        # Extract JSON from response
+        response_text = response.text
+        # Find JSON content between ```json and ``` or direct JSON
+        json_match = re.search(r'```json\s*(\{.*?\})\s*```', response_text, re.DOTALL)
+        if json_match:
+            json_str = json_match.group(1)
+        else:
+            # Try to find JSON object directly
+            json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+            if json_match:
+                json_str = json_match.group(0)
+            else:
+                raise Exception("Could not extract valid JSON from AI response")
+        
+        try:
+            resume_data = json.loads(json_str)
+        except json.JSONDecodeError as e:
+            raise Exception(f"Invalid JSON from AI: {str(e)}")
+
+        # Generate HTML resume with ATS-friendly styling
+        html_parts = []
+        html_parts.append('<!doctype html><html><head><meta charset="utf-8"><title>ATS Resume</title>')
+        
+        # ATS-friendly CSS
+        ats_css = """
+        <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11pt;
+            line-height: 1.3;
+            color: #000;
+            margin: 0.5in;
+            max-width: 8.5in;
+        }
+        h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #000;
+            margin: 0 0 5pt 0;
+            text-align: center;
+        }
+        h2 {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #000;
+            margin: 15pt 0 5pt 0;
+            border-bottom: 1pt solid #000;
+            padding-bottom: 2pt;
+            text-transform: uppercase;
+        }
+        .contact {
+            text-align: center;
+            margin-bottom: 15pt;
+            font-size: 10pt;
+        }
+        .section {
+            margin-bottom: 15pt;
+        }
+        .job-title {
+            font-weight: bold;
+            font-size: 11pt;
+        }
+        .company {
+            font-weight: bold;
+        }
+        .duration {
+            float: right;
+            font-weight: normal;
+        }
+        .achievement {
+            margin: 3pt 0;
+        }
+        .skills-section {
+            display: block;
+        }
+        .skill-category {
+            margin: 5pt 0;
+        }
+        .skill-category strong {
+            font-weight: bold;
+        }
+        ul {
+            margin: 3pt 0;
+            padding-left: 15pt;
+        }
+        li {
+            margin: 2pt 0;
+        }
+        </style>
+        """
+        
+        html_parts.append(ats_css)
+        html_parts.append('</head><body>')
+        
+        # Header
+        html_parts.append(f'<h1>{resume_data.get("name", "")}</h1>')
+        
+        # Contact Info
+        contact = resume_data.get("contact", {})
+        contact_parts = []
+        if contact.get("email"):
+            contact_parts.append(contact["email"])
+        if contact.get("phone"):
+            contact_parts.append(contact["phone"])
+        if contact.get("location"):
+            contact_parts.append(contact["location"])
+        if contact.get("linkedin"):
+            contact_parts.append(contact["linkedin"])
+        if contact.get("github"):
+            contact_parts.append(contact["github"])
+        
+        if contact_parts:
+            html_parts.append(f'<div class="contact">{" | ".join(contact_parts)}</div>')
+        
+        # Professional Title
+        if resume_data.get("title"):
+            html_parts.append(f'<div style="text-align: center; font-weight: bold; margin-bottom: 10pt;">{resume_data["title"]}</div>')
+        
+        # Summary
+        if resume_data.get("summary"):
+            html_parts.append('<h2>Professional Summary</h2>')
+            html_parts.append(f'<div class="section">{resume_data["summary"]}</div>')
+        
+        # Experience
+        if resume_data.get("experience"):
+            html_parts.append('<h2>Professional Experience</h2>')
+            html_parts.append('<div class="section">')
+            for exp in resume_data["experience"]:
+                html_parts.append(f'<div style="margin-bottom: 12pt;">')
+                html_parts.append(f'<div class="job-title">{exp.get("title", "")} <span class="duration">{exp.get("duration", "")}</span></div>')
+                html_parts.append(f'<div class="company">{exp.get("company", "")}</div>')
+                if exp.get("achievements"):
+                    html_parts.append('<ul>')
+                    for achievement in exp["achievements"]:
+                        html_parts.append(f'<li>{achievement}</li>')
+                    html_parts.append('</ul>')
+                html_parts.append('</div>')
+            html_parts.append('</div>')
+        
+        # Education
+        if resume_data.get("education"):
+            html_parts.append('<h2>Education</h2>')
+            html_parts.append('<div class="section">')
+            for edu in resume_data["education"]:
+                html_parts.append(f'<div style="margin-bottom: 8pt;">')
+                html_parts.append(f'<div class="job-title">{edu.get("degree", "")} <span class="duration">{edu.get("year", "")}</span></div>')
+                html_parts.append(f'<div>{edu.get("institution", "")}</div>')
+                html_parts.append('</div>')
+            html_parts.append('</div>')
+        
+        # Skills
+        if resume_data.get("skills"):
+            html_parts.append('<h2>Technical Skills</h2>')
+            html_parts.append('<div class="section skills-section">')
+            skills = resume_data["skills"]
+            
+            for category, skill_list in skills.items():
+                if skill_list:
+                    category_name = category.replace("_", " ").title()
+                    html_parts.append(f'<div class="skill-category"><strong>{category_name}:</strong> {", ".join(skill_list)}</div>')
+            
+            html_parts.append('</div>')
+        
+        html_parts.append('</body></html>')
+        html = '\n'.join(html_parts)
+        
+        # Return the enhanced resume
+        if request.get('format') == 'json':
+            return {
+                "status": "success",
+                "resume_data": resume_data,
+                "html": html
+            }
+        
+        # Return as HTML/PDF
+        pdf_converter_url = os.getenv('PDF_CONVERTER_URL')
+        if pdf_converter_url:
+            try:
+                import requests
+                conv_endpoint = pdf_converter_url.rstrip('/') + '/pdf'
+                r = requests.post(conv_endpoint, json={'html': html}, stream=True, timeout=60)
+                if r.status_code == 200:
+                    headers = {
+                        'Content-Type': 'application/pdf',
+                        'Content-Disposition': 'attachment; filename=ats_resume.pdf'
+                    }
+                    return StreamingResponse(r.raw, status_code=200, headers=headers)
+            except Exception as e:
+                print('PDF converter call failed:', e)
+        
+        # Return HTML
+        return StreamingResponse(
+            io.BytesIO(html.encode('utf-8')), 
+            media_type='text/html', 
+            headers={"Content-Disposition": "attachment; filename=ats_resume.html"}
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"AI resume generation failed: {str(e)}")
 
 # ==================== PDF RESUME IMPORT ====================
 @app.post("/api/import-resume")

@@ -262,8 +262,117 @@ const AdminDashboard = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
-        <div className="bg-slate-800/50 backdrop-blur-xl border border-purple-500/30 rounded-3xl p-10 max-w-lg w-full shadow-2xl shadow-purple-900/20">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+        
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Floating Orbs */}
+          <div className="absolute top-20 left-20 w-32 h-32 bg-purple-500/10 rounded-full blur-xl animate-pulse" 
+               style={{animationDuration: '4s', animationDelay: '0s'}} />
+          <div className="absolute top-40 right-32 w-24 h-24 bg-pink-500/15 rounded-full blur-lg animate-pulse" 
+               style={{animationDuration: '3s', animationDelay: '1s'}} />
+          <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-blue-500/8 rounded-full blur-2xl animate-pulse" 
+               style={{animationDuration: '5s', animationDelay: '2s'}} />
+          <div className="absolute top-1/3 right-20 w-28 h-28 bg-indigo-500/12 rounded-full blur-xl animate-pulse" 
+               style={{animationDuration: '3.5s', animationDelay: '0.5s'}} />
+          
+          {/* Floating Geometric Shapes */}
+          <div className="absolute top-16 left-1/3 w-16 h-16 border border-purple-400/20 rotate-45 animate-spin" 
+               style={{animationDuration: '20s'}} />
+          <div className="absolute bottom-20 right-1/4 w-12 h-12 border border-pink-400/15 animate-spin" 
+               style={{animationDuration: '25s', animationDirection: 'reverse'}} />
+          <div className="absolute top-1/2 left-16 w-8 h-8 bg-gradient-to-r from-purple-400/10 to-pink-400/10 transform rotate-45 animate-bounce" 
+               style={{animationDuration: '6s'}} />
+               
+          {/* Subtle Moving Gradient Lines */}
+          <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-400/30 to-transparent animate-pulse" 
+               style={{animationDuration: '4s'}} />
+          <div className="absolute bottom-0 right-0 w-full h-0.5 bg-gradient-to-l from-transparent via-pink-400/20 to-transparent animate-pulse" 
+               style={{animationDuration: '5s', animationDelay: '2s'}} />
+               
+          {/* Floating Dots */}
+          <div className="absolute top-1/4 left-1/2 w-2 h-2 bg-purple-400/40 rounded-full animate-ping" 
+               style={{animationDuration: '3s', animationDelay: '1s'}} />
+          <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-pink-400/50 rounded-full animate-ping" 
+               style={{animationDuration: '4s', animationDelay: '2.5s'}} />
+          <div className="absolute top-2/3 right-1/3 w-1.5 h-1.5 bg-blue-400/30 rounded-full animate-ping" 
+               style={{animationDuration: '3.5s', animationDelay: '0.8s'}} />
+               
+          {/* Additional Subtle Moving Elements */}
+          <div className="absolute top-12 right-12 w-6 h-6 border-2 border-purple-300/20 rounded-full"
+               style={{
+                 animation: 'slowFloat 7s ease-in-out infinite',
+                 animationDelay: '1s'
+               }} />
+          <div className="absolute bottom-16 left-12 w-4 h-4 border border-pink-300/15 transform rotate-45"
+               style={{
+                 animation: 'gentleSway 9s ease-in-out infinite',
+                 animationDelay: '3s'
+               }} />
+          <div className="absolute top-1/3 left-8 w-1 h-8 bg-gradient-to-b from-purple-400/20 to-transparent"
+               style={{
+                 animation: 'slowFloat 6s ease-in-out infinite',
+                 animationDelay: '2s'
+               }} />
+          <div className="absolute bottom-1/4 right-8 w-8 h-1 bg-gradient-to-r from-pink-400/15 to-transparent"
+               style={{
+                 animation: 'gentleSway 8s ease-in-out infinite',
+                 animationDelay: '4s'
+               }} />
+          
+          {/* Subtle Moving Background Pattern */}
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-radial from-purple-500/10 to-transparent rounded-full"
+                 style={{
+                   animation: 'slowFloat 8s ease-in-out infinite',
+                   animationDelay: '0s'
+                 }} />
+            <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-gradient-radial from-pink-500/8 to-transparent rounded-full"
+                 style={{
+                   animation: 'slowFloat 10s ease-in-out infinite reverse',
+                   animationDelay: '2s'
+                 }} />
+            <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-gradient-radial from-blue-500/6 to-transparent rounded-full"
+                 style={{
+                   animation: 'gentleSway 12s ease-in-out infinite',
+                   animationDelay: '4s'
+                 }} />
+          </div>
+        </div>
+
+        {/* Custom CSS Animations */}
+        <style jsx>{`
+          @keyframes slowFloat {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-30px) translateX(15px); }
+          }
+          
+          @keyframes gentleSway {
+            0%, 100% { transform: translateX(0px) scale(1); }
+            33% { transform: translateX(20px) scale(1.05); }
+            66% { transform: translateX(-15px) scale(0.95); }
+          }
+          
+          @keyframes cardFloat {
+            0%, 100% { 
+              transform: translateY(0px) scale(1);
+              box-shadow: 0 25px 50px -12px rgba(168, 85, 247, 0.2);
+            }
+            50% { 
+              transform: translateY(-8px) scale(1.01);
+              box-shadow: 0 35px 60px -12px rgba(168, 85, 247, 0.3);
+            }
+          }
+          
+          .bg-gradient-radial {
+            background: radial-gradient(circle, var(--tw-gradient-stops));
+          }
+        `}</style>
+
+        <div className="bg-slate-800/50 backdrop-blur-xl border border-purple-500/30 rounded-3xl p-10 max-w-lg w-full shadow-2xl shadow-purple-900/20 relative z-10"
+             style={{
+               animation: 'cardFloat 6s ease-in-out infinite'
+             }}>
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl mb-4 shadow-lg">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -792,6 +901,18 @@ const OverviewSection = ({ analytics, data }) => (
         </svg>
       } color="red" />
     </div>
+
+    {/* AI Resume Generation Section */}
+    <div className="mb-8">
+      <h3 className="text-xl font-bold mb-4 flex items-center gap-3">
+        <svg className="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        AI-Enhanced Resume Generator
+      </h3>
+      <AIResumeGenerator />
+    </div>
+
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <DataCard title="Experience Entries" count={data.experience?.length || 0} icon={
         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3438,6 +3559,178 @@ const SystemStatusSection = ({ systemStatus, loadAllData, showMessage }) => {
           </div>
         </div>
       </div>
+      </div>
+    </div>
+  );
+};
+
+// AI Resume Generator Component
+const AIResumeGenerator = () => {
+  const [jobDescription, setJobDescription] = useState('');
+  const [targetRole, setTargetRole] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [lastGenerated, setLastGenerated] = useState(null);
+
+  const generateAIResume = async () => {
+    if (!jobDescription.trim() || !targetRole.trim()) {
+      alert('Please fill in both job description and target role');
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const base = (process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001');
+      const endpoint = `${base}/api/generate_ats_resume`;
+      
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          job_description: jobDescription,
+          target_role: targetRole
+        })
+      });
+
+      if (!res.ok) {
+        const txt = await res.text().catch(() => '');
+        console.error('AI Resume API error', res.status, txt);
+        alert('AI Resume generation failed');
+        return;
+      }
+
+      const data = await res.json();
+      if (data.success && data.pdf_url) {
+        // Download the generated PDF
+        const pdfRes = await fetch(data.pdf_url);
+        const blob = await pdfRes.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `AI_Resume_${targetRole.replace(/\s+/g, '_')}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        
+        setLastGenerated(new Date().toLocaleString());
+        alert('AI-Enhanced Resume generated successfully!');
+      } else {
+        alert('AI Resume generation failed: ' + (data.error || 'Unknown error'));
+      }
+    } catch (e) {
+      console.error(e);
+      alert('AI Resume generation failed');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  return (
+    <div className="bg-gradient-to-br from-purple-500/10 to-pink-600/10 backdrop-blur-md border border-purple-500/20 rounded-xl p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Input Section */}
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Target Role
+            </label>
+            <input
+              type="text"
+              value={targetRole}
+              onChange={(e) => setTargetRole(e.target.value)}
+              placeholder="e.g., Senior Full-Stack Developer, Data Scientist, etc."
+              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Job Description
+            </label>
+            <textarea
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+              placeholder="Paste the job description here. The AI will analyze it and optimize the resume for ATS compatibility..."
+              rows={6}
+              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 resize-none"
+            />
+          </div>
+        </div>
+
+        {/* Action Section */}
+        <div className="flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full mb-4">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <h4 className="text-lg font-semibold text-white mb-2">AI-Powered Optimization</h4>
+              <p className="text-slate-300 text-sm mb-4">
+                Leverages Google Gemini AI to analyze job requirements and optimize resume content for ATS compatibility
+              </p>
+            </div>
+            
+            <div className="space-y-2 text-sm text-slate-400">
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                ATS-Friendly formatting
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Keyword optimization
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Tailored content selection
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Professional PDF output
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {lastGenerated && (
+              <div className="text-xs text-slate-400 text-center">
+                Last generated: {lastGenerated}
+              </div>
+            )}
+            <button
+              onClick={generateAIResume}
+              disabled={isGenerating || !jobDescription.trim() || !targetRole.trim()}
+              className="w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 flex items-center justify-center gap-2"
+            >
+              {isGenerating ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Generating AI Resume...
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Generate AI-Enhanced Resume
+                </>
+              )}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
