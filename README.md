@@ -3,7 +3,7 @@
 <div align="center">
 
 ![Portfolio Banner](https://img.shields.io/badge/Portfolio-Interactive-red?style=for-the-badge&logo=react)
-![Status](https://img.shields.io/badge/Status-Production_Ready-success?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-MongoDB_Connected-success?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
 **A stunning, interactive portfolio application with 3D business card, AI-powered chat, and comprehensive admin dashboard.**
@@ -564,5 +564,6 @@ If you find this project useful, please consider giving it a ⭐!
 [🏠 Home](https://khalilpreview.space) • [📊 Admin](https://khalilpreview.space/admin) • [📧 Contact](mailto:contact@khalilpreview.space)
 
 </div>
-#   T e s t i n g   a u t o - d e p l o y m e n t  
+#   T e s t i n g   a u t o - d e p l o y m e n t 
+ 
  
