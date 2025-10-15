@@ -76,28 +76,23 @@ The script will:
 
 ## Step 5: Configure Auto-Deployment (5 minutes)
 
-### Create Service Account
+### Setup Workload Identity Federation (Secure - No Keys!)
 
+**For Linux/Mac:**
 ```bash
-# Create service account for GitHub Actions
-gcloud iam service-accounts create github-actions-sa
+chmod +x setup-workload-identity.sh
+./setup-workload-identity.sh
+```
 
-# Grant permissions
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member="serviceAccount:github-actions-sa@$PROJECT_ID.iam.gserviceaccount.com" \
-  --role="roles/run.admin"
+**For Windows:**
+```powershell
+.\setup-workload-identity.bat
+```
 
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member="serviceAccount:github-actions-sa@$PROJECT_ID.iam.gserviceaccount.com" \
-  --role="roles/storage.admin"
-
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member="serviceAccount:github-actions-sa@$PROJECT_ID.iam.gserviceaccount.com" \
-  --role="roles/iam.serviceAccountUser"
-
-# Create and download key
-gcloud iam service-accounts keys create gcloud-key.json \
-  --iam-account=github-actions-sa@$PROJECT_ID.iam.gserviceaccount.com
+The script will:
+- Create Workload Identity Pool for GitHub
+- Bind it to your service account
+- Display the secrets you need for GitHub
 
 # Copy this for GitHub Secrets
 cat gcloud-key.json | base64 -w 0  # Linux/Mac
@@ -109,14 +104,15 @@ certutil -encode gcloud-key.json gcloud-key-base64.txt  # Windows
 
 Go to: Your Repo → Settings → Secrets and variables → Actions
 
-Add these 4 secrets:
+Add these 5 secrets (from setup script output):
 
-| Secret Name | Value |
-|-------------|-------|
-| GCP_PROJECT_ID | `ibrahim-portfolio-XXXXX` |
-| GCP_SA_KEY | `<base64-encoded-key-from-above>` |
-| GEMINI_API_KEY | `AIza...` |
-| MONGO_URL | `mongodb+srv://...` |
+| Secret Name | Value | Example |
+|-------------|-------|---------|
+| `GCP_PROJECT_ID` | Your project ID | `zyniq-core` |
+| `WIF_PROVIDER` | Workload Identity Provider | `projects/123.../` |
+| `WIF_SERVICE_ACCOUNT` | Service account email | `github-actions-sa@...iam.gserviceaccount.com` |
+| `GEMINI_API_KEY` | Your API key | `AIza...` |
+| `MONGO_URL` | MongoDB connection | `mongodb+srv://...` |
 
 ### Test Auto-Deployment
 
