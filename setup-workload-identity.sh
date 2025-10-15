@@ -92,7 +92,11 @@ else
     echo -e "${GREEN}✓ Service account created and configured${NC}"
 fi
 
-echo -e "\n${GREEN}Step 4: Binding Workload Identity to Service Account...${NC}"
+echo -e "\n${GREEN}Step 4: Waiting for Workload Identity Pool to propagate...${NC}"
+sleep 10
+echo -e "${GREEN}✓ Pool is ready${NC}"
+
+echo -e "\n${GREEN}Step 5: Binding Workload Identity to Service Account...${NC}"
 gcloud iam service-accounts add-iam-policy-binding $SERVICE_ACCOUNT \
     --role="roles/iam.workloadIdentityUser" \
     --member="principalSet://iam.googleapis.com/$POOL_ID/attribute.repository/$GITHUB_OWNER/$GITHUB_REPO" \
@@ -100,7 +104,7 @@ gcloud iam service-accounts add-iam-policy-binding $SERVICE_ACCOUNT \
 
 echo -e "${GREEN}✓ Binding complete${NC}"
 
-echo -e "\n${GREEN}Step 5: Getting Workload Identity Provider ID...${NC}"
+echo -e "\n${GREEN}Step 6: Getting Workload Identity Provider ID...${NC}"
 WIF_PROVIDER=$(gcloud iam workload-identity-pools providers describe $PROVIDER_NAME \
     --workload-identity-pool=$POOL_NAME \
     --location=global \

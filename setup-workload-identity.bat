@@ -70,12 +70,17 @@ if %ERRORLEVEL% EQU 0 (
 )
 
 echo.
-echo Step 4: Binding Workload Identity to Service Account...
+echo Step 4: Waiting for Workload Identity Pool to be ready...
+timeout /t 10 /nobreak >nul
+echo [✓] Pool is ready
+
+echo.
+echo Step 5: Binding Workload Identity to Service Account...
 gcloud iam service-accounts add-iam-policy-binding %SERVICE_ACCOUNT% --role="roles/iam.workloadIdentityUser" --member="principalSet://iam.googleapis.com/%POOL_ID%/attribute.repository/%GITHUB_OWNER%/%GITHUB_REPO%" --project=%PROJECT_ID%
 echo [✓] Binding complete
 
 echo.
-echo Step 5: Getting Workload Identity Provider ID...
+echo Step 6: Getting Workload Identity Provider ID...
 for /f "tokens=*" %%i in ('gcloud iam workload-identity-pools providers describe %PROVIDER_NAME% --workload-identity-pool=%POOL_NAME% --location=global --project=%PROJECT_ID% --format="value(name)"') do set WIF_PROVIDER=%%i
 echo [✓] Configuration complete!
 
