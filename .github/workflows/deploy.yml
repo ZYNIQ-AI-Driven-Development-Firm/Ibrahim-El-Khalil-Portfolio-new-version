@@ -55,7 +55,7 @@ jobs:
             --memory 512Mi \
             --cpu 1 \
             --max-instances 10 \
-            --set-env-vars MONGO_URL=${{ secrets.MONGO_URL }},DATABASE_NAME=portfolio_db,PYTHONUNBUFFERED=1
+            --set-env-vars MONGO_URL=${{ secrets.MONGO_URL }},DATABASE_NAME=portfolio_db,GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},PYTHONUNBUFFERED=1
 
       - name: Get Backend URL
         id: backend-url

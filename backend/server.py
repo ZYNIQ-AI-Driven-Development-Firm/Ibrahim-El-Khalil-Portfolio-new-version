@@ -1,12 +1,14 @@
-from fastapi import FastAPI, HTTPException, Body, UploadFile, File
+from fastapi import FastAPI, HTTPException, Body, UploadFile, File, Depends, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from datetime import datetime
 import os
 import uuid
-from typing import List, Optional
+from typing import List, Optional, Annotated
 import io
 import textwrap
 import re
+import logging
 from fastapi.responses import StreamingResponse
 
 # PDF parsing support
@@ -27,7 +29,8 @@ except Exception:
 from database import (
     db, profile_collection, experience_collection, education_collection,
     skills_collection, ventures_collection, achievements_collection,
-    whitepapers_collection, appointments_collection, analytics_collection
+    whitepapers_collection, appointments_collection, analytics_collection,
+    is_mongodb_available
 )
 from models import (
     Profile, Experience, Education, SkillCategory, Venture,
@@ -35,6 +38,10 @@ from models import (
 )
 
 app = FastAPI(title="Ibrahim El Khalil Portfolio API")
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Enable CORS with explicit origins
 app.add_middleware(
@@ -51,6 +58,45 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Authentication function for admin endpoints
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'pass@123')
+
+async def verify_admin_auth(authorization: Annotated[str | None, Header()] = None):
+    """Verify admin authentication for protected endpoints"""
+    if not authorization:
+        raise HTTPException(
+            status_code=401,
+            detail="Authorization header required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # Simple password-based auth (could be enhanced with JWT)
+    if authorization.replace('Bearer ', '') != ADMIN_PASSWORD:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return True
+
+# Database availability check
+def require_database():
+    """Check if database is available and raise error if not"""
+    if not is_mongodb_available():
+        raise HTTPException(
+            status_code=503,
+            detail="Database service unavailable. Please check MongoDB connection."
+        )
+
+# Global exception handler for better error reporting
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Global exception: {str(exc)}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Internal server error: {str(exc)}"}
+    )
 
 # Helper functions
 def serialize_doc(doc):
@@ -194,21 +240,31 @@ def handle_options(full_path: str):
 @app.get("/api/profile")
 def get_profile():
     """Get profile data"""
-    profile = profile_collection.find_one({})
-    if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found")
-    return serialize_doc(profile)
+    require_database()
+    try:
+        profile = profile_collection.find_one({})
+        if not profile:
+            raise HTTPException(status_code=404, detail="Profile not found")
+        return serialize_doc(profile)
+    except Exception as e:
+        logger.error(f"Error getting profile: {e}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 @app.put("/api/profile")
-def update_profile(profile: Profile):
-    """Update profile data"""
-    profile_data = profile.dict()
-    result = profile_collection.update_one(
-        {},
-        {"$set": profile_data},
-        upsert=True
-    )
-    return {"success": True, "message": "Profile updated successfully"}
+def update_profile(profile: Profile, _: bool = Depends(verify_admin_auth)):
+    """Update profile data (Admin only)"""
+    require_database()
+    try:
+        profile_data = profile.dict()
+        result = profile_collection.update_one(
+            {},
+            {"$set": profile_data},
+            upsert=True
+        )
+        return {"success": True, "message": "Profile updated successfully"}
+    except Exception as e:
+        logger.error(f"Error updating profile: {e}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 # ==================== EXPERIENCE ====================
 @app.get("/api/experience")
