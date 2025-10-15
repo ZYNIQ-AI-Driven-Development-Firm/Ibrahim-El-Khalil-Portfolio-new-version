@@ -8,7 +8,7 @@
 
 **A stunning, interactive portfolio application with 3D business card, AI-powered chat, and comprehensive admin dashboard.**
 
-[Live Demo](https://smartportal-2.preview.emergentagent.com) • [Documentation](./instructions.md) • [Report Bug](mailto:contact@khalilpreview.space)
+[Live Demo](https://khalilpreview.space) • [Quick Start](./QUICK-START.md) • [Deployment Guide](./CLOUD-RUN-DEPLOYMENT.md) • [Report Bug](mailto:contact@khalilpreview.space)
 
 </div>
 
@@ -498,6 +498,37 @@ SOFTWARE.
 
 **Ibrahim El Khalil**
 
+---
+
+## 🚀 Deployment
+
+### Quick Deploy to Google Cloud Run
+
+```bash
+# One-command deployment
+./deploy.sh
+```
+
+For detailed deployment instructions, see:
+- 📖 [Quick Start Guide](./QUICK-START.md) - Get live in 30 minutes
+- 📋 [Deployment Checklist](./DEPLOYMENT-CHECKLIST.md) - Complete pre-flight checks
+- 🔧 [Cloud Run Guide](./CLOUD-RUN-DEPLOYMENT.md) - Comprehensive deployment documentation
+
+### Auto-Deployment
+
+Every push to `main` automatically deploys to production via GitHub Actions.
+
+**Requirements:**
+- Google Cloud Platform account
+- MongoDB Atlas account
+- GitHub repository with secrets configured
+
+See [CLOUD-RUN-DEPLOYMENT.md](./CLOUD-RUN-DEPLOYMENT.md) for full setup instructions.
+
+---
+
+## 📧 Contact
+
 - 📧 Email: [contact@khalilpreview.space](mailto:contact@khalilpreview.space)
 - 📱 Phone: +971 585 774 519
 - 🌍 Location: Dubai, UAE
@@ -530,6 +561,6 @@ If you find this project useful, please consider giving it a ⭐!
 
 **© 2025 IEK Portfolio By ZYNIQ. All rights reserved.**
 
-[🏠 Home](https://smartportal-2.preview.emergentagent.com) • [📊 Admin](https://smartportal-2.preview.emergentagent.com/admin) • [📧 Contact](mailto:contact@khalilpreview.space)
+[🏠 Home](https://khalilpreview.space) • [📊 Admin](https://khalilpreview.space/admin) • [📧 Contact](mailto:contact@khalilpreview.space)
 
 </div>
