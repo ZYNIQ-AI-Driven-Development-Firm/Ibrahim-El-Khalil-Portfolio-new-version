@@ -100,20 +100,83 @@ const BusinessCardPage = () => {
     <div 
       className="fixed flex items-center justify-center w-screen h-screen overflow-hidden"
       style={{
-        background: 'radial-gradient(circle at 50% 50%, #1a0000 0%, #0a0000 50%, #000000 100%)',
+        background: 'radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 50%, #000000 100%)',
         zIndex: 1
       }}
     >
-      {/* Animated Background Grid */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-        <svg width="100%" height="100%">
+      {/* Animated Wave Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
+        <svg width="100%" height="100%" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
           <defs>
-            <pattern id="bgGrid" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#ff0000" strokeWidth="0.5" opacity="0.3"/>
-            </pattern>
+            <linearGradient id="waveGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#64748b" stopOpacity="0.1"/>
+              <stop offset="50%" stopColor="#64748b" stopOpacity="0.3"/>
+              <stop offset="100%" stopColor="#64748b" stopOpacity="0.1"/>
+            </linearGradient>
+            <linearGradient id="waveGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#475569" stopOpacity="0.08"/>
+              <stop offset="50%" stopColor="#475569" stopOpacity="0.2"/>
+              <stop offset="100%" stopColor="#475569" stopOpacity="0.08"/>
+            </linearGradient>
+            <linearGradient id="waveGradient3" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#334155" stopOpacity="0.06"/>
+              <stop offset="50%" stopColor="#334155" stopOpacity="0.15"/>
+              <stop offset="100%" stopColor="#334155" stopOpacity="0.06"/>
+            </linearGradient>
           </defs>
-          <rect width="100%" height="100%" fill="url(#bgGrid)" />
+          
+          {/* Wave Layer 1 */}
+          <path d="M0,400 C300,350 600,450 900,400 C1000,380 1100,420 1200,400 L1200,800 L0,800 Z" fill="url(#waveGradient1)">
+            <animate attributeName="d" 
+              values="M0,400 C300,350 600,450 900,400 C1000,380 1100,420 1200,400 L1200,800 L0,800 Z;
+                      M0,420 C300,370 600,470 900,420 C1000,400 1100,440 1200,420 L1200,800 L0,800 Z;
+                      M0,400 C300,350 600,450 900,400 C1000,380 1100,420 1200,400 L1200,800 L0,800 Z"
+              dur="8s" repeatCount="indefinite"/>
+          </path>
+          
+          {/* Wave Layer 2 */}
+          <path d="M0,450 C250,400 500,500 750,450 C850,430 950,470 1200,450 L1200,800 L0,800 Z" fill="url(#waveGradient2)">
+            <animate attributeName="d" 
+              values="M0,450 C250,400 500,500 750,450 C850,430 950,470 1200,450 L1200,800 L0,800 Z;
+                      M0,470 C250,420 500,520 750,470 C850,450 950,490 1200,470 L1200,800 L0,800 Z;
+                      M0,450 C250,400 500,500 750,450 C850,430 950,470 1200,450 L1200,800 L0,800 Z"
+              dur="12s" repeatCount="indefinite"/>
+          </path>
+          
+          {/* Wave Layer 3 */}
+          <path d="M0,500 C400,460 800,540 1200,500 L1200,800 L0,800 Z" fill="url(#waveGradient3)">
+            <animate attributeName="d" 
+              values="M0,500 C400,460 800,540 1200,500 L1200,800 L0,800 Z;
+                      M0,520 C400,480 800,560 1200,520 L1200,800 L0,800 Z;
+                      M0,500 C400,460 800,540 1200,500 L1200,800 L0,800 Z"
+              dur="15s" repeatCount="indefinite"/>
+          </path>
         </svg>
+      </div>
+      
+      {/* Floating Wave Particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 rounded-full bg-slate-400/30"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [-20, 20, -20],
+              x: [-10, 10, -10],
+              opacity: [0.2, 0.6, 0.2],
+            }}
+            transition={{
+              duration: 6 + i * 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.8,
+            }}
+          />
+        ))}
       </div>
       
       {/* Animated Background Particles */}
@@ -246,56 +309,31 @@ const BusinessCardPage = () => {
                   width: 'min(600px, 95vw)',
                   height: 'min(360px, 90vh)',
                   maxHeight: '700px',
-                  background: 'linear-gradient(135deg, rgb(26, 0, 0) 0%, rgb(51, 0, 0) 50%, rgb(0, 0, 0) 100%)',
+                  background: 'linear-gradient(135deg, rgb(30, 41, 59) 0%, rgb(15, 23, 42) 50%, rgb(0, 0, 0) 100%)',
                   boxShadow: showGlow
-                    ? 'rgba(0, 0, 0, 0.5) 0px 30px 60px, rgba(255, 0, 0, 0.1) 0px 0px 80px'
-                    : 'rgba(0, 0, 0, 0.5) 0px 30px 60px, rgba(255, 0, 0, 0.1) 0px 0px 80px',
+                    ? 'rgba(0, 0, 0, 0.5) 0px 30px 60px, rgba(100, 116, 139, 0.15) 0px 0px 80px'
+                    : 'rgba(0, 0, 0, 0.5) 0px 30px 60px, rgba(100, 116, 139, 0.1) 0px 0px 80px',
                   transition: 'box-shadow 3s ease-in-out',
                 }}
               >
                 {/* Card Border Glow */}
-                <div className="absolute inset-0 rounded-3xl border-2 border-primary-500/40" />
+                <div className="absolute inset-0 rounded-3xl border-2 border-slate-500/20" />
                 
-                {/* Animated Tech Pattern */}
-                <div className="absolute inset-0 opacity-5">
+                {/* Subtle Pattern */}
+                <div className="absolute inset-0 opacity-3">
                   <svg width="100%" height="100%">
                     <defs>
                       <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ff0000" strokeWidth="0.5"/>
+                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#64748b" strokeWidth="0.3"/>
                       </pattern>
-                      <linearGradient id="techGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#ff0000" stopOpacity="0.3"/>
-                        <stop offset="50%" stopColor="#ff0000" stopOpacity="0.1"/>
-                        <stop offset="100%" stopColor="#ff0000" stopOpacity="0"/>
+                      <linearGradient id="subtleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#64748b" stopOpacity="0.1"/>
+                        <stop offset="50%" stopColor="#64748b" stopOpacity="0.05"/>
+                        <stop offset="100%" stopColor="#64748b" stopOpacity="0"/>
                       </linearGradient>
                     </defs>
                     <rect width="100%" height="100%" fill="url(#grid)" />
-                    <rect width="100%" height="100%" fill="url(#techGradient)" />
-                  </svg>
-                </div>
-                
-                {/* Animated flowing lines */}
-                <div className="absolute inset-0 opacity-10">
-                  <svg width="100%" height="100%" className="absolute inset-0">
-                    <defs>
-                      <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#ff0000" stopOpacity="0"/>
-                        <stop offset="50%" stopColor="#ff0000" stopOpacity="1"/>
-                        <stop offset="100%" stopColor="#ff0000" stopOpacity="0"/>
-                      </linearGradient>
-                    </defs>
-                    <line x1="0" y1="20%" x2="100%" y2="20%" stroke="url(#lineGradient)" strokeWidth="1">
-                      <animate attributeName="x1" values="-100%;200%" dur="3s" repeatCount="indefinite"/>
-                      <animate attributeName="x2" values="0%;300%" dur="3s" repeatCount="indefinite"/>
-                    </line>
-                    <line x1="0" y1="50%" x2="100%" y2="50%" stroke="url(#lineGradient)" strokeWidth="1">
-                      <animate attributeName="x1" values="-100%;200%" dur="4s" repeatCount="indefinite"/>
-                      <animate attributeName="x2" values="0%;300%" dur="4s" repeatCount="indefinite"/>
-                    </line>
-                    <line x1="0" y1="80%" x2="100%" y2="80%" stroke="url(#lineGradient)" strokeWidth="1">
-                      <animate attributeName="x1" values="-100%;200%" dur="5s" repeatCount="indefinite"/>
-                      <animate attributeName="x2" values="0%;300%" dur="5s" repeatCount="indefinite"/>
-                    </line>
+                    <rect width="100%" height="100%" fill="url(#subtleGradient)" />
                   </svg>
                 </div>
 
@@ -414,12 +452,12 @@ const BusinessCardPage = () => {
                   transform: 'translate(-50%, -50%)',
                   width: 'min(600px, 90vw)',
                   height: 'min(340px, 50vh)',
-                  background: 'linear-gradient(135deg, rgb(26, 0, 0) 0%, rgb(51, 0, 0) 50%, rgb(0, 0, 0) 100%)',
-                  boxShadow: 'rgba(0, 0, 0, 0.5) 0px 30px 60px, rgba(255, 0, 0, 0.1) 0px 0px 80px',
+                  background: 'linear-gradient(135deg, rgb(30, 41, 59) 0%, rgb(15, 23, 42) 50%, rgb(0, 0, 0) 100%)',
+                  boxShadow: 'rgba(0, 0, 0, 0.5) 0px 30px 60px, rgba(100, 116, 139, 0.1) 0px 0px 80px',
                 }}
               >
                 {/* Card Border */}
-                <div className="absolute inset-0 rounded-3xl border-2 border-primary-500/40" />
+                <div className="absolute inset-0 rounded-3xl border-2 border-slate-500/20" />
                 
                 {/* Back Content */}
                 <div className="relative h-full p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col justify-between">

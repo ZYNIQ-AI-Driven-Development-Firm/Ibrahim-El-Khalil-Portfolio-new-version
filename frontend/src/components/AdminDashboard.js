@@ -262,59 +262,59 @@ const AdminDashboard = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-red-900 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
         
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {/* Floating Orbs */}
-          <div className="absolute top-20 left-20 w-32 h-32 bg-purple-500/10 rounded-full blur-xl animate-pulse" 
+          <div className="absolute top-20 left-20 w-32 h-32 bg-red-500/10 rounded-full blur-xl animate-pulse" 
                style={{animationDuration: '4s', animationDelay: '0s'}} />
-          <div className="absolute top-40 right-32 w-24 h-24 bg-pink-500/15 rounded-full blur-lg animate-pulse" 
+          <div className="absolute top-40 right-32 w-24 h-24 bg-red-600/15 rounded-full blur-lg animate-pulse" 
                style={{animationDuration: '3s', animationDelay: '1s'}} />
-          <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-blue-500/8 rounded-full blur-2xl animate-pulse" 
+          <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-slate-500/8 rounded-full blur-2xl animate-pulse" 
                style={{animationDuration: '5s', animationDelay: '2s'}} />
-          <div className="absolute top-1/3 right-20 w-28 h-28 bg-indigo-500/12 rounded-full blur-xl animate-pulse" 
+          <div className="absolute top-1/3 right-20 w-28 h-28 bg-red-700/12 rounded-full blur-xl animate-pulse" 
                style={{animationDuration: '3.5s', animationDelay: '0.5s'}} />
           
           {/* Floating Geometric Shapes */}
-          <div className="absolute top-16 left-1/3 w-16 h-16 border border-purple-400/20 rotate-45 animate-spin" 
+          <div className="absolute top-16 left-1/3 w-16 h-16 border border-red-400/20 rotate-45 animate-spin" 
                style={{animationDuration: '20s'}} />
-          <div className="absolute bottom-20 right-1/4 w-12 h-12 border border-pink-400/15 animate-spin" 
+          <div className="absolute bottom-20 right-1/4 w-12 h-12 border border-red-500/15 animate-spin" 
                style={{animationDuration: '25s', animationDirection: 'reverse'}} />
-          <div className="absolute top-1/2 left-16 w-8 h-8 bg-gradient-to-r from-purple-400/10 to-pink-400/10 transform rotate-45 animate-bounce" 
+          <div className="absolute top-1/2 left-16 w-8 h-8 bg-gradient-to-r from-red-400/10 to-red-600/10 transform rotate-45 animate-bounce" 
                style={{animationDuration: '6s'}} />
                
           {/* Subtle Moving Gradient Lines */}
-          <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-400/30 to-transparent animate-pulse" 
+          <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-red-400/30 to-transparent animate-pulse" 
                style={{animationDuration: '4s'}} />
-          <div className="absolute bottom-0 right-0 w-full h-0.5 bg-gradient-to-l from-transparent via-pink-400/20 to-transparent animate-pulse" 
+          <div className="absolute bottom-0 right-0 w-full h-0.5 bg-gradient-to-l from-transparent via-red-500/20 to-transparent animate-pulse" 
                style={{animationDuration: '5s', animationDelay: '2s'}} />
                
           {/* Floating Dots */}
-          <div className="absolute top-1/4 left-1/2 w-2 h-2 bg-purple-400/40 rounded-full animate-ping" 
+          <div className="absolute top-1/4 left-1/2 w-2 h-2 bg-red-400/40 rounded-full animate-ping" 
                style={{animationDuration: '3s', animationDelay: '1s'}} />
-          <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-pink-400/50 rounded-full animate-ping" 
+          <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-red-500/50 rounded-full animate-ping" 
                style={{animationDuration: '4s', animationDelay: '2.5s'}} />
-          <div className="absolute top-2/3 right-1/3 w-1.5 h-1.5 bg-blue-400/30 rounded-full animate-ping" 
+          <div className="absolute top-2/3 right-1/3 w-1.5 h-1.5 bg-slate-400/30 rounded-full animate-ping" 
                style={{animationDuration: '3.5s', animationDelay: '0.8s'}} />
                
           {/* Additional Subtle Moving Elements */}
-          <div className="absolute top-12 right-12 w-6 h-6 border-2 border-purple-300/20 rounded-full"
+          <div className="absolute top-12 right-12 w-6 h-6 border-2 border-red-300/20 rounded-full"
                style={{
                  animation: 'slowFloat 7s ease-in-out infinite',
                  animationDelay: '1s'
                }} />
-          <div className="absolute bottom-16 left-12 w-4 h-4 border border-pink-300/15 transform rotate-45"
+          <div className="absolute bottom-16 left-12 w-4 h-4 border border-red-400/15 transform rotate-45"
                style={{
                  animation: 'gentleSway 9s ease-in-out infinite',
                  animationDelay: '3s'
                }} />
-          <div className="absolute top-1/3 left-8 w-1 h-8 bg-gradient-to-b from-purple-400/20 to-transparent"
+          <div className="absolute top-1/3 left-8 w-1 h-8 bg-gradient-to-b from-red-400/20 to-transparent"
                style={{
                  animation: 'slowFloat 6s ease-in-out infinite',
                  animationDelay: '2s'
                }} />
-          <div className="absolute bottom-1/4 right-8 w-8 h-1 bg-gradient-to-r from-pink-400/15 to-transparent"
+          <div className="absolute bottom-1/4 right-8 w-8 h-1 bg-gradient-to-r from-red-500/15 to-transparent"
                style={{
                  animation: 'gentleSway 8s ease-in-out infinite',
                  animationDelay: '4s'
@@ -322,17 +322,17 @@ const AdminDashboard = () => {
           
           {/* Subtle Moving Background Pattern */}
           <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-radial from-purple-500/10 to-transparent rounded-full"
+            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-radial from-red-500/10 to-transparent rounded-full"
                  style={{
                    animation: 'slowFloat 8s ease-in-out infinite',
                    animationDelay: '0s'
                  }} />
-            <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-gradient-radial from-pink-500/8 to-transparent rounded-full"
+            <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-gradient-radial from-red-600/8 to-transparent rounded-full"
                  style={{
                    animation: 'slowFloat 10s ease-in-out infinite reverse',
                    animationDelay: '2s'
                  }} />
-            <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-gradient-radial from-blue-500/6 to-transparent rounded-full"
+            <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-gradient-radial from-slate-500/6 to-transparent rounded-full"
                  style={{
                    animation: 'gentleSway 12s ease-in-out infinite',
                    animationDelay: '4s'
@@ -356,11 +356,11 @@ const AdminDashboard = () => {
           @keyframes cardFloat {
             0%, 100% { 
               transform: translateY(0px) scale(1);
-              box-shadow: 0 25px 50px -12px rgba(168, 85, 247, 0.2);
+              box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.2);
             }
             50% { 
               transform: translateY(-8px) scale(1.01);
-              box-shadow: 0 35px 60px -12px rgba(168, 85, 247, 0.3);
+              box-shadow: 0 35px 60px -12px rgba(239, 68, 68, 0.3);
             }
           }
           
@@ -369,17 +369,17 @@ const AdminDashboard = () => {
           }
         `}</style>
 
-        <div className="bg-slate-800/50 backdrop-blur-xl border border-purple-500/30 rounded-3xl p-10 max-w-lg w-full shadow-2xl shadow-purple-900/20 relative z-10"
+        <div className="bg-slate-800/50 backdrop-blur-xl border border-red-500/30 rounded-3xl p-10 max-w-lg w-full shadow-2xl shadow-red-900/20 relative z-10"
              style={{
                animation: 'cardFloat 6s ease-in-out infinite'
              }}>
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl mb-4 shadow-lg">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl mb-4 shadow-lg">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-red-400 to-red-500 bg-clip-text text-transparent mb-2">
               Admin Portal
             </h1>
             <p className="text-slate-400 text-sm">Secure access to dashboard controls</p>
@@ -421,7 +421,7 @@ const AdminDashboard = () => {
                   className={`w-full px-6 py-4 pr-14 bg-slate-800/80 border-2 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-4 transition-all duration-300 backdrop-blur-sm ${
                     isBlocked 
                       ? 'border-red-500/50 focus:border-red-400/50 focus:ring-red-500/20' 
-                      : 'border-purple-500/30 focus:border-purple-400/60 focus:ring-purple-500/20 hover:border-purple-400/50'
+                      : 'border-red-500/30 focus:border-red-400/60 focus:ring-red-500/20 hover:border-red-400/50'
                   }`}
                   placeholder="Enter your secure password"
                   disabled={isBlocked}
@@ -430,7 +430,7 @@ const AdminDashboard = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-400 transition-colors duration-200 p-1 rounded-lg hover:bg-purple-500/10"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-400 transition-colors duration-200 p-1 rounded-lg hover:bg-red-500/10"
                   disabled={isBlocked}
                 >
                   {showPassword ? (
@@ -452,7 +452,7 @@ const AdminDashboard = () => {
               className={`w-full py-4 rounded-2xl font-bold text-lg tracking-wide transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 transform hover:scale-[1.02] active:scale-[0.98] ${
                 isBlocked
                   ? 'bg-slate-700 cursor-not-allowed text-slate-500 shadow-none'
-                  : 'bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 hover:from-purple-500 hover:via-purple-400 hover:to-pink-400 text-white shadow-purple-500/25 hover:shadow-purple-500/40'
+                  : 'bg-gradient-to-r from-red-600 via-red-500 to-red-700 hover:from-red-500 hover:via-red-400 hover:to-red-600 text-white shadow-red-500/25 hover:shadow-red-500/40'
               }`}
             >
               {isBlocked ? (
@@ -3628,7 +3628,7 @@ const AIResumeGenerator = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-purple-500/10 to-pink-600/10 backdrop-blur-md border border-purple-500/20 rounded-xl p-6">
+    <div className="bg-gradient-to-br from-red-500/10 to-red-700/10 backdrop-blur-md border border-red-500/20 rounded-xl p-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input Section */}
         <div className="space-y-4">
@@ -3641,7 +3641,7 @@ const AIResumeGenerator = () => {
               value={targetRole}
               onChange={(e) => setTargetRole(e.target.value)}
               placeholder="e.g., Senior Full-Stack Developer, Data Scientist, etc."
-              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400"
+              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-white placeholder-slate-400"
             />
           </div>
           <div>
@@ -3653,7 +3653,7 @@ const AIResumeGenerator = () => {
               onChange={(e) => setJobDescription(e.target.value)}
               placeholder="Paste the job description here. The AI will analyze it and optimize the resume for ATS compatibility..."
               rows={6}
-              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 resize-none"
+              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-white placeholder-slate-400 resize-none"
             />
           </div>
         </div>
@@ -3662,7 +3662,7 @@ const AIResumeGenerator = () => {
         <div className="flex flex-col justify-between">
           <div className="space-y-4">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full mb-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-red-500 to-red-700 rounded-full mb-4">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
@@ -3710,7 +3710,7 @@ const AIResumeGenerator = () => {
             <button
               onClick={generateAIResume}
               disabled={isGenerating || !jobDescription.trim() || !targetRole.trim()}
-              className="w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 flex items-center justify-center gap-2"
+              className="w-full py-3 px-6 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 flex items-center justify-center gap-2"
             >
               {isGenerating ? (
                 <>
