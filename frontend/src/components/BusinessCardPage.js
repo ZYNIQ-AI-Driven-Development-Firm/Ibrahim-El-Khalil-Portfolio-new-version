@@ -97,161 +97,27 @@ const BusinessCardPage = () => {
   };
 
   return (
-    <div 
-      className="fixed flex items-center justify-center w-screen h-screen overflow-hidden"
-      style={{
-        background: 'radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 50%, #000000 100%)',
-        zIndex: 1
-      }}
-    >
-      {/* Animated Wave Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
-        <svg width="100%" height="100%" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="waveGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#64748b" stopOpacity="0.1"/>
-              <stop offset="50%" stopColor="#64748b" stopOpacity="0.3"/>
-              <stop offset="100%" stopColor="#64748b" stopOpacity="0.1"/>
-            </linearGradient>
-            <linearGradient id="waveGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#475569" stopOpacity="0.08"/>
-              <stop offset="50%" stopColor="#475569" stopOpacity="0.2"/>
-              <stop offset="100%" stopColor="#475569" stopOpacity="0.08"/>
-            </linearGradient>
-            <linearGradient id="waveGradient3" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#334155" stopOpacity="0.06"/>
-              <stop offset="50%" stopColor="#334155" stopOpacity="0.15"/>
-              <stop offset="100%" stopColor="#334155" stopOpacity="0.06"/>
-            </linearGradient>
-          </defs>
-          
-          {/* Wave Layer 1 */}
-          <path d="M0,400 C300,350 600,450 900,400 C1000,380 1100,420 1200,400 L1200,800 L0,800 Z" fill="url(#waveGradient1)">
-            <animate attributeName="d" 
-              values="M0,400 C300,350 600,450 900,400 C1000,380 1100,420 1200,400 L1200,800 L0,800 Z;
-                      M0,420 C300,370 600,470 900,420 C1000,400 1100,440 1200,420 L1200,800 L0,800 Z;
-                      M0,400 C300,350 600,450 900,400 C1000,380 1100,420 1200,400 L1200,800 L0,800 Z"
-              dur="8s" repeatCount="indefinite"/>
-          </path>
-          
-          {/* Wave Layer 2 */}
-          <path d="M0,450 C250,400 500,500 750,450 C850,430 950,470 1200,450 L1200,800 L0,800 Z" fill="url(#waveGradient2)">
-            <animate attributeName="d" 
-              values="M0,450 C250,400 500,500 750,450 C850,430 950,470 1200,450 L1200,800 L0,800 Z;
-                      M0,470 C250,420 500,520 750,470 C850,450 950,490 1200,470 L1200,800 L0,800 Z;
-                      M0,450 C250,400 500,500 750,450 C850,430 950,470 1200,450 L1200,800 L0,800 Z"
-              dur="12s" repeatCount="indefinite"/>
-          </path>
-          
-          {/* Wave Layer 3 */}
-          <path d="M0,500 C400,460 800,540 1200,500 L1200,800 L0,800 Z" fill="url(#waveGradient3)">
-            <animate attributeName="d" 
-              values="M0,500 C400,460 800,540 1200,500 L1200,800 L0,800 Z;
-                      M0,520 C400,480 800,560 1200,520 L1200,800 L0,800 Z;
-                      M0,500 C400,460 800,540 1200,500 L1200,800 L0,800 Z"
-              dur="15s" repeatCount="indefinite"/>
-          </path>
-        </svg>
+    <div className="fixed flex items-center justify-center w-screen h-screen overflow-hidden bg-black">
+      {/* Dark Professional Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-950 to-black"></div>
+      
+      {/* Subtle Grid Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="h-full w-full bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
       </div>
       
-      {/* Floating Wave Particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 rounded-full bg-slate-400/30"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [-20, 20, -20],
-              x: [-10, 10, -10],
-              opacity: [0.2, 0.6, 0.2],
-            }}
-            transition={{
-              duration: 6 + i * 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.8,
-            }}
-          />
-        ))}
-      </div>
-      
-      {/* Animated Background Particles */}
+      {/* Minimal Corporate Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(30)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-primary-400/40 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -40, 0],
-              x: [0, Math.random() * 20 - 10, 0],
-              opacity: [0.2, 0.8, 0.2],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 4 + Math.random() * 3,
-              repeat: Infinity,
-              delay: Math.random() * 3,
-            }}
-          />
-        ))}
-      </div>
-      
-      {/* Floating Glow Elements */}
-      <motion.div
-        className="absolute w-64 h-64 bg-primary-500/15 rounded-full blur-3xl pointer-events-none"
-        style={{ top: '20%', right: '20%' }}
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.2, 0.5, 0.2],
-          x: [0, 30, 0],
-          y: [0, -20, 0],
-        }}
-        transition={{ duration: 6, repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute w-64 h-64 bg-primary-700/15 rounded-full blur-3xl pointer-events-none"
-        style={{ bottom: '20%', left: '20%' }}
-        animate={{
-          scale: [1.3, 1, 1.3],
-          opacity: [0.5, 0.2, 0.5],
-          x: [0, -30, 0],
-          y: [0, 20, 0],
-        }}
-        transition={{ duration: 6, repeat: Infinity, delay: 3 }}
-      />
-      
-      {/* Radial Lines Effect */}
-      <div className="absolute inset-0 pointer-events-none opacity-10">
-        <svg width="100%" height="100%">
-          <defs>
-            <radialGradient id="radialLines">
-              <stop offset="0%" stopColor="#ff0000" stopOpacity="0.3"/>
-              <stop offset="100%" stopColor="#ff0000" stopOpacity="0"/>
-            </radialGradient>
-          </defs>
-          {[...Array(12)].map((_, i) => {
-            const angle = (i * 30) * (Math.PI / 180);
-            return (
-              <line
-                key={i}
-                x1="50%"
-                y1="50%"
-                x2={`${50 + Math.cos(angle) * 100}%`}
-                y2={`${50 + Math.sin(angle) * 100}%`}
-                stroke="url(#radialLines)"
-                strokeWidth="1"
-              />
-            );
-          })}
-        </svg>
+        {/* Corporate Red Accents */}
+        <div className="absolute top-10 left-10 w-1 h-20 bg-gradient-to-b from-red-600/50 to-transparent"></div>
+        <div className="absolute top-10 left-10 w-20 h-1 bg-gradient-to-r from-red-600/50 to-transparent"></div>
+        <div className="absolute bottom-10 right-10 w-1 h-20 bg-gradient-to-t from-red-600/50 to-transparent"></div>
+        <div className="absolute bottom-10 right-10 w-20 h-1 bg-gradient-to-l from-red-600/50 to-transparent"></div>
+        
+        {/* Minimal Geometric Elements */}
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-red-500/30 transform rotate-45"></div>
+        <div className="absolute bottom-1/3 right-1/3 w-2 h-2 bg-red-500/30 transform rotate-45"></div>
+        <div className="absolute top-2/3 left-1/2 w-1 h-1 bg-red-600/40"></div>
       </div>
 
       {/* Card Container */}
@@ -300,7 +166,7 @@ const BusinessCardPage = () => {
               }}
             >
               <div
-                className="rounded-3xl overflow-hidden flex items-center justify-center"
+                className="rounded-2xl overflow-hidden flex items-center justify-center bg-red-900/20 backdrop-blur-2xl border border-red-500/30 shadow-2xl shadow-black/50 relative"
                 style={{
                   position: 'absolute',
                   top: '50%',
@@ -309,33 +175,12 @@ const BusinessCardPage = () => {
                   width: 'min(600px, 95vw)',
                   height: 'min(360px, 90vh)',
                   maxHeight: '700px',
-                  background: 'linear-gradient(135deg, rgb(30, 41, 59) 0%, rgb(15, 23, 42) 50%, rgb(0, 0, 0) 100%)',
-                  boxShadow: showGlow
-                    ? 'rgba(0, 0, 0, 0.5) 0px 30px 60px, rgba(100, 116, 139, 0.15) 0px 0px 80px'
-                    : 'rgba(0, 0, 0, 0.5) 0px 30px 60px, rgba(100, 116, 139, 0.1) 0px 0px 80px',
-                  transition: 'box-shadow 3s ease-in-out',
                 }}
               >
-                {/* Card Border Glow */}
-                <div className="absolute inset-0 rounded-3xl border-2 border-slate-500/20" />
+                {/* Glassmorphism Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-red-900/20 pointer-events-none"></div>
                 
-                {/* Subtle Pattern */}
-                <div className="absolute inset-0 opacity-3">
-                  <svg width="100%" height="100%">
-                    <defs>
-                      <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#64748b" strokeWidth="0.3"/>
-                      </pattern>
-                      <linearGradient id="subtleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#64748b" stopOpacity="0.1"/>
-                        <stop offset="50%" stopColor="#64748b" stopOpacity="0.05"/>
-                        <stop offset="100%" stopColor="#64748b" stopOpacity="0"/>
-                      </linearGradient>
-                    </defs>
-                    <rect width="100%" height="100%" fill="url(#grid)" />
-                    <rect width="100%" height="100%" fill="url(#subtleGradient)" />
-                  </svg>
-                </div>
+
 
                 {/* Card Content */}
                 <div className="relative h-full p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col justify-between">
@@ -444,7 +289,7 @@ const BusinessCardPage = () => {
               }}
             >
               <div
-                className="rounded-3xl overflow-hidden flex items-center justify-center"
+                className="rounded-2xl overflow-hidden flex items-center justify-center bg-red-900/20 backdrop-blur-2xl border border-red-500/30 shadow-2xl shadow-black/50 relative"
                 style={{
                   position: 'absolute',
                   top: '50%',
@@ -452,12 +297,10 @@ const BusinessCardPage = () => {
                   transform: 'translate(-50%, -50%)',
                   width: 'min(600px, 90vw)',
                   height: 'min(340px, 50vh)',
-                  background: 'linear-gradient(135deg, rgb(30, 41, 59) 0%, rgb(15, 23, 42) 50%, rgb(0, 0, 0) 100%)',
-                  boxShadow: 'rgba(0, 0, 0, 0.5) 0px 30px 60px, rgba(100, 116, 139, 0.1) 0px 0px 80px',
                 }}
               >
-                {/* Card Border */}
-                <div className="absolute inset-0 rounded-3xl border-2 border-slate-500/20" />
+                {/* Glassmorphism Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-red-900/20 pointer-events-none"></div>
                 
                 {/* Back Content */}
                 <div className="relative h-full p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col justify-between">

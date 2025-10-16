@@ -55,56 +55,19 @@ const Hero = () => {
   }
   return (
     <div className="relative">
-      <div className="glass-card rounded-2xl p-6 md:p-8 relative overflow-hidden border-2 border-primary-500/30 shadow-2xl shadow-primary-500/20">
-        {/* Enhanced background effects for Hero */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-primary-900/10 pointer-events-none"></div>
-        
-        {/* Animated glow pulse */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-primary-600/20 via-primary-500/20 to-primary-600/20 blur-xl opacity-50 animate-pulse pointer-events-none"></div>
-        
-        {/* Geometric pattern overlay */}
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <svg width="100%" height="100%">
-            <defs>
-              <pattern id="heroPattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
-                <circle cx="30" cy="30" r="1.5" fill="#ff0000"/>
-                <path d="M30 0 L30 60 M0 30 L60 30" stroke="#ff0000" strokeWidth="0.5" opacity="0.3"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#heroPattern)" />
-          </svg>
-        </div>
-        
-        {/* Premium corner accents */}
-        <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-primary-500/50 rounded-tl-2xl"></div>
-        <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-primary-500/50 rounded-br-2xl"></div>
-        
-        {/* Background crack effect */}
-        <div className="crack-effect">
-          <svg viewBox="0 0 200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="crackGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style={{stopColor: 'rgba(234, 35, 35, 0)'}} />
-                <stop offset="20%" style={{stopColor: 'rgba(234, 35, 35, 0.4)'}} />
-                <stop offset="80%" style={{stopColor: 'rgba(234, 35, 35, 0.4)'}} />
-                <stop offset="100%" style={{stopColor: 'rgba(234, 35, 35, 0)'}} />
-              </linearGradient>
-            </defs>
-            <path d="M 100,0 C 105,50 95,100 100,150 C 105,175 98,190 100,200" stroke="url(#crackGradient)" strokeWidth="1.5" fill="none" />
-            <path d="M 100,80 C 60,75 30,90 0,95" stroke="url(#crackGradient)" strokeWidth="0.8" fill="none" />
-            <path d="M 100,120 C 140,125 170,110 200,105" stroke="url(#crackGradient)" strokeWidth="0.8" fill="none" />
-          </svg>
-        </div>
+      <div className="bg-gray-900/60 backdrop-blur-md rounded-2xl p-6 md:p-8 relative overflow-hidden border border-gray-600/30 shadow-2xl shadow-black/50">
+        {/* Dark professional background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-800/20 via-transparent to-black/20 pointer-events-none"></div>
         
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
           {/* Profile Image - Mobile First (Top) */}
           <div className="flex justify-center lg:hidden order-first">
             <div className="relative group">
-              {/* Outer glow ring */}
-              <div className="absolute -inset-2 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 rounded-2xl opacity-75 group-hover:opacity-100 blur-lg transition-all duration-300 animate-pulse"></div>
+              {/* Subtle glow effect */}
+              <div className="absolute -inset-2 bg-gradient-to-r from-gray-600/20 via-gray-500/30 to-gray-600/20 rounded-2xl opacity-50 group-hover:opacity-75 blur-lg transition-all duration-300"></div>
               
               {/* Image container */}
-              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden border-4 border-primary-500/50 shadow-2xl shadow-primary-500/50 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-1">
+              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden border-4 border-gray-600/50 shadow-2xl shadow-black/50 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-1">
                 <img 
                   src={profileData.image} 
                   alt={profileData.name}
@@ -119,10 +82,6 @@ const Hero = () => {
                 <div className="absolute w-5 h-5 bg-green-500 rounded-full animate-ping opacity-75"></div>
                 <div className="relative w-5 h-5 bg-green-500 rounded-full border-4 border-black"></div>
               </div>
-              
-              {/* Corner accents */}
-              <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-primary-400/80 rounded-tl-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-primary-400/80 rounded-br-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
           </div>
 
@@ -132,7 +91,7 @@ const Hero = () => {
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight">
                 {profileData.name}
               </h1>
-              <h2 className="text-lg md:text-xl text-primary-400 font-medium">
+              <h2 className="text-lg md:text-xl text-gray-300 font-medium">
                 {profileData.title}
               </h2>
               <div className="flex items-center space-x-2 text-sm text-gray-400">
@@ -175,7 +134,7 @@ const Hero = () => {
                 className="group p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 hover:scale-105 relative"
                 aria-label="View Business Card"
               >
-                <svg className="w-5 h-5 text-gray-300 group-hover:text-primary-400 transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
                 </svg>
                 {/* Tooltip */}
@@ -243,11 +202,11 @@ const Hero = () => {
           {/* Profile Image - Desktop Only (Right Side) */}
           <div className="hidden lg:flex justify-center lg:justify-end">
             <div className="relative group">
-              {/* Outer glow ring */}
-              <div className="absolute -inset-2 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 rounded-2xl opacity-75 group-hover:opacity-100 blur-lg transition-all duration-300 animate-pulse"></div>
+              {/* Subtle glow effect */}
+              <div className="absolute -inset-2 bg-gradient-to-r from-gray-600/20 via-gray-500/30 to-gray-600/20 rounded-2xl opacity-50 group-hover:opacity-75 blur-lg transition-all duration-300"></div>
               
               {/* Image container */}
-              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden border-4 border-primary-500/50 shadow-2xl shadow-primary-500/50 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-1">
+              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden border-4 border-gray-600/50 shadow-2xl shadow-black/50 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-1">
                 <img 
                   src={profileData.image} 
                   alt={profileData.name}
@@ -262,10 +221,6 @@ const Hero = () => {
                 <div className="absolute w-5 h-5 bg-green-500 rounded-full animate-ping opacity-75"></div>
                 <div className="relative w-5 h-5 bg-green-500 rounded-full border-4 border-black"></div>
               </div>
-              
-              {/* Corner accents */}
-              <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-primary-400/80 rounded-tl-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-primary-400/80 rounded-br-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
           </div>
         </div>
