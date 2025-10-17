@@ -18,7 +18,7 @@ GEMINI_API_KEY=your_api_key_here
 
 **frontend/.env`** (for local development):
 ```properties
-REACT_APP_GEMINI_API_KEY=your_api_key_here
+GEMINI_API_KEY=your_api_key_here
 ```
 
 ### 2. Docker Configuration
@@ -56,7 +56,7 @@ RUN npm run build
 1. Docker Compose reads `GEMINI_API_KEY` from root `.env`
 2. Passes it as build argument to Dockerfile
 3. Dockerfile copies `frontend/.env` as fallback
-4. Sets `ENV REACT_APP_GEMINI_API_KEY` which React reads during build
+4. Sets `GEMINI_API_KEY` which React reads during build
 5. `npm run build` bakes the API key into the JavaScript bundle
 6. The built app can now use the API key client-side
 
@@ -99,7 +99,7 @@ docker exec portfolio_frontend sh -c "cat /usr/share/nginx/html/static/js/main.*
 ```
 
 If you see the actual API key (starts with `AIzaSy`), it's working!
-If you see `REACT_APP_GEMINI_API_KEY` instead, rebuild with `--no-cache`.
+If you see `GEMINI_API_KEY` instead, rebuild with `--no-cache`.
 
 **Check Docker build logs**:
 ```powershell

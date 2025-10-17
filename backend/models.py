@@ -88,3 +88,24 @@ class Appointment(BaseModel):
     time: str
     status: str = 'pending'
     created_at: Optional[str] = None
+
+class BlogPost(BaseModel):
+    id: Optional[str] = None
+    title: str
+    slug: str
+    excerpt: str
+    content: str
+    author: str = "Ibrahim El Khalil"
+    tags: List[str] = []
+    category: str
+    featured_image: Optional[str] = None
+    images: Optional[List[str]] = []
+    status: str = 'draft'  # draft, published, archived
+    views: int = 0
+    reading_time: Optional[int] = None  # in minutes
+    published_date: Optional[str] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+    seo_title: Optional[str] = None
+    seo_description: Optional[str] = None
+    ai_generated: bool = False

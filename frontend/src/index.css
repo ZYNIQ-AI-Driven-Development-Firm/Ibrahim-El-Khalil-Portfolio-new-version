@@ -7,6 +7,7 @@
   --color-primary: 239 68 68;    /* red-500 */
   --color-secondary: 220 38 38;  /* red-600 */
   --color-accent: 153 27 27;     /* red-900 */
+  --color-header: 239 68 68;     /* red-500 - for headers and titles */
   
   /* Background colors */
   --bg-start: 15 15 35;     /* #0f0f23 */

@@ -31,7 +31,7 @@ sleep 10
 gcloud iam service-accounts add-iam-policy-binding $SERVICE_ACCOUNT \
     --role="roles/iam.workloadIdentityUser" \
     --member="principalSet://iam.googleapis.com/${POOL_ID}/attribute.repository/${GITHUB_OWNER}/${GITHUB_REPO}" \
-    --project=$PROJECT_ID
+    --project=zyniq-core
 
 # Get the provider ID (copy this output!)
 echo ""

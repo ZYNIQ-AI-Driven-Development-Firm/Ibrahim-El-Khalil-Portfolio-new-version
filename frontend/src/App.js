@@ -5,6 +5,7 @@ import Experience from './components/Experience';
 import Education from './components/Education';
 import Ventures from './components/Ventures';
 import OtherAchievements from './components/OtherAchievements';
+import Blog from './components/Blog';
 import AiChat from './components/AiChat';
 import AppointmentManager from './components/AppointmentManager';
 import AdminDashboard from './components/AdminDashboard';
@@ -46,12 +47,14 @@ const PortfolioPage = () => {
           const primary = hexToRgb(theme.primary_color || '#ef4444');
           const secondary = hexToRgb(theme.secondary_color || '#dc2626');
           const accent = hexToRgb(theme.accent_color || '#991b1b');
+          const header = hexToRgb(theme.header_color || theme.primary_color || '#ef4444');
 
-          if (primary && secondary && accent) {
+          if (primary && secondary && accent && header) {
             // Set CSS variables on root
             document.documentElement.style.setProperty('--color-primary', `${primary.r} ${primary.g} ${primary.b}`);
             document.documentElement.style.setProperty('--color-secondary', `${secondary.r} ${secondary.g} ${secondary.b}`);
             document.documentElement.style.setProperty('--color-accent', `${accent.r} ${accent.g} ${accent.b}`);
+            document.documentElement.style.setProperty('--color-header', `${header.r} ${header.g} ${header.b}`);
             
             // Set background colors (darker shades of primary)
             const bgStart = {
@@ -92,7 +95,7 @@ const PortfolioPage = () => {
   // Track active section on scroll
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['hero', 'ventures', 'experience', 'education', 'achievements'];
+      const sections = ['hero', 'ventures', 'experience', 'education', 'blog', 'achievements'];
       const scrollPosition = window.scrollY + 200;
 
       for (const sectionId of sections) {
@@ -235,6 +238,9 @@ const PortfolioPage = () => {
           </div>
           <div id="education">
             <Education />
+          </div>
+          <div id="blog">
+            <Blog />
           </div>
           <div id="achievements">
             <OtherAchievements />

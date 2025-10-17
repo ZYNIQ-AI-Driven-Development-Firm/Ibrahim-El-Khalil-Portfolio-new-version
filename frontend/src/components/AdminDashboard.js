@@ -23,6 +23,7 @@ const AdminDashboard = () => {
   const [ventures, setVentures] = useState([]);
   const [achievements, setAchievements] = useState({ certificates: [], hackathons: [] });
   const [whitePapers, setWhitePapers] = useState([]);
+  const [blogs, setBlogs] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [analytics, setAnalytics] = useState({});
   const [envVars, setEnvVars] = useState({});
@@ -516,6 +517,11 @@ const AdminDashboard = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             )},
+            { id: 'blog', label: 'Blog Posts', icon: (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+            )},
             { id: 'appointments', label: 'Appointments', icon: (
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -622,7 +628,7 @@ const AdminDashboard = () => {
             </div>
           ) : (
             <div className="space-y-6">{activeSection === 'overview' && (
-                <OverviewSection analytics={analytics} data={{ profile, experience, education, skills, ventures, achievements, whitePapers, appointments }} />
+                <OverviewSection analytics={analytics} data={{ profile, experience, education, skills, ventures, achievements, whitePapers, appointments }} headerText="Dashboard Overview" />
               )}
               {activeSection === 'status' && (
                 <SystemStatusSection 
@@ -756,6 +762,13 @@ const AdminDashboard = () => {
                   )}
                 />
               )}
+              {activeSection === 'blog' && (
+                <BlogSection 
+                  blogs={blogs}
+                  setBlogs={setBlogs}
+                  showMessage={showMessage}
+                />
+              )}
               {activeSection === 'appointments' && (
                 <AppointmentsSection 
                   appointments={appointments}
@@ -801,13 +814,13 @@ const AdminDashboard = () => {
 };
 
 // Overview Section
-const OverviewSection = ({ analytics, data }) => (
+const OverviewSection = ({ analytics, data, headerText = "Dashboard Overview" }) => (
   <div>
     <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
       <svg className="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
       </svg>
-      Dashboard Overview
+      {headerText}
     </h2>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <StatCard title="Total Visits" value={analytics.total_visits || 0} icon={
@@ -2194,6 +2207,7 @@ const ThemeSection = ({ showMessage }) => {
     surfaceColor: '#111827',
     textColor: '#ffffff',
     mutedTextColor: '#9ca3af',
+    headerColor: '#ef4444',
     borderRadius: '0.75rem',
     shadowIntensity: 'medium',
     animationSpeed: 'normal',
@@ -2223,6 +2237,7 @@ const ThemeSection = ({ showMessage }) => {
             surfaceColor: data.surface_color || '#111827',
             textColor: data.text_color || '#ffffff',
             mutedTextColor: data.muted_text_color || '#9ca3af',
+            headerColor: data.header_color || data.primary_color || '#ef4444',
             borderRadius: data.border_radius || '0.75rem',
             shadowIntensity: data.shadow_intensity || 'medium',
             animationSpeed: data.animation_speed || 'normal',
@@ -2258,6 +2273,7 @@ const ThemeSection = ({ showMessage }) => {
           surface_color: theme.surfaceColor,
           text_color: theme.textColor,
           muted_text_color: theme.mutedTextColor,
+          header_color: theme.headerColor,
           border_radius: theme.borderRadius,
           shadow_intensity: theme.shadowIntensity,
           animation_speed: theme.animationSpeed,
@@ -2294,6 +2310,7 @@ const ThemeSection = ({ showMessage }) => {
       surfaceColor: '#111827',
       textColor: '#ffffff',
       mutedTextColor: '#9ca3af',
+      headerColor: '#ef4444',
       borderRadius: '0.75rem',
       shadowIntensity: 'medium',
       animationSpeed: 'normal',
@@ -2379,7 +2396,8 @@ const ThemeSection = ({ showMessage }) => {
                   { key: 'backgroundColor', label: 'Background Color', description: 'Main background', placeholder: '#000000' },
                   { key: 'surfaceColor', label: 'Surface Color', description: 'Cards, panels', placeholder: '#111827' },
                   { key: 'textColor', label: 'Text Color', description: 'Primary text', placeholder: '#ffffff' },
-                  { key: 'mutedTextColor', label: 'Muted Text', description: 'Secondary text', placeholder: '#9ca3af' }
+                  { key: 'mutedTextColor', label: 'Muted Text', description: 'Secondary text', placeholder: '#9ca3af' },
+                  { key: 'headerColor', label: 'Header Color', description: 'Section headers, titles', placeholder: '#ef4444' }
                 ].map((color) => (
                   <div key={color.key} className="space-y-2">
                     <label className="block text-sm font-medium text-gray-300">
@@ -3662,6 +3680,506 @@ const AIResumeGenerator = () => {
               )}
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ==================== BLOG SECTION ====================
+const BlogSection = ({ blogs, setBlogs, showMessage }) => {
+  const [editingBlog, setEditingBlog] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
+  const [aiTopic, setAiTopic] = useState('');
+  const [aiCategory, setAiCategory] = useState('');
+  const [aiTone, setAiTone] = useState('professional');
+  const [aiLength, setAiLength] = useState('medium');
+  const [generatingAI, setGeneratingAI] = useState(false);
+
+  useEffect(() => {
+    loadBlogs();
+  }, []);
+
+  const loadBlogs = async () => {
+    setLoading(true);
+    try {
+      const data = await API.getBlogs();
+      setBlogs(data || []);
+    } catch (error) {
+      console.error('Error loading blogs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async (blogData) => {
+    try {
+      if (editingBlog?.id) {
+        await API.updateBlog(editingBlog.id, blogData);
+        showMessage('Blog updated successfully!');
+      } else {
+        await API.createBlog(blogData);
+        showMessage('Blog created successfully!');
+      }
+      loadBlogs();
+      setShowModal(false);
+      setEditingBlog(null);
+    } catch (error) {
+      showMessage('Error saving blog', 'error');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this blog post?')) {
+      try {
+        await API.deleteBlog(id);
+        showMessage('Blog deleted successfully!');
+        loadBlogs();
+      } catch (error) {
+        showMessage('Error deleting blog', 'error');
+      }
+    }
+  };
+
+  const handleGenerateWithAI = async () => {
+    if (!aiTopic) {
+      showMessage('Please enter a topic', 'error');
+      return;
+    }
+
+    setGeneratingAI(true);
+    try {
+      const generatedContent = await API.generateBlogWithAI(aiTopic, aiCategory, aiTone, aiLength);
+      setEditingBlog({
+        ...generatedContent,
+        category: aiCategory,
+        status: 'draft'
+      });
+      setShowAIModal(false);
+      setShowModal(true);
+      showMessage('Blog content generated! Review and save.');
+    } catch (error) {
+      showMessage('Error generating blog with AI', 'error');
+    } finally {
+      setGeneratingAI(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold flex items-center gap-3">
+            <svg className="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+            </svg>
+            Blog Posts
+          </h2>
+          <p className="text-gray-400 mt-1">Manage your blog content</p>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setShowAIModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            Generate with AI
+          </button>
+          <button
+            onClick={() => {
+              setEditingBlog(null);
+              setShowModal(true);
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            New Blog Post
+          </button>
+        </div>
+      </div>
+
+      {/* Blog List */}
+      {loading ? (
+        <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-12">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500 mr-3"></div>
+            <p className="text-gray-400">Loading blogs...</p>
+          </div>
+        </div>
+      ) : blogs.length === 0 ? (
+        <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-12 text-center">
+          <svg className="w-16 h-16 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+          </svg>
+          <p className="text-gray-400 mb-4">No blog posts yet</p>
+          <button
+            onClick={() => setShowModal(true)}
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
+          >
+            Create Your First Blog Post
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {blogs.map((blog) => (
+            <div key={blog.id} className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6 hover:border-red-500/50 transition-all">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      blog.status === 'published' ? 'bg-green-500/20 text-green-300' :
+                      blog.status === 'draft' ? 'bg-yellow-500/20 text-yellow-300' :
+                      'bg-gray-500/20 text-gray-300'
+                    }`}>
+                      {blog.status}
+                    </span>
+                    {blog.category && (
+                      <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">
+                        {blog.category}
+                      </span>
+                    )}
+                    {blog.ai_generated && (
+                      <span className="px-2 py-1 bg-purple-500/20 text-purple-300 rounded text-xs flex items-center gap-1">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        AI
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{blog.title}</h3>
+                  <p className="text-gray-400 text-sm line-clamp-2 mb-3">{blog.excerpt}</p>
+                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                    {blog.reading_time && <span>{blog.reading_time} min read</span>}
+                    {blog.views > 0 && <span>{blog.views} views</span>}
+                    <span>{new Date(blog.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setEditingBlog(blog);
+                    setShowModal(true);
+                  }}
+                  className="flex-1 px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(blog.id)}
+                  className="px-3 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* AI Generation Modal */}
+      {showAIModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-900 rounded-2xl border border-purple-500/30 p-8 max-w-2xl w-full">
+            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+              <svg className="w-7 h-7 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Generate Blog with AI
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Topic *</label>
+                <input
+                  type="text"
+                  value={aiTopic}
+                  onChange={(e) => setAiTopic(e.target.value)}
+                  placeholder="e.g., Machine Learning in Web Development"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                <input
+                  type="text"
+                  value={aiCategory}
+                  onChange={(e) => setAiCategory(e.target.value)}
+                  placeholder="e.g., Technology, Tutorial, Opinion"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Tone</label>
+                  <select
+                    value={aiTone}
+                    onChange={(e) => setAiTone(e.target.value)}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-purple-500"
+                  >
+                    <option value="professional">Professional</option>
+                    <option value="casual">Casual</option>
+                    <option value="technical">Technical</option>
+                    <option value="friendly">Friendly</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Length</label>
+                  <select
+                    value={aiLength}
+                    onChange={(e) => setAiLength(e.target.value)}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-purple-500"
+                  >
+                    <option value="short">Short (~500 words)</option>
+                    <option value="medium">Medium (~1000 words)</option>
+                    <option value="long">Long (~1500 words)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-8">
+              <button
+                onClick={() => setShowAIModal(false)}
+                disabled={generatingAI}
+                className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleGenerateWithAI}
+                disabled={generatingAI || !aiTopic}
+                className="flex-1 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {generatingAI ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Generate
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Blog Editor Modal */}
+      {showModal && (
+        <BlogEditorModal
+          blog={editingBlog}
+          onSave={handleSave}
+          onClose={() => {
+            setShowModal(false);
+            setEditingBlog(null);
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+// Blog Editor Modal Component
+const BlogEditorModal = ({ blog, onSave, onClose }) => {
+  const [formData, setFormData] = useState({
+    title: blog?.title || '',
+    slug: blog?.slug || '',
+    excerpt: blog?.excerpt || '',
+    content: blog?.content || '',
+    category: blog?.category || '',
+    tags: blog?.tags?.join(', ') || '',
+    status: blog?.status || 'draft',
+    featured_image: blog?.featured_image || '',
+    seo_title: blog?.seo_title || '',
+    seo_description: blog?.seo_description || ''
+  });
+
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Auto-generate slug from title
+    if (field === 'title' && !blog?.slug) {
+      const slug = value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      setFormData(prev => ({ ...prev, slug }));
+    }
+  };
+
+  const handleSubmit = () => {
+    const blogData = {
+      ...formData,
+      tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean)
+    };
+    onSave(blogData);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-gray-900 rounded-2xl border border-red-500/30 p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-2xl font-bold text-white">
+            {blog ? 'Edit Blog Post' : 'New Blog Post'}
+          </h3>
+          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+            <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="space-y-6">
+          {/* Title & Slug */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Title *</label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) => handleChange('title', e.target.value)}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Slug</label>
+              <input
+                type="text"
+                value={formData.slug}
+                onChange={(e) => handleChange('slug', e.target.value)}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
+              />
+            </div>
+          </div>
+
+          {/* Excerpt */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Excerpt *</label>
+            <textarea
+              value={formData.excerpt}
+              onChange={(e) => handleChange('excerpt', e.target.value)}
+              rows="3"
+              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
+              required
+            />
+          </div>
+
+          {/* Content */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Content *</label>
+            <textarea
+              value={formData.content}
+              onChange={(e) => handleChange('content', e.target.value)}
+              rows="15"
+              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500 font-mono text-sm"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">Supports markdown and HTML</p>
+          </div>
+
+          {/* Category, Tags, Status */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
+              <input
+                type="text"
+                value={formData.category}
+                onChange={(e) => handleChange('category', e.target.value)}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Tags</label>
+              <input
+                type="text"
+                value={formData.tags}
+                onChange={(e) => handleChange('tags', e.target.value)}
+                placeholder="tag1, tag2, tag3"
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
+              <select
+                value={formData.status}
+                onChange={(e) => handleChange('status', e.target.value)}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
+              >
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Featured Image */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Featured Image URL</label>
+            <input
+              type="url"
+              value={formData.featured_image}
+              onChange={(e) => handleChange('featured_image', e.target.value)}
+              placeholder="https://example.com/image.jpg"
+              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
+            />
+          </div>
+
+          {/* SEO Fields */}
+          <div className="border-t border-white/10 pt-6">
+            <h4 className="text-lg font-bold text-white mb-4">SEO Settings</h4>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">SEO Title</label>
+                <input
+                  type="text"
+                  value={formData.seo_title}
+                  onChange={(e) => handleChange('seo_title', e.target.value)}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">SEO Description</label>
+                <textarea
+                  value={formData.seo_description}
+                  onChange={(e) => handleChange('seo_description', e.target.value)}
+                  rows="2"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-3 mt-8">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg font-medium transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={!formData.title || !formData.excerpt || !formData.content}
+            className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+          >
+            {blog ? 'Update Blog Post' : 'Create Blog Post'}
+          </button>
         </div>
       </div>
     </div>

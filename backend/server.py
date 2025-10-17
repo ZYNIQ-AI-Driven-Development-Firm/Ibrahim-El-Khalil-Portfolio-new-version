@@ -30,11 +30,11 @@ from database import (
     db, profile_collection, experience_collection, education_collection,
     skills_collection, ventures_collection, achievements_collection,
     whitepapers_collection, appointments_collection, analytics_collection,
-    is_mongodb_available
+    blogs_collection, is_mongodb_available
 )
 from models import (
     Profile, Experience, Education, SkillCategory, Venture,
-    Achievements, WhitePaper, Appointment
+    Achievements, WhitePaper, Appointment, BlogPost
 )
 
 app = FastAPI(title="Ibrahim El Khalil Portfolio API")
@@ -505,6 +505,201 @@ def delete_appointment(apt_id: str):
         raise HTTPException(status_code=404, detail="Appointment not found")
     return {"success": True, "message": "Appointment deleted"}
 
+# ==================== BLOG POSTS ====================
+@app.get("/api/blogs")
+def get_blogs(status: Optional[str] = None, category: Optional[str] = None, limit: Optional[int] = None):
+    """Get all blog posts with optional filtering"""
+    try:
+        query = {}
+        if status:
+            query["status"] = status
+        if category:
+            query["category"] = category
+        
+        cursor = blogs_collection.find(query).sort("created_at", -1)
+        if limit:
+            cursor = cursor.limit(limit)
+        
+        blogs = [serialize_doc(blog) for blog in cursor]
+        return blogs
+    except Exception as e:
+        logger.error(f"Error fetching blogs: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/blogs/{blog_id}")
+def get_blog(blog_id: str):
+    """Get a single blog post by ID or slug"""
+    try:
+        # Try to find by ID first, then by slug
+        blog = blogs_collection.find_one({"id": blog_id})
+        if not blog:
+            blog = blogs_collection.find_one({"slug": blog_id})
+        
+        if not blog:
+            raise HTTPException(status_code=404, detail="Blog post not found")
+        
+        # Increment view count
+        blogs_collection.update_one(
+            {"id": blog.get("id")},
+            {"$inc": {"views": 1}}
+        )
+        
+        return serialize_doc(blog)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching blog: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/blogs")
+def create_blog(blog: BlogPost):
+    """Create a new blog post"""
+    try:
+        blog_dict = blog.dict(exclude_none=True)
+        blog_id = str(uuid.uuid4())
+        blog_dict["id"] = blog_id
+        blog_dict["created_at"] = datetime.utcnow().isoformat()
+        blog_dict["updated_at"] = datetime.utcnow().isoformat()
+        
+        # Generate slug from title if not provided
+        if not blog_dict.get("slug"):
+            blog_dict["slug"] = re.sub(r'[^a-z0-9]+', '-', blog_dict["title"].lower()).strip('-')
+        
+        # Calculate reading time if not provided (approx 200 words per minute)
+        if not blog_dict.get("reading_time") and blog_dict.get("content"):
+            word_count = len(blog_dict["content"].split())
+            blog_dict["reading_time"] = max(1, round(word_count / 200))
+        
+        blogs_collection.insert_one(blog_dict)
+        return serialize_doc(blog_dict)
+    except Exception as e:
+        logger.error(f"Error creating blog: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put("/api/blogs/{blog_id}")
+def update_blog(blog_id: str, blog: BlogPost):
+    """Update an existing blog post"""
+    try:
+        existing_blog = blogs_collection.find_one({"id": blog_id})
+        if not existing_blog:
+            raise HTTPException(status_code=404, detail="Blog post not found")
+        
+        blog_dict = blog.dict(exclude_none=True)
+        blog_dict["updated_at"] = datetime.utcnow().isoformat()
+        
+        # Update slug if title changed
+        if blog_dict.get("title") and blog_dict["title"] != existing_blog.get("title"):
+            if not blog_dict.get("slug"):
+                blog_dict["slug"] = re.sub(r'[^a-z0-9]+', '-', blog_dict["title"].lower()).strip('-')
+        
+        # Recalculate reading time if content changed
+        if blog_dict.get("content") and blog_dict["content"] != existing_blog.get("content"):
+            word_count = len(blog_dict["content"].split())
+            blog_dict["reading_time"] = max(1, round(word_count / 200))
+        
+        blogs_collection.update_one(
+            {"id": blog_id},
+            {"$set": blog_dict}
+        )
+        
+        updated_blog = blogs_collection.find_one({"id": blog_id})
+        return serialize_doc(updated_blog)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating blog: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/blogs/{blog_id}")
+def delete_blog(blog_id: str):
+    """Delete a blog post"""
+    try:
+        result = blogs_collection.delete_one({"id": blog_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Blog post not found")
+        return {"success": True, "message": "Blog post deleted"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting blog: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/blogs/generate")
+async def generate_blog_with_ai(data: dict = Body(...)):
+    """Generate blog content using Gemini AI"""
+    try:
+        topic = data.get("topic", "")
+        category = data.get("category", "")
+        tone = data.get("tone", "professional")
+        length = data.get("length", "medium")
+        
+        if not topic:
+            raise HTTPException(status_code=400, detail="Topic is required")
+        
+        # Import Gemini if available
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+            model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        except:
+            raise HTTPException(status_code=500, detail="Gemini API not configured")
+        
+        # Generate prompt based on parameters
+        word_count = {"short": 500, "medium": 1000, "long": 1500}.get(length, 1000)
+        
+        prompt = f"""Write a professional blog post about: {topic}
+
+Category: {category}
+Tone: {tone}
+Target length: approximately {word_count} words
+
+Please structure the blog post with:
+1. An engaging title
+2. A compelling excerpt (2-3 sentences)
+3. Well-organized main content with proper headings
+4. SEO-friendly keywords
+5. A conclusion
+
+Format the response as JSON with the following structure:
+{{
+    "title": "Blog Title",
+    "excerpt": "Brief description...",
+    "content": "Full blog content with markdown formatting...",
+    "tags": ["tag1", "tag2", "tag3"],
+    "seo_title": "SEO optimized title",
+    "seo_description": "SEO meta description"
+}}"""
+        
+        response = model.generate_content(prompt)
+        
+        # Try to parse JSON from response
+        import json
+        try:
+            # Extract JSON from response (handle markdown code blocks)
+            text = response.text
+            if "```json" in text:
+                text = text.split("```json")[1].split("```")[0]
+            elif "```" in text:
+                text = text.split("```")[1].split("```")[0]
+            
+            blog_data = json.loads(text.strip())
+            blog_data["ai_generated"] = True
+            return blog_data
+        except:
+            # If JSON parsing fails, return raw content
+            return {
+                "title": topic,
+                "excerpt": "",
+                "content": response.text,
+                "tags": [category] if category else [],
+                "ai_generated": True
+            }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating blog with AI: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ==================== ANALYTICS ====================
 @app.get("/api/analytics")
 def get_analytics():
@@ -635,32 +830,63 @@ def get_theme():
         return {
             "primary_color": theme_doc.get('primary_color', '#ef4444'),
             "secondary_color": theme_doc.get('secondary_color', '#dc2626'),
-            "accent_color": theme_doc.get('accent_color', '#991b1b')
+            "accent_color": theme_doc.get('accent_color', '#991b1b'),
+            "background_color": theme_doc.get('background_color', '#000000'),
+            "surface_color": theme_doc.get('surface_color', '#111827'),
+            "text_color": theme_doc.get('text_color', '#ffffff'),
+            "muted_text_color": theme_doc.get('muted_text_color', '#9ca3af'),
+            "header_color": theme_doc.get('header_color', theme_doc.get('primary_color', '#ef4444')),
+            "border_radius": theme_doc.get('border_radius', '0.75rem'),
+            "shadow_intensity": theme_doc.get('shadow_intensity', 'medium'),
+            "animation_speed": theme_doc.get('animation_speed', 'normal'),
+            "font_size": theme_doc.get('font_size', 'medium'),
+            "spacing": theme_doc.get('spacing', 'normal'),
+            "gradient_style": theme_doc.get('gradient_style', 'linear')
         }
     
     # Return default theme
     return {
         "primary_color": "#ef4444",
         "secondary_color": "#dc2626",
-        "accent_color": "#991b1b"
+        "accent_color": "#991b1b",
+        "background_color": "#000000",
+        "surface_color": "#111827",
+        "text_color": "#ffffff",
+        "muted_text_color": "#9ca3af",
+        "header_color": "#ef4444",
+        "border_radius": "0.75rem",
+        "shadow_intensity": "medium",
+        "animation_speed": "normal",
+        "font_size": "medium",
+        "spacing": "normal",
+        "gradient_style": "linear"
     }
 
 @app.post("/api/theme")
 def update_theme(data: dict = Body(...)):
     """Update theme colors"""
     try:
-        primary_color = data.get('primary_color', '#ef4444')
-        secondary_color = data.get('secondary_color', '#dc2626')
-        accent_color = data.get('accent_color', '#991b1b')
+        theme_data = {
+            "primary_color": data.get('primary_color', '#ef4444'),
+            "secondary_color": data.get('secondary_color', '#dc2626'),
+            "accent_color": data.get('accent_color', '#991b1b'),
+            "background_color": data.get('background_color', '#000000'),
+            "surface_color": data.get('surface_color', '#111827'),
+            "text_color": data.get('text_color', '#ffffff'),
+            "muted_text_color": data.get('muted_text_color', '#9ca3af'),
+            "header_color": data.get('header_color', data.get('primary_color', '#ef4444')),
+            "border_radius": data.get('border_radius', '0.75rem'),
+            "shadow_intensity": data.get('shadow_intensity', 'medium'),
+            "animation_speed": data.get('animation_speed', 'normal'),
+            "font_size": data.get('font_size', 'medium'),
+            "spacing": data.get('spacing', 'normal'),
+            "gradient_style": data.get('gradient_style', 'linear')
+        }
         
         # Upsert to database
         db['theme'].update_one(
             {},
-            {"$set": {
-                "primary_color": primary_color,
-                "secondary_color": secondary_color,
-                "accent_color": accent_color
-            }},
+            {"$set": theme_data},
             upsert=True
         )
         

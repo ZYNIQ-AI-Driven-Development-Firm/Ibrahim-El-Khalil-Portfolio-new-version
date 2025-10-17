@@ -283,3 +283,43 @@ export const updateTheme = async (themeData) => {
 export const getSystemStatus = async () => {
   return await apiCall('/api/system-status');
 };
+
+// ==================== BLOG POSTS ====================
+export const getBlogs = async (status = null, category = null, limit = null) => {
+  let url = '/api/blogs?';
+  if (status) url += `status=${status}&`;
+  if (category) url += `category=${category}&`;
+  if (limit) url += `limit=${limit}`;
+  return await apiCall(url);
+};
+
+export const getBlog = async (id) => {
+  return await apiCall(`/api/blogs/${id}`);
+};
+
+export const createBlog = async (blogData) => {
+  return await apiCall('/api/blogs', {
+    method: 'POST',
+    body: JSON.stringify(blogData),
+  });
+};
+
+export const updateBlog = async (id, blogData) => {
+  return await apiCall(`/api/blogs/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(blogData),
+  });
+};
+
+export const deleteBlog = async (id) => {
+  return await apiCall(`/api/blogs/${id}`, {
+    method: 'DELETE',
+  });
+};
+
+export const generateBlogWithAI = async (topic, category, tone = 'professional', length = 'medium') => {
+  return await apiCall('/api/blogs/generate', {
+    method: 'POST',
+    body: JSON.stringify({ topic, category, tone, length }),
+  });
+};

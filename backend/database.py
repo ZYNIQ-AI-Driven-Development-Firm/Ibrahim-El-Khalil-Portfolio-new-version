@@ -52,6 +52,7 @@ if db is not None:
     whitepapers_collection = db['whitepapers']
     appointments_collection = db['appointments']
     analytics_collection = db['analytics']
+    blogs_collection = db['blogs']
 else:
     # Create dummy collections that will raise appropriate errors
     logger.warning("MongoDB not available - collections will not work")
@@ -64,6 +65,7 @@ else:
     whitepapers_collection = None
     appointments_collection = None
     analytics_collection = None
+    blogs_collection = None
 
 def init_analytics():
     """Initialize analytics collection if it doesn't exist"""
