@@ -36,14 +36,24 @@ services:
       - ./backend:/app
     networks:
       - portfolio_network
-    command: ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
+    command:
+      [
+        "uvicorn",
+        "server:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8001",
+        "--reload",
+      ]
 
   # Frontend React Service - Development Mode
   frontend:
-    image: node:18-alpine
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
     container_name: portfolio_frontend_dev
     restart: unless-stopped
-    working_dir: /app
     environment:
       REACT_APP_API_URL: http://localhost:8001/api
       REACT_APP_BACKEND_URL: http://backend:8001
@@ -56,7 +66,7 @@ services:
       - /app/node_modules
     networks:
       - portfolio_network
-    command: sh -c "npm install && npm start"
+    command: ["npm", "start"]
 
   # MongoDB Express - Database Admin Interface
   mongo-express:
