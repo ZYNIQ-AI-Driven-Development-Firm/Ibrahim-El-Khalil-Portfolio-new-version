@@ -19,8 +19,10 @@ COPY . .
 
 # Accept build arguments (non-sensitive data)
 ARG REACT_APP_BACKEND_URL
+ARG REACT_APP_GEMINI_API_KEY
 # Use build args if provided, otherwise use .env file
 ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL:-}
+ENV REACT_APP_GEMINI_API_KEY=${REACT_APP_GEMINI_API_KEY:-}
 
 # Build the app
 RUN npm run build

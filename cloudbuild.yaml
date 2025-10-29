@@ -12,7 +12,9 @@ steps:
       - '-t'
       - 'gcr.io/$PROJECT_ID/portfolio-frontend:latest'
       - '--build-arg'
-      - 'GEMINI_API_KEY=${_GEMINI_API_KEY}'
+      - 'REACT_APP_BACKEND_URL=https://portfolio-backend-${_REGION_SUFFIX}.run.app'
+      - '--build-arg'
+      - 'REACT_APP_GEMINI_API_KEY=${_GEMINI_API_KEY}'
       - '-f'
       - 'frontend/Dockerfile'
       - './frontend'
@@ -94,8 +96,6 @@ steps:
       - '10'
       - '--port'
       - '80'
-      - '--set-env-vars'
-      - 'REACT_APP_API_URL=https://portfolio-backend-${_REGION_SUFFIX}.run.app/api,REACT_APP_BACKEND_URL=https://portfolio-backend-${_REGION_SUFFIX}.run.app,REACT_APP_GEMINI_API_KEY=${_GEMINI_API_KEY}'
     waitFor: ['push-frontend', 'deploy-backend']
 
 # Timeout for the entire build

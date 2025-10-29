@@ -67,27 +67,35 @@ When answering:
 };
 
 export const streamChatMessage = async (message, onChunk) => {
-  if (!API_KEY || !genAI) {
-    onChunk("Error: Gemini API key is not configured. Please contact the site owner.");
-    return;
-  }
-
+  // Use backend API endpoint instead of direct Gemini API call
+  // This ensures we use the Mem0 integration and don't expose API keys in frontend
   try {
-    const systemInstruction = await buildSystemInstruction();
-    
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-pro",
-      systemInstruction: systemInstruction
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+    const response = await fetch(`${backendUrl}/api/ai/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message }),
     });
 
-    const result = await model.generateContentStream(message);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
     
-    for await (const chunk of result.stream) {
-      const chunkText = chunk.text();
-      onChunk(chunkText);
+    // Stream the response text character by character for smooth effect
+    const responseText = data.response || data.message || "Sorry, I couldn't generate a response.";
+    const words = responseText.split(' ');
+    
+    for (let i = 0; i < words.length; i++) {
+      onChunk(words[i] + ' ');
+      // Small delay between words to simulate streaming
+      await new Promise(resolve => setTimeout(resolve, 30));
     }
   } catch (error) {
-    console.error('Error calling Gemini API:', error);
+    console.error('Error calling AI chat API:', error);
     onChunk("Sorry, I'm having trouble connecting to the AI service. Please try again later.");
   }
 };
