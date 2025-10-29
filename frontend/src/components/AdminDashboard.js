@@ -48,6 +48,7 @@ const AdminDashboard = () => {
     if (password === 'pass@123') {
       setIsAuthenticated(true);
       localStorage.setItem('admin_authenticated', 'true');
+      localStorage.setItem('adminAuth', password); // Store password for API authentication
       // Reset failed attempts on successful login
       setFailedAttempts(0);
       localStorage.removeItem('admin_failed_attempts');
@@ -88,9 +89,15 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const saved = localStorage.getItem('admin_authenticated');
-    if (saved === 'true') {
+    const authToken = localStorage.getItem('adminAuth');
+    
+    if (saved === 'true' && authToken) {
       setIsAuthenticated(true);
       loadAllData();
+    } else if (saved === 'true' && !authToken) {
+      // Old session without auth token, need to re-login
+      localStorage.removeItem('admin_authenticated');
+      setIsAuthenticated(false);
     }
     
     // Check for existing block and failed attempts
@@ -135,6 +142,7 @@ const AdminDashboard = () => {
   const handleLogout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem('admin_authenticated');
+    localStorage.removeItem('adminAuth'); // Clear auth token
   };
 
   // Show message
