@@ -26,8 +26,8 @@ services:
     environment:
       MONGO_URL: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-password}@mongodb:27017/${DATABASE_NAME:-portfolio_db}?authSource=admin
       DATABASE_NAME: ${DATABASE_NAME:-portfolio_db}
-      GEMINI_API_KEY: AIzaSyBbE2dQMNfvQYHjS5QaOTHa3MJNcOr5dD0
-      GOOGLE_API_KEY: AIzaSyBbE2dQMNfvQYHjS5QaOTHa3MJNcOr5dD0
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
       PYTHONPATH: /app
       PYTHONUNBUFFERED: 1
     ports:
