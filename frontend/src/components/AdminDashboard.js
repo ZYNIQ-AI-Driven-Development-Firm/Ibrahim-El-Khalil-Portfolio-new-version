@@ -37,7 +37,7 @@ const AdminDashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Authentication
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     
     if (isBlocked) {
@@ -45,45 +45,60 @@ const AdminDashboard = () => {
       return;
     }
 
-    if (password === 'pass@123') {
-      setIsAuthenticated(true);
-      localStorage.setItem('admin_authenticated', 'true');
-      localStorage.setItem('adminAuth', password); // Store password for API authentication
-      // Reset failed attempts on successful login
-      setFailedAttempts(0);
-      localStorage.removeItem('admin_failed_attempts');
-      localStorage.removeItem('admin_block_time');
-      loadAllData();
-    } else {
-      const newFailedAttempts = failedAttempts + 1;
-      setFailedAttempts(newFailedAttempts);
-      localStorage.setItem('admin_failed_attempts', newFailedAttempts.toString());
-      
-      if (newFailedAttempts >= 3) {
-        const blockDuration = 15 * 60 * 1000; // 15 minutes in milliseconds
-        const blockUntil = Date.now() + blockDuration;
-        localStorage.setItem('admin_block_time', blockUntil.toString());
-        setIsBlocked(true);
-        setBlockTimeRemaining(blockDuration);
-        showMessage('Too many failed attempts! Login blocked for 15 minutes.', 'error');
-        
-        // Start countdown timer
-        const countdownInterval = setInterval(() => {
-          const remaining = blockUntil - Date.now();
-          if (remaining <= 0) {
-            setIsBlocked(false);
-            setBlockTimeRemaining(0);
-            setFailedAttempts(0);
-            localStorage.removeItem('admin_failed_attempts');
-            localStorage.removeItem('admin_block_time');
-            clearInterval(countdownInterval);
-          } else {
-            setBlockTimeRemaining(remaining);
-          }
-        }, 1000);
+    try {
+      // Validate password with backend
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const response = await fetch(`${backendUrl}/api/admin/validate-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password })
+      });
+
+      if (response.ok) {
+        setIsAuthenticated(true);
+        localStorage.setItem('admin_authenticated', 'true');
+        localStorage.setItem('adminAuth', password); // Store password for API authentication
+        // Reset failed attempts on successful login
+        setFailedAttempts(0);
+        localStorage.removeItem('admin_failed_attempts');
+        localStorage.removeItem('admin_block_time');
+        loadAllData();
       } else {
-        showMessage(`Invalid password! ${3 - newFailedAttempts} attempts remaining.`, 'error');
+        const newFailedAttempts = failedAttempts + 1;
+        setFailedAttempts(newFailedAttempts);
+        localStorage.setItem('admin_failed_attempts', newFailedAttempts.toString());
+        
+        if (newFailedAttempts >= 3) {
+          const blockDuration = 15 * 60 * 1000; // 15 minutes in milliseconds
+          const blockUntil = Date.now() + blockDuration;
+          localStorage.setItem('admin_block_time', blockUntil.toString());
+          setIsBlocked(true);
+          setBlockTimeRemaining(blockDuration);
+          showMessage('Too many failed attempts! Login blocked for 15 minutes.', 'error');
+          
+          // Start countdown timer
+          const countdownInterval = setInterval(() => {
+            const remaining = blockUntil - Date.now();
+            if (remaining <= 0) {
+              setIsBlocked(false);
+              setBlockTimeRemaining(0);
+              setFailedAttempts(0);
+              localStorage.removeItem('admin_failed_attempts');
+              localStorage.removeItem('admin_block_time');
+              clearInterval(countdownInterval);
+            } else {
+              setBlockTimeRemaining(remaining);
+            }
+          }, 1000);
+        } else {
+          showMessage(`Invalid password! ${3 - newFailedAttempts} attempts remaining.`, 'error');
+        }
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      showMessage('Login failed. Please check your connection.', 'error');
     }
   };
 

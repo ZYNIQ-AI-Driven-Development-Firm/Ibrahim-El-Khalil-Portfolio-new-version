@@ -299,6 +299,19 @@ def update_profile(profile: Profile, _: bool = Depends(verify_admin_auth)):
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 # ==================== ADMIN PASSWORD ====================
+@app.post("/api/admin/validate-password")
+async def validate_admin_password(data: dict = Body(...)):
+    """Validate admin password for login"""
+    password = data.get("password")
+    
+    if not password:
+        raise HTTPException(status_code=400, detail="Password is required")
+    
+    if password == ADMIN_PASSWORD:
+        return {"success": True, "message": "Password is valid"}
+    else:
+        raise HTTPException(status_code=401, detail="Invalid password")
+
 @app.post("/api/admin/change-password")
 async def change_admin_password(data: dict = Body(...), authorization: Annotated[str | None, Header()] = None):
     """Change admin password (Admin only)"""
