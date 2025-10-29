@@ -156,32 +156,34 @@ const Ventures = () => {
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <h5 className="text-base font-semibold text-white mb-2">Key Achievements:</h5>
-                        <div className="space-y-1">
-                          {venture.achievements.slice(0, 2).map((achievement, i) => (
-                            <div key={i} className="flex items-start space-x-2">
-                              <div className="w-1.5 h-1.5 bg-primary-500 rounded-full mt-2 flex-shrink-0"></div>
-                              <p className="text-gray-300 leading-relaxed text-sm">{achievement}</p>
-                            </div>
-                          ))}
-                          {venture.achievements.length > 2 && (
-                            <details className="group cursor-pointer">
-                              <summary className="text-primary-400 hover:text-primary-300 text-sm font-medium">
-                                +{venture.achievements.length - 2} more...
-                              </summary>
-                              <div className="mt-1 space-y-1">
-                                {venture.achievements.slice(2).map((achievement, i) => (
-                                  <div key={i + 2} className="flex items-start space-x-2">
-                                    <div className="w-1.5 h-1.5 bg-primary-500 rounded-full mt-2 flex-shrink-0"></div>
-                                    <p className="text-gray-300 leading-relaxed text-sm">{achievement}</p>
-                                  </div>
-                                ))}
+                      {venture.achievements && Array.isArray(venture.achievements) && venture.achievements.length > 0 && (
+                        <div>
+                          <h5 className="text-base font-semibold text-white mb-2">Key Achievements:</h5>
+                          <div className="space-y-1">
+                            {venture.achievements.slice(0, 2).map((achievement, i) => (
+                              <div key={i} className="flex items-start space-x-2">
+                                <div className="w-1.5 h-1.5 bg-primary-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <p className="text-gray-300 leading-relaxed text-sm">{achievement}</p>
                               </div>
-                            </details>
-                          )}
+                            ))}
+                            {venture.achievements.length > 2 && (
+                              <details className="group cursor-pointer">
+                                <summary className="text-primary-400 hover:text-primary-300 text-sm font-medium">
+                                  +{venture.achievements.length - 2} more...
+                                </summary>
+                                <div className="mt-1 space-y-1">
+                                  {venture.achievements.slice(2).map((achievement, i) => (
+                                    <div key={i + 2} className="flex items-start space-x-2">
+                                      <div className="w-1.5 h-1.5 bg-primary-500 rounded-full mt-2 flex-shrink-0"></div>
+                                      <p className="text-gray-300 leading-relaxed text-sm">{achievement}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              </details>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                      )}
                       
                       {venture.technologies && Array.isArray(venture.technologies) && venture.technologies.length > 0 && (
                         <div>
@@ -321,7 +323,7 @@ const Ventures = () => {
               <div>
                 <h3 className="text-lg font-semibold text-white mb-2">Key Points</h3>
                 <div className="space-y-2">
-                  {selectedPaper.keyPoints.map((point, index) => (
+                  {selectedPaper.keyPoints && Array.isArray(selectedPaper.keyPoints) && selectedPaper.keyPoints.map((point, index) => (
                     <div key={index} className="flex items-start space-x-2">
                       <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                       <p className="text-gray-300 text-sm leading-relaxed">{point}</p>
