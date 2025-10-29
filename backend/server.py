@@ -56,6 +56,16 @@ app.add_middleware(
 # Authentication function for admin endpoints
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'pass@123')
 
+# Try to load password from database on startup
+try:
+    if is_mongodb_available():
+        stored_password = db['admin_settings'].find_one({"setting": "admin_password"})
+        if stored_password and stored_password.get('value'):
+            ADMIN_PASSWORD = stored_password['value']
+            logger.info("Loaded admin password from database")
+except Exception as e:
+    logger.warning(f"Could not load admin password from database: {e}")
+
 async def verify_admin_auth(authorization: Annotated[str | None, Header()] = None):
     """Verify admin authentication for protected endpoints"""
     if not authorization:
@@ -287,6 +297,44 @@ def update_profile(profile: Profile, _: bool = Depends(verify_admin_auth)):
     except Exception as e:
         logger.error(f"Error updating profile: {e}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+# ==================== ADMIN PASSWORD ====================
+@app.post("/api/admin/change-password")
+async def change_admin_password(data: dict = Body(...), authorization: Annotated[str | None, Header()] = None):
+    """Change admin password (Admin only)"""
+    global ADMIN_PASSWORD
+    
+    # Verify current password
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization required")
+    
+    current_auth = authorization.replace('Bearer ', '')
+    if current_auth != ADMIN_PASSWORD:
+        raise HTTPException(status_code=401, detail="Current password is incorrect")
+    
+    # Validate new password
+    new_password = data.get("new_password")
+    if not new_password or len(new_password) < 6:
+        raise HTTPException(status_code=400, detail="New password must be at least 6 characters")
+    
+    # Update password in environment variable (runtime only - not persistent)
+    ADMIN_PASSWORD = new_password
+    
+    # Store in database for persistence
+    try:
+        require_database()
+        db['admin_settings'].update_one(
+            {"setting": "admin_password"},
+            {"$set": {"setting": "admin_password", "value": new_password}},
+            upsert=True
+        )
+    except Exception as e:
+        logger.warning(f"Could not persist password to database: {e}")
+    
+    return {
+        "success": True,
+        "message": "Password changed successfully. Please use the new password for future logins."
+    }
 
 # ==================== EXPERIENCE ====================
 @app.get("/api/experience")

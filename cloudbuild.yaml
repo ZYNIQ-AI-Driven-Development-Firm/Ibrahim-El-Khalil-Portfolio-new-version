@@ -2,24 +2,7 @@
 # This file is triggered when you push to the main branch
 
 steps:
-  # Build Frontend Docker Image
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'build-frontend'
-    args:
-      - 'build'
-      - '-t'
-      - 'gcr.io/$PROJECT_ID/portfolio-frontend:$COMMIT_SHA'
-      - '-t'
-      - 'gcr.io/$PROJECT_ID/portfolio-frontend:latest'
-      - '--build-arg'
-      - 'REACT_APP_BACKEND_URL=https://portfolio-backend-${_REGION_SUFFIX}.run.app'
-      - '--build-arg'
-      - 'REACT_APP_GEMINI_API_KEY=${_GEMINI_API_KEY}'
-      - '-f'
-      - 'frontend/Dockerfile'
-      - './frontend'
-
-  # Build Backend Docker Image
+  # Build Backend Docker Image first
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-backend'
     args:
@@ -31,14 +14,6 @@ steps:
       - '-f'
       - 'backend/Dockerfile'
       - './backend'
-
-  # Push Frontend Image to Container Registry
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'push-frontend'
-    args:
-      - 'push'
-      - 'gcr.io/$PROJECT_ID/portfolio-frontend:$COMMIT_SHA'
-    waitFor: ['build-frontend']
 
   # Push Backend Image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
@@ -73,6 +48,42 @@ steps:
       - 'MONGO_URL=${_MONGO_URL},DATABASE_NAME=${_DATABASE_NAME},GEMINI_API_KEY=${_GEMINI_API_KEY},GOOGLE_API_KEY=${_GEMINI_API_KEY},PYTHONUNBUFFERED=1'
     waitFor: ['push-backend']
 
+  # Get Backend URL and store it
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'get-backend-url'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud run services describe portfolio-backend --region=${_REGION} --format='value(status.url)' > /workspace/backend_url.txt
+        echo "Backend URL: $(cat /workspace/backend_url.txt)"
+    waitFor: ['deploy-backend']
+
+  # Build Frontend with actual backend URL
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'rebuild-frontend-with-url'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        BACKEND_URL=$(cat /workspace/backend_url.txt)
+        docker build \
+          -t gcr.io/$PROJECT_ID/portfolio-frontend:$COMMIT_SHA \
+          -t gcr.io/$PROJECT_ID/portfolio-frontend:latest \
+          --build-arg REACT_APP_BACKEND_URL=$BACKEND_URL \
+          --build-arg REACT_APP_GEMINI_API_KEY=${_GEMINI_API_KEY} \
+          -f frontend/Dockerfile \
+          ./frontend
+    waitFor: ['get-backend-url']
+
+  # Push Frontend Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-frontend-final'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/portfolio-frontend:$COMMIT_SHA'
+    waitFor: ['rebuild-frontend-with-url']
+
   # Deploy Frontend to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy-frontend'
@@ -96,7 +107,7 @@ steps:
       - '10'
       - '--port'
       - '80'
-    waitFor: ['push-frontend', 'deploy-backend']
+    waitFor: ['push-frontend-final']
 
 # Timeout for the entire build
 timeout: '1800s'
@@ -104,7 +115,6 @@ timeout: '1800s'
 # Substitution variables (set these in Cloud Build triggers)
 substitutions:
   _REGION: 'us-central1'
-  _REGION_SUFFIX: 'uc.a'
   _GEMINI_API_KEY: ''
   _MONGO_URL: ''
   _DATABASE_NAME: 'portfolio_db'
