@@ -95,7 +95,7 @@ const PortfolioPage = () => {
   // Track active section on scroll
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['hero', 'ventures', 'experience', 'education', 'blog', 'achievements'];
+      const sections = ['hero', 'ventures', 'experience', 'education', 'achievements', 'blog'];
       const scrollPosition = window.scrollY + 200;
 
       for (const sectionId of sections) {
@@ -200,7 +200,8 @@ const PortfolioPage = () => {
           { id: 'ventures', label: 'Ventures' },
           { id: 'experience', label: 'Experience' },
           { id: 'education', label: 'Education' },
-          { id: 'achievements', label: 'Achievements' }
+          { id: 'achievements', label: 'Achievements' },
+          { id: 'blog', label: 'Blog & Insights' }
         ].map((item, index) => (
           <button
             key={item.id}
@@ -239,11 +240,11 @@ const PortfolioPage = () => {
           <div id="education">
             <Education />
           </div>
-          <div id="blog">
-            <Blog />
-          </div>
           <div id="achievements">
             <OtherAchievements />
+          </div>
+          <div id="blog">
+            <Blog />
           </div>
         </div>
         <footer className="text-center pt-12 pb-6 text-sm text-slate-400">
