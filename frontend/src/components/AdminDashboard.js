@@ -4188,9 +4188,11 @@ const BlogEditorModal = ({ blog, onSave, onClose }) => {
     tags: blog?.tags?.join(', ') || '',
     status: blog?.status || 'draft',
     featured_image: blog?.featured_image || '',
+    images: blog?.images || [],
     seo_title: blog?.seo_title || '',
     seo_description: blog?.seo_description || ''
   });
+  const [newImageUrl, setNewImageUrl] = useState('');
 
   // Update form data when blog prop changes (e.g., AI generation)
   useEffect(() => {
@@ -4225,6 +4227,7 @@ const BlogEditorModal = ({ blog, onSave, onClose }) => {
         tags: Array.isArray(blog.tags) ? blog.tags.join(', ') : (blog.tags || ''),
         status: blog.status || 'draft',
         featured_image: blog.featured_image || '',
+        images: blog.images || [],
         seo_title: blog.seo_title || blog.title || '',
         seo_description: blog.seo_description || blog.excerpt || ''
       });
@@ -4244,9 +4247,31 @@ const BlogEditorModal = ({ blog, onSave, onClose }) => {
   const handleSubmit = () => {
     const blogData = {
       ...formData,
-      tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean)
+      tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
+      images: formData.images || []
     };
     onSave(blogData);
+  };
+
+  const addImage = () => {
+    if (newImageUrl.trim()) {
+      setFormData(prev => ({
+        ...prev,
+        images: [...(prev.images || []), newImageUrl.trim()]
+      }));
+      setNewImageUrl('');
+    }
+  };
+
+  const removeImage = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
+
+  const isPDF = (url) => {
+    return url?.toLowerCase().endsWith('.pdf');
   };
 
   return (
@@ -4356,6 +4381,70 @@ const BlogEditorModal = ({ blog, onSave, onClose }) => {
               placeholder="https://example.com/image.jpg"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
             />
+          </div>
+
+          {/* Gallery Images & PDFs */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Gallery Images / PDFs (Slider)
+            </label>
+            <p className="text-xs text-gray-500 mb-3">Add multiple images or PDF URLs to create a carousel/slider in the blog post</p>
+            
+            {/* Add new image/PDF */}
+            <div className="flex gap-2 mb-4">
+              <input
+                type="url"
+                value={newImageUrl}
+                onChange={(e) => setNewImageUrl(e.target.value)}
+                placeholder="https://example.com/image.jpg or .pdf"
+                className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
+                onKeyPress={(e) => e.key === 'Enter' && addImage()}
+              />
+              <button
+                type="button"
+                onClick={addImage}
+                className="px-6 py-3 bg-primary-500 hover:bg-primary-600 rounded-lg text-white font-medium transition-colors"
+              >
+                Add
+              </button>
+            </div>
+
+            {/* Display current images/PDFs */}
+            {formData.images && formData.images.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {formData.images.map((img, idx) => (
+                  <div key={idx} className="relative group">
+                    <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden border border-white/10">
+                      {isPDF(img) ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-red-500/20">
+                          <svg className="w-12 h-12 text-red-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                          </svg>
+                          <span className="text-xs text-red-400 font-medium">PDF</span>
+                        </div>
+                      ) : (
+                        <img src={img} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover" />
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeImage(idx)}
+                      className="absolute -top-2 -right-2 p-1.5 bg-red-500 hover:bg-red-600 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Remove"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <div className="text-xs text-white bg-black/50 backdrop-blur-sm px-2 py-1 rounded truncate">
+                        {idx + 1}. {isPDF(img) ? 'PDF Document' : 'Image'}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* SEO Fields */}

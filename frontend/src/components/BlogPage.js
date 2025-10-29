@@ -11,7 +11,8 @@ const BlogPage = () => {
   const [filter, setFilter] = useState('all');
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showCopySuccess, setShowCopySuccess] = useState(false);
   useEffect(() => {
     loadBlogs();
   }, [filter]);
@@ -55,6 +56,30 @@ const BlogPage = () => {
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
+  const copyBlogLink = () => {
+    const blogUrl = `${window.location.origin}/blog/${blogId}`;
+    navigator.clipboard.writeText(blogUrl).then(() => {
+      setShowCopySuccess(true);
+      setTimeout(() => setShowCopySuccess(false), 2000);
+    });
+  };
+
+  const nextImage = () => {
+    if (selectedBlog?.images && selectedBlog.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % selectedBlog.images.length);
+    }
+  };
+
+  const previousImage = () => {
+    if (selectedBlog?.images && selectedBlog.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + selectedBlog.images.length) % selectedBlog.images.length);
+    }
+  };
+
+  const isPDF = (url) => {
+    return url?.toLowerCase().endsWith('.pdf');
+  };
+
   const filteredBlogs = blogs.filter(blog => {
     const matchesSearch = blog.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          blog.excerpt?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -79,9 +104,33 @@ const BlogPage = () => {
                 </svg>
                 <span className="font-medium">Back to Blog</span>
               </Link>
-              <Link to="/portfolio" className="text-gray-400 hover:text-white transition-colors">
-                Portfolio
-              </Link>
+              <div className="flex items-center gap-3">
+                {/* Copy Link Button */}
+                <button
+                  onClick={copyBlogLink}
+                  className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white transition-all"
+                  title="Copy link to this blog"
+                >
+                  {showCopySuccess ? (
+                    <>
+                      <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-green-400">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                      </svg>
+                      <span>Share</span>
+                    </>
+                  )}
+                </button>
+                <Link to="/portfolio" className="text-gray-400 hover:text-white transition-colors">
+                  Portfolio
+                </Link>
+              </div>
             </div>
           </div>
         </header>
@@ -134,6 +183,102 @@ const BlogPage = () => {
                 alt={selectedBlog.title}
                 className="w-full h-auto object-cover"
               />
+            </div>
+          )}
+
+          {/* Image Carousel / PDF Viewer */}
+          {selectedBlog.images && selectedBlog.images.length > 0 && (
+            <div className="mb-12">
+              <h3 className="text-xl font-semibold text-white mb-4">Gallery</h3>
+              <div className="relative bg-gray-800/50 rounded-2xl overflow-hidden border border-white/10">
+                {/* Main Image/PDF Display */}
+                <div className="relative aspect-video bg-gray-900/50">
+                  {isPDF(selectedBlog.images[currentImageIndex]) ? (
+                    // PDF Viewer
+                    <div className="w-full h-full flex items-center justify-center">
+                      <iframe
+                        src={selectedBlog.images[currentImageIndex]}
+                        className="w-full h-full"
+                        title={`PDF ${currentImageIndex + 1}`}
+                        style={{ minHeight: '600px' }}
+                      />
+                    </div>
+                  ) : (
+                    // Image Display
+                    <img
+                      src={selectedBlog.images[currentImageIndex]}
+                      alt={`Gallery image ${currentImageIndex + 1}`}
+                      className="w-full h-full object-contain"
+                    />
+                  )}
+                  
+                  {/* Navigation Arrows */}
+                  {selectedBlog.images.length > 1 && (
+                    <>
+                      <button
+                        onClick={previousImage}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-black/70 rounded-full text-white transition-all backdrop-blur-sm"
+                        aria-label="Previous"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={nextImage}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-black/70 rounded-full text-white transition-all backdrop-blur-sm"
+                        aria-label="Next"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </>
+                  )}
+
+                  {/* Counter */}
+                  <div className="absolute bottom-4 right-4 px-3 py-1 bg-black/70 rounded-lg text-white text-sm backdrop-blur-sm">
+                    {currentImageIndex + 1} / {selectedBlog.images.length}
+                  </div>
+
+                  {/* PDF Badge */}
+                  {isPDF(selectedBlog.images[currentImageIndex]) && (
+                    <div className="absolute top-4 left-4 px-3 py-1 bg-red-500/80 rounded-lg text-white text-sm font-medium backdrop-blur-sm flex items-center gap-1">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                      </svg>
+                      PDF
+                    </div>
+                  )}
+                </div>
+
+                {/* Thumbnail Strip */}
+                {selectedBlog.images.length > 1 && (
+                  <div className="p-4 bg-gray-900/30 flex gap-2 overflow-x-auto">
+                    {selectedBlog.images.map((img, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentImageIndex(idx)}
+                        className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                          idx === currentImageIndex
+                            ? 'border-primary-500 opacity-100'
+                            : 'border-white/10 opacity-50 hover:opacity-75'
+                        }`}
+                      >
+                        {isPDF(img) ? (
+                          <div className="w-full h-full bg-red-500/20 flex items-center justify-center">
+                            <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                          </div>
+                        ) : (
+                          <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
