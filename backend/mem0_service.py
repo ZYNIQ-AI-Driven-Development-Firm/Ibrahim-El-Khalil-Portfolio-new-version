@@ -27,16 +27,17 @@ class Mem0Service:
             # Configure Mem0 with Gemini 2.0 Flash and Chroma
             config = {
                 "llm": {
-                    "provider": "gemini",
+                    "provider": "google",
                     "config": {
                         "model": "gemini-2.0-flash-exp",
                         "temperature": 0.2,
                         "max_tokens": 2000,
-                        "top_p": 1.0
+                        "top_p": 1.0,
+                        "api_key": google_api_key
                     }
                 },
                 "embedder": {
-                    "provider": "gemini",
+                    "provider": "google",
                     "config": {
                         "model": "models/text-embedding-004",
                         "api_key": google_api_key
