@@ -16,7 +16,7 @@ class Mem0Service:
     def __init__(self):
         """Initialize Mem0 with Gemini 2.0 Flash and Chroma vector store"""
         try:
-            # Get API key from environment
+            # Get API keys from environment
             google_api_key = os.getenv('GOOGLE_API_KEY') or os.getenv('GEMINI_API_KEY')
             
             if not google_api_key:
@@ -24,25 +24,9 @@ class Mem0Service:
                 self.memory = None
                 return
             
-            # Configure Mem0 with Gemini 2.0 Flash and Chroma
+            # Configure Mem0 with minimal config - using Chroma for vector storage
+            # Mem0 will use its default embedding model
             config = {
-                "llm": {
-                    "provider": "google",
-                    "config": {
-                        "model": "gemini-2.0-flash-exp",
-                        "temperature": 0.2,
-                        "max_tokens": 2000,
-                        "top_p": 1.0,
-                        "api_key": google_api_key
-                    }
-                },
-                "embedder": {
-                    "provider": "google",
-                    "config": {
-                        "model": "models/text-embedding-004",
-                        "api_key": google_api_key
-                    }
-                },
                 "vector_store": {
                     "provider": "chroma",
                     "config": {
@@ -52,9 +36,9 @@ class Mem0Service:
                 }
             }
             
-            # Initialize Mem0
+            # Initialize Mem0 with simple config
             self.memory = Memory.from_config(config)
-            logger.info("Mem0 initialized successfully with Gemini 2.0 Flash")
+            logger.info("Mem0 initialized successfully with ChromaDB")
             
         except Exception as e:
             logger.error(f"Failed to initialize Mem0: {e}")
