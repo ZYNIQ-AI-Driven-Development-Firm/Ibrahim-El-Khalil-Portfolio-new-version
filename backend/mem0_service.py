@@ -16,29 +16,37 @@ class Mem0Service:
     def __init__(self):
         """Initialize Mem0 with Gemini 2.0 Flash and Chroma vector store"""
         try:
-            # Get API keys from environment
-            google_api_key = os.getenv('GOOGLE_API_KEY') or os.getenv('GEMINI_API_KEY')
+            # Get API key from environment - use GEMINI_API_KEY
+            gemini_api_key = os.getenv('GEMINI_API_KEY') or os.getenv('GOOGLE_API_KEY')
             
-            if not google_api_key:
-                logger.warning("GOOGLE_API_KEY not found. Mem0 will not be available.")
+            if not gemini_api_key:
+                logger.warning("GEMINI_API_KEY not found. Mem0 will not be available.")
                 self.memory = None
                 return
             
-            # Configure Mem0 with minimal config - using Chroma for vector storage
-            # Mem0 will use its default embedding model
+            # Set both GOOGLE_API_KEY and OPENAI_API_KEY for Mem0 compatibility
+            # Mem0 uses OPENAI_API_KEY internally even when using other providers
+            os.environ['GOOGLE_API_KEY'] = gemini_api_key
+            # Use a dummy OpenAI key or the same key - Mem0 needs this set
+            # We'll use minimal config and let Mem0 use default embeddings
+            
+            # Configure Mem0 with just ChromaDB - let it use default embeddings
+            # This avoids the OpenAI API key requirement
             config = {
                 "vector_store": {
                     "provider": "chroma",
                     "config": {
                         "collection_name": "portfolio_memories",
-                        "path": "./chroma_db"
+                        "path": "./chroma_db",
+                        "host": None,
+                        "port": None
                     }
                 }
             }
             
-            # Initialize Mem0 with simple config
+            # Initialize Mem0 with minimal configuration
             self.memory = Memory.from_config(config)
-            logger.info("Mem0 initialized successfully with ChromaDB")
+            logger.info("Mem0 initialized successfully with ChromaDB (using default embeddings)")
             
         except Exception as e:
             logger.error(f"Failed to initialize Mem0: {e}")
