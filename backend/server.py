@@ -47,14 +47,7 @@ logger = logging.getLogger(__name__)
 # Enable CORS with explicit origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:3001", 
-        "https://khalilpreview.space",
-        "https://www.khalilpreview.space",
-        "https://portfolio-frontend-71372052711.us-central1.run.app",
-        "https://portfolio-frontend-hgf2k2ko2a-uc.a.run.app"
-    ],
+    allow_origins=["*"],  # Allow all origins for now - restrict in production if needed
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
@@ -123,15 +116,23 @@ def health_check():
 def system_status():
     """Get comprehensive system status for admin dashboard"""
     import datetime
+    import time
+    import psutil
     from pymongo.errors import ServerSelectionTimeoutError
     
     try:
+        # Measure response time
+        start_time = time.time()
+        
         # Test database connection
         db_status = {"connected": False, "error": None, "collections": {}}
+        db_latency_start = time.time()
         try:
             # Test connection with a simple operation
             db.admin.command('ismaster')
+            db_latency = round((time.time() - db_latency_start) * 1000, 2)  # Convert to ms
             db_status["connected"] = True
+            db_status["latency"] = f"{db_latency}ms"
             
             # Get collection stats
             collections_info = {
@@ -180,11 +181,27 @@ def system_status():
         except ServerSelectionTimeoutError as e:
             db_status["connected"] = False
             db_status["error"] = "Connection timeout"
+            db_status["latency"] = "N/A"
         except Exception as e:
             db_status["connected"] = False
             db_status["error"] = str(e)
+            db_status["latency"] = "N/A"
+        
+        # Get system metrics (CPU, Memory)
+        try:
+            cpu_percent = psutil.cpu_percent(interval=0.1)
+            memory = psutil.virtual_memory()
+            memory_used_gb = round(memory.used / (1024**3), 2)
+            memory_total_gb = round(memory.total / (1024**3), 2)
+            memory_percent = memory.percent
+        except Exception:
+            cpu_percent = 0
+            memory_used_gb = 0
+            memory_total_gb = 0
+            memory_percent = 0
         
         # Backend status
+        response_time = round((time.time() - start_time) * 1000, 2)  # in ms
         backend_status = {
             "status": "healthy",
             "timestamp": datetime.datetime.utcnow().isoformat(),
@@ -207,6 +224,10 @@ def system_status():
         return {
             "overall_status": overall_status,
             "timestamp": datetime.datetime.utcnow().isoformat(),
+            "response_time": f"{response_time}ms",
+            "cpu_usage": f"{cpu_percent}%",
+            "memory_usage": f"{memory_used_gb}GB / {memory_total_gb}GB ({memory_percent}%)",
+            "uptime": "Available",
             "database": db_status,
             "backend": backend_status,
             "api_endpoints": {
