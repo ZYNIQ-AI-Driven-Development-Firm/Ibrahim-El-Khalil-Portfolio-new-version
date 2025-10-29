@@ -6,6 +6,7 @@ import Education from './components/Education';
 import Ventures from './components/Ventures';
 import OtherAchievements from './components/OtherAchievements';
 import Blog from './components/Blog';
+import BlogPage from './components/BlogPage';
 import AiChat from './components/AiChat';
 import AppointmentManager from './components/AppointmentManager';
 import AdminDashboard from './components/AdminDashboard';
@@ -263,6 +264,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<BusinessCardPage />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:blogId" element={<BlogPage />} />
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </Router>

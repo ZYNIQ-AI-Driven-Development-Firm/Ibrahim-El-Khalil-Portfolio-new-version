@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import * as API from '../services/apiService';
 
 const Blog = () => {
@@ -90,6 +91,15 @@ const Blog = () => {
               Thoughts on technology, development, and innovation
             </p>
           </div>
+          <Link
+            to="/blog"
+            className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+          >
+            View All
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </Link>
         </div>
 
         {/* Filter Buttons */}
@@ -139,7 +149,7 @@ const Blog = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {blogs.map((blog) => (
+            {blogs.slice(0, 6).map((blog) => (
               <div
                 key={blog.id}
                 onClick={() => openBlog(blog.id)}
