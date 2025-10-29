@@ -1099,7 +1099,8 @@ const ChangePasswordModal = ({ onClose }) => {
 
     setLoading(true);
     try {
-      const response = await fetch(`${API.API_URL || 'http://localhost:8001'}/api/admin/change-password`, {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const response = await fetch(`${backendUrl}/api/admin/change-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
