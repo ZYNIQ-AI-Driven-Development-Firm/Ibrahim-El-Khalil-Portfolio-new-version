@@ -3756,15 +3756,29 @@ const BlogSection = ({ blogs, setBlogs, showMessage }) => {
     setGeneratingAI(true);
     try {
       const generatedContent = await API.generateBlogWithAI(aiTopic, aiCategory, aiTone, aiLength);
-      setEditingBlog({
-        ...generatedContent,
-        category: aiCategory,
-        status: 'draft'
-      });
+      
+      // Parse and structure the generated content properly
+      const blogData = {
+        title: generatedContent.title || '',
+        excerpt: generatedContent.excerpt || '',
+        content: generatedContent.content || '',
+        category: generatedContent.category || aiCategory || '',
+        tags: Array.isArray(generatedContent.tags) ? generatedContent.tags : [],
+        seo_title: generatedContent.seo_title || generatedContent.title || '',
+        seo_description: generatedContent.seo_description || generatedContent.excerpt || '',
+        status: 'draft',
+        ai_generated: generatedContent.ai_generated || true,
+        author: 'Ibrahim El Khalil',
+        featured_image: '',
+        reading_time: Math.ceil((generatedContent.content || '').split(' ').length / 200) // Estimate reading time
+      };
+      
+      setEditingBlog(blogData);
       setShowAIModal(false);
       setShowModal(true);
       showMessage('Blog content generated! Review and save.');
     } catch (error) {
+      console.error('AI Generation Error:', error);
       showMessage('Error generating blog with AI', 'error');
     } finally {
       setGeneratingAI(false);
@@ -4177,6 +4191,45 @@ const BlogEditorModal = ({ blog, onSave, onClose }) => {
     seo_title: blog?.seo_title || '',
     seo_description: blog?.seo_description || ''
   });
+
+  // Update form data when blog prop changes (e.g., AI generation)
+  useEffect(() => {
+    if (blog) {
+      // Convert markdown to HTML if content contains markdown syntax
+      let content = blog.content || '';
+      if (content.includes('##') || content.includes('**') || content.includes('```')) {
+        // Simple markdown to HTML conversion for common elements
+        content = content
+          .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+          .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+          .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>')
+          .replace(/`(.*?)`/g, '<code>$1</code>')
+          .replace(/\n\n/g, '</p><p>')
+          .replace(/\n/g, '<br />');
+        
+        // Wrap in paragraph if not already wrapped
+        if (!content.startsWith('<')) {
+          content = '<p>' + content + '</p>';
+        }
+      }
+      
+      setFormData({
+        title: blog.title || '',
+        slug: blog.slug || '',
+        excerpt: blog.excerpt || '',
+        content: content,
+        category: blog.category || '',
+        tags: Array.isArray(blog.tags) ? blog.tags.join(', ') : (blog.tags || ''),
+        status: blog.status || 'draft',
+        featured_image: blog.featured_image || '',
+        seo_title: blog.seo_title || blog.title || '',
+        seo_description: blog.seo_description || blog.excerpt || ''
+      });
+    }
+  }, [blog]);
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
