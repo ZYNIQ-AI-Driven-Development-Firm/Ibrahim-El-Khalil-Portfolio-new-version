@@ -9,6 +9,8 @@ services:
     environment:
       MONGO_URL: ${MONGO_URL}
       DATABASE_NAME: ${DATABASE_NAME:-portfolio_db}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
       PYTHONPATH: /app
       PYTHONUNBUFFERED: 1
     ports:

@@ -36,6 +36,7 @@ from models import (
     Profile, Experience, Education, SkillCategory, Venture,
     Achievements, WhitePaper, Appointment, BlogPost
 )
+from mem0_service import get_mem0_service
 
 app = FastAPI(title="Ibrahim El Khalil Portfolio API")
 
@@ -636,13 +637,57 @@ async def generate_blog_with_ai(data: dict = Body(...)):
         if not topic:
             raise HTTPException(status_code=400, detail="Topic is required")
         
+        # Check if Gemini API is available
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key or api_key == "your-gemini-api-key-here":
+            # Return a demo blog post when API key is not available
+            word_count = {"short": 500, "medium": 1000, "long": 1500}.get(length, 1000)
+            demo_content = f"""# {topic}
+
+## Introduction
+
+This is a sample blog post about {topic}. This content is generated as a placeholder since the Gemini AI API key is not configured.
+
+## Main Content
+
+To enable AI-powered blog generation, you need to:
+
+1. Get a Gemini API key from Google AI Studio
+2. Add it to your environment variables
+3. Restart the backend service
+
+## Key Points
+
+- This feature requires a valid Gemini API key
+- The AI can generate professional content in various tones
+- Blog posts can be customized by length and category
+- Generated content includes SEO optimization
+
+## Conclusion
+
+Once properly configured, this feature will generate high-quality blog content tailored to your specifications using Google's Gemini AI model.
+
+*Note: This is demo content. Configure your Gemini API key to enable AI generation.*"""
+
+            return {
+                "title": f"Sample: {topic}",
+                "excerpt": f"This is a sample blog post about {topic}. Configure Gemini API for AI generation.",
+                "content": demo_content,
+                "tags": [category, "sample", "demo"] if category else ["sample", "demo"],
+                "seo_title": f"{topic} - Sample Blog Post",
+                "seo_description": f"Learn about {topic} in this sample blog post. Configure AI for automated content generation.",
+                "ai_generated": False,
+                "demo": True
+            }
+        
         # Import Gemini if available
         try:
             import google.generativeai as genai
-            genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+            genai.configure(api_key=api_key)
             model = genai.GenerativeModel('gemini-2.0-flash-exp')
-        except:
-            raise HTTPException(status_code=500, detail="Gemini API not configured")
+        except Exception as e:
+            logger.error(f"Failed to configure Gemini: {e}")
+            raise HTTPException(status_code=500, detail="Gemini API configuration failed")
         
         # Generate prompt based on parameters
         word_count = {"short": 500, "medium": 1000, "long": 1500}.get(length, 1000)
@@ -684,6 +729,7 @@ Format the response as JSON with the following structure:
             
             blog_data = json.loads(text.strip())
             blog_data["ai_generated"] = True
+            blog_data["demo"] = False
             return blog_data
         except:
             # If JSON parsing fails, return raw content
@@ -692,7 +738,8 @@ Format the response as JSON with the following structure:
                 "excerpt": "",
                 "content": response.text,
                 "tags": [category] if category else [],
-                "ai_generated": True
+                "ai_generated": True,
+                "demo": False
             }
     except HTTPException:
         raise
@@ -1789,6 +1836,230 @@ def populate_database_from_parsed_resume(data: dict):
             'skills': data['skills']
         }
         skills_collection.insert_one(skill_category)
+
+# ==================== AI CHAT WITH MEMORY ====================
+@app.post("/api/ai/chat")
+async def ai_chat(data: dict = Body(...)):
+    """
+    AI Chat endpoint with Mem0 memory integration
+    Provides personalized responses based on conversation history
+    """
+    try:
+        message = data.get("message", "")
+        user_id = data.get("user_id", "anonymous")
+        session_id = data.get("session_id", str(uuid.uuid4()))
+        
+        if not message:
+            raise HTTPException(status_code=400, detail="Message is required")
+        
+        # Get Mem0 service
+        mem0_service = get_mem0_service()
+        
+        # Get AI instructions from database
+        instructions_doc = db['ai_instructions'].find_one({})
+        system_instruction = instructions_doc.get('instructions') if instructions_doc else None
+        
+        if not system_instruction:
+            system_instruction = """You are Ibrahim El Khalil's AI assistant. You help visitors learn about his portfolio, skills, and experience.
+            
+Be professional, friendly, and helpful. Provide accurate information about Ibrahim's:
+- Professional experience and projects
+- Technical skills and expertise
+- Education and achievements
+- Ventures and entrepreneurial activities
+
+If you remember previous conversations with the user, use that context to provide personalized responses."""
+        
+        # Get relevant context from memories
+        memory_context = ""
+        if mem0_service.is_available():
+            memory_context = mem0_service.get_context_for_chat(message, user_id, limit=3)
+        
+        # Import Gemini
+        try:
+            import google.generativeai as genai
+            api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+            
+            if not api_key or api_key == "your-gemini-api-key-here":
+                return {
+                    "response": "I'm currently in demo mode. Please configure the Gemini API key to enable AI chat functionality.",
+                    "has_memory": False
+                }
+            
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-2.0-flash-exp')
+            
+            # Build the prompt with memory context
+            full_prompt = system_instruction
+            if memory_context:
+                full_prompt += f"\n\n{memory_context}\n\nUser's current question: {message}"
+            else:
+                full_prompt += f"\n\nUser's question: {message}"
+            
+            # Generate response
+            response = model.generate_content(full_prompt)
+            ai_response = response.text
+            
+            # Store conversation in memory
+            if mem0_service.is_available():
+                conversation = [
+                    {"role": "user", "content": message},
+                    {"role": "assistant", "content": ai_response}
+                ]
+                mem0_service.add_conversation(
+                    conversation,
+                    user_id=user_id,
+                    metadata={
+                        "session_id": session_id,
+                        "timestamp": datetime.utcnow().isoformat()
+                    }
+                )
+            
+            # Track analytics
+            analytics_collection.update_one(
+                {},
+                {"$inc": {"ai_chat_sessions": 1}},
+                upsert=True
+            )
+            
+            return {
+                "response": ai_response,
+                "has_memory": mem0_service.is_available(),
+                "session_id": session_id
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in AI chat: {e}")
+            raise HTTPException(status_code=500, detail=f"AI chat error: {str(e)}")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in AI chat endpoint: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== MEMORY MANAGEMENT ====================
+@app.get("/api/memories")
+async def get_memories(user_id: str = "anonymous", limit: Optional[int] = None):
+    """Get all memories for a user"""
+    try:
+        mem0_service = get_mem0_service()
+        
+        if not mem0_service.is_available():
+            return {
+                "success": False,
+                "message": "Memory service not available",
+                "memories": []
+            }
+        
+        if limit:
+            # Search with limit
+            memories = mem0_service.search_memories("", user_id, limit)
+        else:
+            # Get all memories
+            memories = mem0_service.get_all_memories(user_id)
+        
+        return {
+            "success": True,
+            "memories": memories,
+            "count": len(memories)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting memories: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/memories/search")
+async def search_memories(data: dict = Body(...)):
+    """Search memories by query"""
+    try:
+        query = data.get("query", "")
+        user_id = data.get("user_id", "anonymous")
+        limit = data.get("limit", 5)
+        
+        mem0_service = get_mem0_service()
+        
+        if not mem0_service.is_available():
+            return {
+                "success": False,
+                "message": "Memory service not available",
+                "results": []
+            }
+        
+        results = mem0_service.search_memories(query, user_id, limit)
+        
+        return {
+            "success": True,
+            "results": results,
+            "count": len(results)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error searching memories: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/memories/{memory_id}")
+async def delete_memory(memory_id: str):
+    """Delete a specific memory"""
+    try:
+        mem0_service = get_mem0_service()
+        
+        if not mem0_service.is_available():
+            raise HTTPException(status_code=503, detail="Memory service not available")
+        
+        success = mem0_service.delete_memory(memory_id)
+        
+        if success:
+            return {"success": True, "message": "Memory deleted"}
+        else:
+            raise HTTPException(status_code=404, detail="Memory not found or could not be deleted")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting memory: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/memories/user/{user_id}")
+async def delete_all_user_memories(user_id: str):
+    """Delete all memories for a user"""
+    try:
+        mem0_service = get_mem0_service()
+        
+        if not mem0_service.is_available():
+            raise HTTPException(status_code=503, detail="Memory service not available")
+        
+        success = mem0_service.delete_all_memories(user_id)
+        
+        if success:
+            return {"success": True, "message": f"All memories deleted for user {user_id}"}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to delete memories")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting user memories: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/memories/status")
+async def get_memory_status():
+    """Check if memory service is available and get stats"""
+    try:
+        mem0_service = get_mem0_service()
+        
+        return {
+            "available": mem0_service.is_available(),
+            "provider": "Mem0 with Gemini 2.0 Flash" if mem0_service.is_available() else None,
+            "vector_store": "ChromaDB" if mem0_service.is_available() else None
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting memory status: {e}")
+        return {
+            "available": False,
+            "error": str(e)
+        }
 
 if __name__ == "__main__":
     import uvicorn

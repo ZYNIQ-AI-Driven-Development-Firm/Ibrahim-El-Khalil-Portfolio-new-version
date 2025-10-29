@@ -68,7 +68,7 @@ steps:
       - '--max-instances'
       - '10'
       - '--set-env-vars'
-      - 'MONGO_URL=${_MONGO_URL},DATABASE_NAME=${_DATABASE_NAME},PYTHONUNBUFFERED=1'
+      - 'MONGO_URL=${_MONGO_URL},DATABASE_NAME=${_DATABASE_NAME},GEMINI_API_KEY=${_GEMINI_API_KEY},GOOGLE_API_KEY=${_GEMINI_API_KEY},PYTHONUNBUFFERED=1'
     waitFor: ['push-backend']
 
   # Deploy Frontend to Cloud Run

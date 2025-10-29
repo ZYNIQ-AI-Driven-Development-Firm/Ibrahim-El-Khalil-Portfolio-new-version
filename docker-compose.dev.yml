@@ -26,6 +26,8 @@ services:
     environment:
       MONGO_URL: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-password}@mongodb:27017/${DATABASE_NAME:-portfolio_db}?authSource=admin
       DATABASE_NAME: ${DATABASE_NAME:-portfolio_db}
+      GEMINI_API_KEY: AIzaSyBbE2dQMNfvQYHjS5QaOTHa3MJNcOr5dD0
+      GOOGLE_API_KEY: AIzaSyBbE2dQMNfvQYHjS5QaOTHa3MJNcOr5dD0
       PYTHONPATH: /app
       PYTHONUNBUFFERED: 1
     ports:
@@ -56,7 +58,7 @@ services:
     restart: unless-stopped
     environment:
       REACT_APP_API_URL: http://localhost:8001/api
-      REACT_APP_BACKEND_URL: http://backend:8001
+      REACT_APP_BACKEND_URL: http://localhost:8001
     ports:
       - "3000:3000"
     depends_on:
