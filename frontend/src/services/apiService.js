@@ -2,15 +2,30 @@ import { PROFILE_DATA, SOCIAL_LINKS, EXPERIENCE_DATA, EDUCATION_DATA, SKILLS_DAT
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
+// Helper to get auth headers
+const getAuthHeaders = () => {
+  const authToken = localStorage.getItem('adminAuth');
+  return authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
+};
+
 // Helper function for API calls
 const apiCall = async (endpoint, options = {}) => {
   try {
+    // Add auth headers for write operations
+    const isWriteOperation = options.method && ['POST', 'PUT', 'DELETE'].includes(options.method.toUpperCase());
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+    
+    // Add authorization header for write operations
+    if (isWriteOperation) {
+      Object.assign(headers, getAuthHeaders());
+    }
+    
     const response = await fetch(`${API_URL}${endpoint}`, {
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+      headers,
     });
     
     if (!response.ok) {
