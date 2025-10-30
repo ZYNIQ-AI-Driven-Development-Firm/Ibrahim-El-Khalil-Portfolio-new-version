@@ -1,14 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { RESUME_DATA_FOR_AI } from '../constants';
 
-// For Create React App, we need to use REACT_APP_ prefix
-const API_KEY = process.env.REACT_APP_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
-
-if (!API_KEY) {
-  console.error("Gemini API key is missing. Please set the REACT_APP_GEMINI_API_KEY environment variable.");
-}
-
-const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
+// Note: We're using the backend API for AI chat, so we don't need the API key in frontend
+// The backend handles the Gemini API integration securely
+const genAI = null; // Not used - backend handles AI integration
 
 // Cache for AI instructions
 let cachedInstructions = null;
@@ -23,7 +18,8 @@ const fetchAIInstructions = async () => {
   }
 
   try {
-    const response = await fetch('/api/ai-instructions');
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+    const response = await fetch(`${backendUrl}/api/ai-instructions`);
     if (response.ok) {
       const data = await response.json();
       cachedInstructions = data.instructions;
