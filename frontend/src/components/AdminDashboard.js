@@ -2956,6 +2956,8 @@ const AIInstructionsSection = ({ aiInstructions, setAiInstructions, showMessage 
     setLoading(true);
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      console.log('Loading AI instructions from:', `${backendUrl}/api/ai-instructions`);
+      console.log('REACT_APP_BACKEND_URL:', process.env.REACT_APP_BACKEND_URL);
       const response = await fetch(`${backendUrl}/api/ai-instructions`);
       if (response.ok) {
         const data = await response.json();
@@ -2963,11 +2965,17 @@ const AIInstructionsSection = ({ aiInstructions, setAiInstructions, showMessage 
         setAiInstructions(instructions);
         setEditedInstructions(instructions);
       } else {
+        console.error('Failed to load AI instructions. Response status:', response.status);
+        console.error('Response headers:', [...response.headers.entries()]);
+        const errorText = await response.text();
+        console.error('Error response body:', errorText);
         showMessage('Error loading AI instructions', 'error');
       }
     } catch (error) {
       console.error('Error loading AI instructions:', error);
-      showMessage('Error loading AI instructions', 'error');
+      console.error('Error type:', error.constructor.name);
+      console.error('Error message:', error.message);
+      showMessage(`Error loading AI instructions: ${error.message}`, 'error');
     } finally {
       setLoading(false);
     }
