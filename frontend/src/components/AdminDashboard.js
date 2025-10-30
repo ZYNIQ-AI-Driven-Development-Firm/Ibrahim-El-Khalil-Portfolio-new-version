@@ -2955,12 +2955,15 @@ const AIInstructionsSection = ({ aiInstructions, setAiInstructions, showMessage 
   const loadAIInstructions = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/ai-instructions');
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const response = await fetch(`${backendUrl}/api/ai-instructions`);
       if (response.ok) {
         const data = await response.json();
         const instructions = data.instructions || '';
         setAiInstructions(instructions);
         setEditedInstructions(instructions);
+      } else {
+        showMessage('Error loading AI instructions', 'error');
       }
     } catch (error) {
       console.error('Error loading AI instructions:', error);
@@ -2973,9 +2976,13 @@ const AIInstructionsSection = ({ aiInstructions, setAiInstructions, showMessage 
   const handleSave = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/ai-instructions', {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const response = await fetch(`${backendUrl}/api/ai-instructions`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('adminAuth')}`
+        },
         body: JSON.stringify({ instructions: editedInstructions }),
       });
       

@@ -27,7 +27,7 @@ except Exception:
     HAS_REPORTLAB = False
 
 from database import (
-    db, profile_collection, experience_collection, education_collection,
+    db, client, profile_collection, experience_collection, education_collection,
     skills_collection, ventures_collection, achievements_collection,
     whitepapers_collection, appointments_collection, analytics_collection,
     blogs_collection, is_mongodb_available
@@ -138,8 +138,11 @@ def system_status():
         db_status = {"connected": False, "error": None, "collections": {}}
         db_latency_start = time.time()
         try:
+            if db is None:
+                raise Exception("Database connection not initialized")
+            
             # Test connection with a simple operation
-            db.admin.command('ismaster')
+            client.admin.command('ismaster')
             db_latency = round((time.time() - db_latency_start) * 1000, 2)  # Convert to ms
             db_status["connected"] = True
             db_status["latency"] = f"{db_latency}ms"
@@ -218,8 +221,10 @@ def system_status():
             "uptime": "Available", # Could implement actual uptime tracking
             "version": "1.0.0",
             "environment": {
-                "has_gemini_api": bool(os.getenv('GEMINI_API_KEY')),
-                "has_mongo_uri": bool(os.getenv('MONGODB_URI')),
+                "has_gemini_api": bool(os.getenv('GEMINI_API_KEY') or os.getenv('GOOGLE_API_KEY')),
+                "has_mongo_uri": bool(os.getenv('MONGO_URL') or os.getenv('MONGODB_URI')),
+                "has_admin_password": bool(ADMIN_PASSWORD),
+                "has_cors_origins": True,  # CORS is configured in the app
                 "port": os.getenv('PORT', '8001')
             }
         }
@@ -317,12 +322,16 @@ async def change_admin_password(data: dict = Body(...), authorization: Annotated
     """Change admin password (Admin only)"""
     global ADMIN_PASSWORD
     
-    # Verify current password
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Authorization required")
+    # Get current password from request body or authorization header
+    current_password = data.get("current_password")
+    if not current_password and authorization:
+        current_password = authorization.replace('Bearer ', '')
     
-    current_auth = authorization.replace('Bearer ', '')
-    if current_auth != ADMIN_PASSWORD:
+    if not current_password:
+        raise HTTPException(status_code=400, detail="Current password is required")
+    
+    # Verify current password
+    if current_password != ADMIN_PASSWORD:
         raise HTTPException(status_code=401, detail="Current password is incorrect")
     
     # Validate new password
@@ -914,12 +923,16 @@ def update_env_variables(env_vars: dict = Body(...)):
 @app.get("/api/ai-instructions")
 def get_ai_instructions():
     """Get AI chat instructions"""
-    # Try to get from database first
-    instructions_doc = db['ai_instructions'].find_one({})
-    if instructions_doc and 'instructions' in instructions_doc:
-        return {"instructions": instructions_doc['instructions']}
+    try:
+        # Try to get from database first
+        require_database()
+        instructions_doc = db['ai_instructions'].find_one({})
+        if instructions_doc and 'instructions' in instructions_doc:
+            return {"instructions": instructions_doc['instructions']}
+    except Exception as e:
+        logger.warning(f"Could not load AI instructions from database: {e}")
     
-    # Return default instructions if not found
+    # Return default instructions if not found or database unavailable
     default_instructions = """You are Ibrahim El Khalil's AI assistant, helping visitors learn about his portfolio and capabilities.
 
 Key Guidelines:
@@ -937,6 +950,7 @@ Remember to maintain a conversational tone while being informative and respectfu
 def update_ai_instructions(data: dict = Body(...)):
     """Update AI chat instructions"""
     try:
+        require_database()
         instructions = data.get('instructions', '')
         
         # Upsert to database
@@ -948,6 +962,7 @@ def update_ai_instructions(data: dict = Body(...)):
         
         return {"success": True, "message": "AI instructions updated successfully"}
     except Exception as e:
+        logger.error(f"Error updating AI instructions: {e}")
         raise HTTPException(status_code=500, detail=f"Error updating AI instructions: {str(e)}")
 
 # ==================== THEME ====================
