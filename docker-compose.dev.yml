@@ -60,6 +60,7 @@ services:
     environment:
       REACT_APP_API_URL: http://localhost:8001/api
       REACT_APP_BACKEND_URL: http://localhost:8001
+      REACT_APP_GEMINI_API_KEY: ${GEMINI_API_KEY}
     ports:
       - "3000:3000"
     depends_on:
