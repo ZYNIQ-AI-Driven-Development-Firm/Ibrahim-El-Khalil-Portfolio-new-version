@@ -2036,6 +2036,146 @@ If you remember previous conversations with the user, use that context to provid
         raise HTTPException(status_code=500, detail=str(e))
 
 # ==================== MEMORY MANAGEMENT ====================
+# ==================== SECTION VISIBILITY SETTINGS ====================
+@app.get("/api/section-visibility")
+async def get_section_visibility():
+    """Get section visibility settings for portfolio"""
+    try:
+        if not is_mongodb_available():
+            # Return default settings if MongoDB is not available
+            default_sections = [
+                {"section_name": "hero", "is_visible": True, "display_order": 0},
+                {"section_name": "ventures", "is_visible": True, "display_order": 1},
+                {"section_name": "experience", "is_visible": True, "display_order": 2},
+                {"section_name": "education", "is_visible": True, "display_order": 3},
+                {"section_name": "achievements", "is_visible": True, "display_order": 4},
+                {"section_name": "blog", "is_visible": True, "display_order": 5}
+            ]
+            return {"sections": default_sections}
+        
+        collection = db['section_visibility']
+        sections = list(collection.find({}, {"_id": 0}))
+        
+        # If no settings exist, create default ones
+        if not sections:
+            default_sections = [
+                {"section_name": "hero", "is_visible": True, "display_order": 0, "last_updated": datetime.now().isoformat()},
+                {"section_name": "ventures", "is_visible": True, "display_order": 1, "last_updated": datetime.now().isoformat()},
+                {"section_name": "experience", "is_visible": True, "display_order": 2, "last_updated": datetime.now().isoformat()},
+                {"section_name": "education", "is_visible": True, "display_order": 3, "last_updated": datetime.now().isoformat()},
+                {"section_name": "achievements", "is_visible": True, "display_order": 4, "last_updated": datetime.now().isoformat()},
+                {"section_name": "blog", "is_visible": True, "display_order": 5, "last_updated": datetime.now().isoformat()}
+            ]
+            
+            # Insert default settings
+            collection.insert_many(default_sections)
+            sections = default_sections
+        
+        return {"sections": sections}
+        
+    except Exception as e:
+        logger.error(f"Error getting section visibility: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/admin/section-visibility")
+async def update_section_visibility(sections_data: dict = Body(...), _: bool = Depends(verify_admin_auth)):
+    """Update section visibility settings (Admin only)"""
+    try:
+        if not is_mongodb_available():
+            raise HTTPException(status_code=503, detail="Database not available")
+        
+        collection = db['section_visibility']
+        sections = sections_data.get('sections', [])
+        
+        # Update each section
+        for section in sections:
+            section['last_updated'] = datetime.now().isoformat()
+            collection.update_one(
+                {"section_name": section['section_name']},
+                {"$set": section},
+                upsert=True
+            )
+        
+        return {"success": True, "message": "Section visibility updated successfully"}
+        
+    except Exception as e:
+        logger.error(f"Error updating section visibility: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/admin/portfolio-settings")
+async def get_portfolio_settings(_: bool = Depends(verify_admin_auth)):
+    """Get portfolio settings including section visibility (Admin only)"""
+    try:
+        if not is_mongodb_available():
+            return {
+                "maintenance_mode": False,
+                "show_ai_chat": True,
+                "show_appointment_booking": True,
+                "analytics_enabled": True,
+                "section_visibility": []
+            }
+        
+        settings_collection = db['portfolio_settings']
+        visibility_collection = db['section_visibility']
+        
+        # Get general settings
+        settings = settings_collection.find_one({}, {"_id": 0})
+        if not settings:
+            settings = {
+                "maintenance_mode": False,
+                "show_ai_chat": True,
+                "show_appointment_booking": True,
+                "analytics_enabled": True
+            }
+        
+        # Get section visibility
+        sections = list(visibility_collection.find({}, {"_id": 0}))
+        settings['section_visibility'] = sections
+        
+        return settings
+        
+    except Exception as e:
+        logger.error(f"Error getting portfolio settings: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/admin/portfolio-settings")
+async def update_portfolio_settings(settings_data: dict = Body(...), _: bool = Depends(verify_admin_auth)):
+    """Update portfolio settings (Admin only)"""
+    try:
+        if not is_mongodb_available():
+            raise HTTPException(status_code=503, detail="Database not available")
+        
+        settings_collection = db['portfolio_settings']
+        
+        # Extract section visibility from settings
+        sections = settings_data.pop('section_visibility', [])
+        
+        # Update general settings
+        settings_data['last_updated'] = datetime.now().isoformat()
+        settings_collection.update_one(
+            {},
+            {"$set": settings_data},
+            upsert=True
+        )
+        
+        # Update section visibility if provided
+        if sections:
+            visibility_collection = db['section_visibility']
+            for section in sections:
+                section['last_updated'] = datetime.now().isoformat()
+                visibility_collection.update_one(
+                    {"section_name": section['section_name']},
+                    {"$set": section},
+                    upsert=True
+                )
+        
+        return {"success": True, "message": "Portfolio settings updated successfully"}
+        
+    except Exception as e:
+        logger.error(f"Error updating portfolio settings: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== MEMORY ENDPOINTS ====================
 @app.get("/api/memories")
 async def get_memories(user_id: str = "anonymous", limit: Optional[int] = None):
     """Get all memories for a user"""

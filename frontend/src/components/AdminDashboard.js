@@ -30,6 +30,8 @@ const AdminDashboard = () => {
   const [envVars, setEnvVars] = useState({});
   const [aiInstructions, setAiInstructions] = useState('');
   const [systemStatus, setSystemStatus] = useState(null);
+  const [sectionVisibility, setSectionVisibility] = useState([]);
+  const [portfolioSettings, setPortfolioSettings] = useState({});
 
   // Editing states
   const [editingItem, setEditingItem] = useState(null);
@@ -170,7 +172,7 @@ const AdminDashboard = () => {
   const loadAllData = async () => {
     setLoading(true);
     try {
-      const [profileData, expData, eduData, skillsData, venturesData, achData, papersData, aptData, analyticsData, statusData] = await Promise.all([
+      const [profileData, expData, eduData, skillsData, venturesData, achData, papersData, aptData, analyticsData, statusData, sectionsData, settingsData] = await Promise.all([
         API.getProfile().catch(() => null),
         API.getExperience(),
         API.getEducation(),
@@ -180,7 +182,9 @@ const AdminDashboard = () => {
         API.getWhitePapers(),
         API.getAppointments(),
         API.getAnalytics(),
-        API.getSystemStatus().catch(() => null)
+        API.getSystemStatus().catch(() => null),
+        API.getSectionVisibility().catch(() => ({ sections: [] })),
+        API.getPortfolioSettings().catch(() => ({}))
       ]);
       
       setProfile(profileData);
@@ -193,6 +197,8 @@ const AdminDashboard = () => {
       setAppointments(aptData);
       setAnalytics(analyticsData);
       setSystemStatus(statusData);
+      setSectionVisibility(sectionsData.sections || []);
+      setPortfolioSettings(settingsData);
     } catch (error) {
       console.error('Error loading data:', error);
       showMessage('Error loading data', 'error');
@@ -546,6 +552,12 @@ const AdminDashboard = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             )},
+            { id: 'sections', label: 'Section Visibility', icon: (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            )},
             { id: 'appointments', label: 'Appointments', icon: (
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -790,6 +802,15 @@ const AdminDashboard = () => {
                 <BlogSection 
                   blogs={blogs}
                   setBlogs={setBlogs}
+                  showMessage={showMessage}
+                />
+              )}
+              {activeSection === 'sections' && (
+                <SectionVisibilitySection 
+                  sectionVisibility={sectionVisibility}
+                  setSectionVisibility={setSectionVisibility}
+                  portfolioSettings={portfolioSettings}
+                  setPortfolioSettings={setPortfolioSettings}
                   showMessage={showMessage}
                 />
               )}
@@ -5036,6 +5057,293 @@ const BlogEditorModal = ({ blog, onSave, onClose }) => {
               Cancel
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ==================== SECTION VISIBILITY SECTION ====================
+const SectionVisibilitySection = ({ sectionVisibility, setSectionVisibility, portfolioSettings, setPortfolioSettings, showMessage }) => {
+  const [loading, setLoading] = useState(false);
+  const [sections, setSections] = useState([]);
+
+  useEffect(() => {
+    if (sectionVisibility && sectionVisibility.length > 0) {
+      setSections([...sectionVisibility].sort((a, b) => a.display_order - b.display_order));
+    } else {
+      // Initialize with default sections if none exist
+      const defaultSections = [
+        { section_name: 'hero', is_visible: true, display_order: 0, description: 'Hero section with profile intro' },
+        { section_name: 'ventures', is_visible: true, display_order: 1, description: 'Business ventures and projects' },
+        { section_name: 'experience', is_visible: true, display_order: 2, description: 'Professional work experience' },
+        { section_name: 'education', is_visible: true, display_order: 3, description: 'Educational background' },
+        { section_name: 'achievements', is_visible: true, display_order: 4, description: 'Certificates and hackathons' },
+        { section_name: 'blog', is_visible: true, display_order: 5, description: 'Blog posts and insights' }
+      ];
+      setSections(defaultSections);
+    }
+  }, [sectionVisibility]);
+
+  const handleToggleVisibility = (sectionName) => {
+    setSections(sections.map(section => 
+      section.section_name === sectionName 
+        ? { ...section, is_visible: !section.is_visible }
+        : section
+    ));
+  };
+
+  const handleReorderSection = (sectionName, direction) => {
+    const currentIndex = sections.findIndex(s => s.section_name === sectionName);
+    if (currentIndex === -1) return;
+
+    const newSections = [...sections];
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+
+    if (targetIndex < 0 || targetIndex >= newSections.length) return;
+
+    // Swap the sections
+    [newSections[currentIndex], newSections[targetIndex]] = [newSections[targetIndex], newSections[currentIndex]];
+    
+    // Update display orders
+    newSections.forEach((section, index) => {
+      section.display_order = index;
+    });
+
+    setSections(newSections);
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      await API.updateSectionVisibility(sections);
+      setSectionVisibility(sections);
+      showMessage('Section visibility updated successfully!', 'success');
+    } catch (error) {
+      console.error('Error updating section visibility:', error);
+      showMessage('Error updating section visibility', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getSectionIcon = (sectionName) => {
+    const icons = {
+      hero: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      ),
+      ventures: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      ),
+      experience: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0H8m8 0v6l-1 1-1-1V6H8v6l-1 1-1-1V6" />
+        </svg>
+      ),
+      education: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+        </svg>
+      ),
+      achievements: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+        </svg>
+      ),
+      blog: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+        </svg>
+      )
+    };
+    return icons[sectionName] || icons.hero;
+  };
+
+  const getSectionLabel = (sectionName) => {
+    const labels = {
+      hero: 'Hero Section',
+      ventures: 'Ventures',
+      experience: 'Experience',
+      education: 'Education',
+      achievements: 'Achievements',
+      blog: 'Blog & Insights'
+    };
+    return labels[sectionName] || sectionName.charAt(0).toUpperCase() + sectionName.slice(1);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold flex items-center gap-3">
+            <svg className="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            Portfolio Section Visibility
+          </h2>
+          <p className="text-gray-400 mt-1">Control which sections are visible on your portfolio</p>
+        </div>
+        
+        <button
+          onClick={handleSave}
+          disabled={loading}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:opacity-50 text-white rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+        >
+          {loading ? (
+            <>
+              <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Saving...
+            </>
+          ) : (
+            <>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              Save Changes
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Settings Cards */}
+      <div className="grid gap-4">
+        <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            </svg>
+            Section Order & Visibility
+          </h3>
+          <p className="text-gray-400 text-sm mb-6">Drag to reorder sections, toggle visibility, and control what visitors see on your portfolio.</p>
+          
+          <div className="space-y-3">
+            {sections.map((section, index) => (
+              <div
+                key={section.section_name}
+                className={`p-4 rounded-lg border transition-all ${
+                  section.is_visible 
+                    ? 'bg-gray-900/50 border-gray-600' 
+                    : 'bg-gray-900/20 border-gray-700 opacity-60'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    {/* Visibility Toggle */}
+                    <button
+                      onClick={() => handleToggleVisibility(section.section_name)}
+                      className={`p-2 rounded-lg transition-colors ${
+                        section.is_visible 
+                          ? 'bg-green-600 text-white' 
+                          : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                      }`}
+                      title={section.is_visible ? 'Hide Section' : 'Show Section'}
+                    >
+                      {section.is_visible ? (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L8.464 8.464m1.414 1.414l-1.414-1.414m2.829 2.829l4.243 4.243m0 0a3 3 0 104.243-4.243m-4.243 4.243L15.172 15.172m0-6.364L19.071 4.93m0 0a3 3 0 10-4.243 4.243m4.243-4.243L8.464 15.536" />
+                        </svg>
+                      )}
+                    </button>
+
+                    {/* Section Info */}
+                    <div className="flex items-center gap-3">
+                      <div className="text-gray-400">
+                        {getSectionIcon(section.section_name)}
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-white">{getSectionLabel(section.section_name)}</h4>
+                        <p className="text-sm text-gray-500">
+                          {section.description || `${getSectionLabel(section.section_name)} content`}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Order Controls */}
+                  <div className="flex items-center gap-2">
+                    <div className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded">
+                      #{section.display_order + 1}
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <button
+                        onClick={() => handleReorderSection(section.section_name, 'up')}
+                        disabled={index === 0}
+                        className="p-1 text-gray-400 hover:text-white hover:bg-gray-700 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        title="Move Up"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleReorderSection(section.section_name, 'down')}
+                        disabled={index === sections.length - 1}
+                        className="p-1 text-gray-400 hover:text-white hover:bg-gray-700 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        title="Move Down"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {sections.length === 0 && (
+            <div className="text-center py-12">
+              <svg className="w-16 h-16 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <p className="text-gray-400">No sections configured</p>
+            </div>
+          )}
+        </div>
+
+        {/* Preview */}
+        <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            Portfolio Preview Order
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {sections
+              .filter(section => section.is_visible)
+              .map((section, index) => (
+                <div 
+                  key={section.section_name}
+                  className="flex items-center gap-2 px-3 py-2 bg-green-600/20 border border-green-500/30 rounded-lg text-green-300 text-sm"
+                >
+                  <span className="text-xs text-green-500">#{index + 1}</span>
+                  {getSectionIcon(section.section_name)}
+                  {getSectionLabel(section.section_name)}
+                </div>
+              ))}
+          </div>
+          {sections.filter(s => s.is_visible).length === 0 && (
+            <p className="text-gray-500 text-sm">No visible sections - portfolio will be empty</p>
+          )}
         </div>
       </div>
     </div>

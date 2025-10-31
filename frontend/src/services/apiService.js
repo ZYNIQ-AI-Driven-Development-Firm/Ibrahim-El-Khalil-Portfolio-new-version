@@ -338,3 +338,26 @@ export const generateBlogWithAI = async (topic, category, tone = 'professional',
     body: JSON.stringify({ topic, category, tone, length }),
   });
 };
+
+// ==================== SECTION VISIBILITY ====================
+export const getSectionVisibility = async () => {
+  return await apiCall('/api/section-visibility');
+};
+
+export const updateSectionVisibility = async (sections) => {
+  return await apiCall('/api/admin/section-visibility', {
+    method: 'POST',
+    body: JSON.stringify({ sections }),
+  });
+};
+
+export const getPortfolioSettings = async () => {
+  return await apiCall('/api/admin/portfolio-settings');
+};
+
+export const updatePortfolioSettings = async (settings) => {
+  return await apiCall('/api/admin/portfolio-settings', {
+    method: 'POST',
+    body: JSON.stringify(settings),
+  });
+};

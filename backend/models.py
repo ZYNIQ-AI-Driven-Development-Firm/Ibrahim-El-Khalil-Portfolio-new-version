@@ -109,3 +109,19 @@ class BlogPost(BaseModel):
     seo_title: Optional[str] = None
     seo_description: Optional[str] = None
     ai_generated: bool = False
+
+class SectionVisibility(BaseModel):
+    id: Optional[str] = None
+    section_name: str  # 'hero', 'ventures', 'experience', 'education', 'achievements', 'blog'
+    is_visible: bool = True
+    display_order: int = 0
+    last_updated: Optional[str] = None
+
+class PortfolioSettings(BaseModel):
+    id: Optional[str] = None
+    maintenance_mode: bool = False
+    show_ai_chat: bool = True
+    show_appointment_booking: bool = True
+    custom_css: Optional[str] = None
+    analytics_enabled: bool = True
+    section_visibility: List[SectionVisibility] = []
