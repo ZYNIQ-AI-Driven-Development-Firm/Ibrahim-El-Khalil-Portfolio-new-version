@@ -3911,6 +3911,15 @@ const BlogSection = ({ blogs, setBlogs, showMessage }) => {
   const [viewMode, setViewMode] = useState('table');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [showPreview, setShowPreview] = useState(false);
+  const [showSEOPanel, setShowSEOPanel] = useState(false);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [editorMode, setEditorMode] = useState('wysiwyg'); // 'wysiwyg', 'markdown', 'code'
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [availableTags, setAvailableTags] = useState([
+    'Technology', 'AI', 'Web Development', 'Mobile', 'Backend', 'Frontend',
+    'DevOps', 'Cloud', 'Database', 'Security', 'UI/UX', 'Business', 'Tutorial'
+  ]);
 
   useEffect(() => {
     loadBlogs();
@@ -4400,49 +4409,103 @@ const BlogEditorModal = ({ blog, onSave, onClose }) => {
     featured_image: blog?.featured_image || '',
     images: blog?.images || [],
     seo_title: blog?.seo_title || '',
-    seo_description: blog?.seo_description || ''
+    seo_description: blog?.seo_description || '',
+    reading_time: blog?.reading_time || 0,
+    scheduled_date: blog?.scheduled_date || '',
+    meta_keywords: blog?.meta_keywords || '',
+    canonical_url: blog?.canonical_url || ''
   });
   const [newImageUrl, setNewImageUrl] = useState('');
+  const [editorMode, setEditorMode] = useState('wysiwyg');
+  const [showPreview, setShowPreview] = useState(false);
+  const [showSEOPanel, setShowSEOPanel] = useState(false);
+  const [wordCount, setWordCount] = useState(0);
+  const [availableTags] = useState([
+    'Technology', 'AI', 'Web Development', 'Mobile', 'Backend', 'Frontend',
+    'DevOps', 'Cloud', 'Database', 'Security', 'UI/UX', 'Business', 'Tutorial', 
+    'React', 'JavaScript', 'Python', 'Node.js', 'Machine Learning', 'Blockchain'
+  ]);
+
+  // Calculate reading time based on word count
+  const calculateReadingTime = (text) => {
+    const wordsPerMinute = 200; // Average reading speed
+    const words = text.split(/\s+/).filter(word => word.length > 0).length;
+    const readingTime = Math.ceil(words / wordsPerMinute);
+    setWordCount(words);
+    return readingTime;
+  };
+
+  // Enhanced markdown to HTML conversion
+  const convertMarkdownToHTML = (markdown) => {
+    if (!markdown) return '';
+    
+    // Enhanced markdown parsing with code syntax highlighting
+    let html = markdown
+      // Code blocks with language specification
+      .replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+        const language = lang || 'javascript';
+        return `<pre class="bg-gray-800 rounded-lg p-4 overflow-x-auto"><code class="language-${language} text-sm">${code.trim()}</code></pre>`;
+      })
+      // Headers
+      .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold mt-6 mb-3 text-white">$1</h3>')
+      .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-8 mb-4 text-white">$1</h2>')
+      .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mt-8 mb-6 text-white">$1</h1>')
+      // Bold and italic
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em class="italic text-gray-300">$1</em>')
+      // Inline code
+      .replace(/`(.*?)`/g, '<code class="bg-gray-800 px-2 py-1 rounded text-sm font-mono text-green-400">$1</code>')
+      // Links
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-red-400 hover:text-red-300 underline" target="_blank" rel="noopener noreferrer">$1</a>')
+      // Lists
+      .replace(/^\* (.*$)/gm, '<li class="ml-4 mb-1 text-gray-300">• $1</li>')
+      // Blockquotes
+      .replace(/^> (.*$)/gm, '<blockquote class="border-l-4 border-red-500 pl-4 italic text-gray-400 my-4">$1</blockquote>')
+      // Line breaks and paragraphs
+      .replace(/\n\n/g, '</p><p class="mb-4 text-gray-300 leading-relaxed">')
+      .replace(/\n/g, '<br />');
+    
+    // Wrap in paragraph if not already wrapped
+    if (!html.startsWith('<')) {
+      html = '<p class="mb-4 text-gray-300 leading-relaxed">' + html + '</p>';
+    }
+    
+    return html;
+  };
 
   // Update form data when blog prop changes (e.g., AI generation)
   useEffect(() => {
     if (blog) {
-      // Convert markdown to HTML if content contains markdown syntax
-      let content = blog.content || '';
-      if (content.includes('##') || content.includes('**') || content.includes('```')) {
-        // Simple markdown to HTML conversion for common elements
-        content = content
-          .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-          .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-          .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-          .replace(/\*(.*?)\*/g, '<em>$1</em>')
-          .replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>')
-          .replace(/`(.*?)`/g, '<code>$1</code>')
-          .replace(/\n\n/g, '</p><p>')
-          .replace(/\n/g, '<br />');
-        
-        // Wrap in paragraph if not already wrapped
-        if (!content.startsWith('<')) {
-          content = '<p>' + content + '</p>';
-        }
-      }
+      const content = blog.content || '';
+      const processedContent = convertMarkdownToHTML(content);
+      const readingTime = calculateReadingTime(content);
       
       setFormData({
         title: blog.title || '',
         slug: blog.slug || '',
         excerpt: blog.excerpt || '',
-        content: content,
+        content: processedContent,
         category: blog.category || '',
         tags: Array.isArray(blog.tags) ? blog.tags.join(', ') : (blog.tags || ''),
         status: blog.status || 'draft',
         featured_image: blog.featured_image || '',
         images: blog.images || [],
         seo_title: blog.seo_title || blog.title || '',
-        seo_description: blog.seo_description || blog.excerpt || ''
+        seo_description: blog.seo_description || blog.excerpt || '',
+        reading_time: readingTime,
+        scheduled_date: blog.scheduled_date || '',
+        meta_keywords: blog.meta_keywords || '',
+        canonical_url: blog.canonical_url || ''
       });
     }
   }, [blog]);
+
+  // Update word count when content changes
+  useEffect(() => {
+    if (formData.content) {
+      calculateReadingTime(formData.content.replace(/<[^>]*>/g, ''));
+    }
+  }, [formData.content]);
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -4486,218 +4549,493 @@ const BlogEditorModal = ({ blog, onSave, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-gray-900 rounded-2xl border border-red-500/30 p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-gray-900 rounded-2xl border border-red-500/30 p-8 max-w-6xl w-full max-h-[95vh] overflow-y-auto">
+        {/* Enhanced Header with Toolbar */}
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-bold text-white">
-            {blog ? 'Edit Blog Post' : 'New Blog Post'}
-          </h3>
-          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-            <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-4">
+            <h3 className="text-2xl font-bold text-white">
+              {blog ? 'Edit Blog Post' : 'New Blog Post'}
+            </h3>
+            <div className="flex items-center gap-2 text-sm text-gray-400">
+              <span>{wordCount} words</span>
+              <span>•</span>
+              <span>{formData.reading_time} min read</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {/* Editor Mode Toggle */}
+            <div className="flex bg-gray-800 rounded-lg p-1">
+              <button
+                onClick={() => setEditorMode('wysiwyg')}
+                className={`px-3 py-1 text-xs rounded transition-colors ${
+                  editorMode === 'wysiwyg' ? 'bg-red-600 text-white' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Visual
+              </button>
+              <button
+                onClick={() => setEditorMode('markdown')}
+                className={`px-3 py-1 text-xs rounded transition-colors ${
+                  editorMode === 'markdown' ? 'bg-red-600 text-white' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Markdown
+              </button>
+            </div>
+            
+            {/* Preview Toggle */}
+            <button
+              onClick={() => setShowPreview(!showPreview)}
+              className={`px-3 py-2 text-xs rounded-lg transition-colors ${
+                showPreview ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'
+              }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
+
+            {/* SEO Panel Toggle */}
+            <button
+              onClick={() => setShowSEOPanel(!showSEOPanel)}
+              className={`px-3 py-2 text-xs rounded-lg transition-colors ${
+                showSEOPanel ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'
+              }`}
+            >
+              SEO
+            </button>
+
+            <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
-        <div className="space-y-6">
-          {/* Title & Slug */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content Area */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Title & Slug */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Title *</label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => handleChange('title', e.target.value)}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
+                  required
+                  placeholder="Enter your blog title..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">URL Slug</label>
+                <input
+                  type="text"
+                  value={formData.slug}
+                  onChange={(e) => handleChange('slug', e.target.value)}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
+                  placeholder="auto-generated-from-title"
+                />
+              </div>
+            </div>
+
+            {/* Excerpt with Character Count */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Title *</label>
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => handleChange('title', e.target.value)}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium text-gray-300">Excerpt *</label>
+                <span className="text-xs text-gray-500">{formData.excerpt.length}/160 chars</span>
+              </div>
+              <textarea
+                value={formData.excerpt}
+                onChange={(e) => handleChange('excerpt', e.target.value)}
+                rows="3"
+                maxLength="160"
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500 resize-none"
+                placeholder="Brief description for search engines and social media..."
                 required
               />
             </div>
+
+            {/* Enhanced Content Editor */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Slug</label>
-              <input
-                type="text"
-                value={formData.slug}
-                onChange={(e) => handleChange('slug', e.target.value)}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
-              />
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-sm font-medium text-gray-300">Content *</label>
+                <div className="flex items-center gap-2">
+                  {/* Content Formatting Tools */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const selection = window.getSelection();
+                      if (selection.rangeCount > 0) {
+                        const range = selection.getRangeAt(0);
+                        const strong = document.createElement('strong');
+                        try {
+                          range.surroundContents(strong);
+                        } catch (e) {
+                          strong.appendChild(range.extractContents());
+                          range.insertNode(strong);
+                        }
+                      }
+                    }}
+                    className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors"
+                    title="Bold"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M15.6 10.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 6.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z"/>
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors"
+                    title="Italic"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4h-8z"/>
+                    </svg>
+                  </button>
+                  <div className="w-px h-4 bg-gray-600"></div>
+                  <select
+                    className="text-xs bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white"
+                    onChange={(e) => {
+                      // Insert code block template
+                      const template = `<pre class="bg-gray-800 rounded-lg p-4 overflow-x-auto"><code class="language-${e.target.value}">\n// Your ${e.target.value} code here\n</code></pre>`;
+                      handleChange('content', formData.content + '\n\n' + template);
+                    }}
+                  >
+                    <option value="">Insert Code</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="json">JSON</option>
+                    <option value="bash">Bash</option>
+                  </select>
+                </div>
+              </div>
+              
+              {showPreview ? (
+                <div className="border border-gray-700 rounded-lg">
+                  <div className="bg-gray-800 px-4 py-2 border-b border-gray-700 text-sm text-gray-400">
+                    Preview
+                  </div>
+                  <div 
+                    className="p-4 prose prose-invert max-w-none"
+                    dangerouslySetInnerHTML={{ __html: formData.content }}
+                  />
+                </div>
+              ) : (
+                <textarea
+                  value={formData.content}
+                  onChange={(e) => handleChange('content', e.target.value)}
+                  rows={editorMode === 'markdown' ? 20 : 15}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500 font-mono text-sm resize-none"
+                  placeholder={editorMode === 'markdown' 
+                    ? "# Your Blog Title\n\nStart writing in **Markdown**...\n\n## Section Title\n\nYour content here with `code` and [links](https://example.com).\n\n```javascript\n// Code blocks supported\nconsole.log('Hello World');\n```"
+                    : "Start writing your blog content..."
+                  }
+                  required
+                />
+              )}
+              
+              {editorMode === 'markdown' && (
+                <p className="text-xs text-gray-500 mt-2">
+                  Markdown supported: **bold**, *italic*, `code`, [links](url), ## headers, ```code blocks```
+                </p>
+              )}
             </div>
           </div>
 
-          {/* Excerpt */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Excerpt *</label>
-            <textarea
-              value={formData.excerpt}
-              onChange={(e) => handleChange('excerpt', e.target.value)}
-              rows="3"
-              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
-              required
-            />
-          </div>
+          {/* Sidebar */}
+          <div className="space-y-6">
 
-          {/* Content */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Content *</label>
-            <RichTextEditor
-              value={formData.content}
-              onChange={(value) => handleChange('content', value)}
-              placeholder="Start writing your blog content..."
-              className="mb-2"
-            />
-            <p className="text-xs text-gray-500 mt-1">Rich text editor with formatting tools - no markdown needed!</p>
-          </div>
+            {/* Publishing Options */}
+            <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+              <h4 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Publishing
+              </h4>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => handleChange('status', e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500"
+                  >
+                    <option value="draft">Draft</option>
+                    <option value="published">Published</option>
+                    <option value="archived">Archived</option>
+                  </select>
+                </div>
 
-          {/* Category, Tags, Status */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
-              <input
-                type="text"
-                value={formData.category}
-                onChange={(e) => handleChange('category', e.target.value)}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Tags</label>
-              <input
-                type="text"
-                value={formData.tags}
-                onChange={(e) => handleChange('tags', e.target.value)}
-                placeholder="tag1, tag2, tag3"
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
-              <select
-                value={formData.status}
-                onChange={(e) => handleChange('status', e.target.value)}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
-              >
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-                <option value="archived">Archived</option>
-              </select>
-            </div>
-          </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Schedule Publication</label>
+                  <input
+                    type="datetime-local"
+                    value={formData.scheduled_date}
+                    onChange={(e) => handleChange('scheduled_date', e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500"
+                  />
+                </div>
 
-          {/* Featured Image */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Featured Image URL</label>
-            <input
-              type="url"
-              value={formData.featured_image}
-              onChange={(e) => handleChange('featured_image', e.target.value)}
-              placeholder="https://example.com/image.jpg"
-              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
-            />
-          </div>
-
-          {/* Gallery Images & PDFs */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Gallery Images / PDFs (Slider)
-            </label>
-            <p className="text-xs text-gray-500 mb-3">Add multiple images or PDF URLs to create a carousel/slider in the blog post</p>
-            
-            {/* Add new image/PDF */}
-            <div className="flex gap-2 mb-4">
-              <input
-                type="url"
-                value={newImageUrl}
-                onChange={(e) => setNewImageUrl(e.target.value)}
-                placeholder="https://example.com/image.jpg or .pdf"
-                className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
-                onKeyPress={(e) => e.key === 'Enter' && addImage()}
-              />
-              <button
-                type="button"
-                onClick={addImage}
-                className="px-6 py-3 bg-primary-500 hover:bg-primary-600 rounded-lg text-white font-medium transition-colors"
-              >
-                Add
-              </button>
+                <div className="pt-2 border-t border-gray-700">
+                  <div className="text-xs text-gray-400 space-y-1">
+                    <div>Last saved: {new Date().toLocaleTimeString()}</div>
+                    <div>Reading time: {formData.reading_time} minutes</div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Display current images/PDFs */}
-            {formData.images && formData.images.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {formData.images.map((img, idx) => (
-                  <div key={idx} className="relative group">
-                    <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden border border-white/10">
-                      {isPDF(img) ? (
-                        <div className="w-full h-full flex flex-col items-center justify-center bg-red-500/20">
-                          <svg className="w-12 h-12 text-red-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                          </svg>
-                          <span className="text-xs text-red-400 font-medium">PDF</span>
-                        </div>
-                      ) : (
-                        <img src={img} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover" />
-                      )}
+            {/* Category & Tags */}
+            <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+              <h4 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                Categorization
+              </h4>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                  <input
+                    type="text"
+                    value={formData.category}
+                    onChange={(e) => handleChange('category', e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500"
+                    placeholder="e.g., Technology, Tutorial"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Tags</label>
+                  <input
+                    type="text"
+                    value={formData.tags}
+                    onChange={(e) => handleChange('tags', e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500 mb-2"
+                    placeholder="React, JavaScript, Web Dev"
+                  />
+                  <div className="flex flex-wrap gap-1">
+                    {availableTags.slice(0, 8).map(tag => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => {
+                          const currentTags = formData.tags.split(',').map(t => t.trim()).filter(Boolean);
+                          if (!currentTags.includes(tag)) {
+                            handleChange('tags', [...currentTags, tag].join(', '));
+                          }
+                        }}
+                        className="px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors"
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Featured Image & Gallery */}
+            <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+              <h4 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Media
+              </h4>
+              
+              <div className="space-y-4">
+                {/* Featured Image */}
+                <div>
+                  <label className="block text-xs font-medium text-gray-400 mb-2">Featured Image</label>
+                  <input
+                    type="url"
+                    value={formData.featured_image}
+                    onChange={(e) => handleChange('featured_image', e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                  {formData.featured_image && (
+                    <div className="mt-2">
+                      <img 
+                        src={formData.featured_image} 
+                        alt="Featured" 
+                        className="w-full h-20 object-cover rounded-lg"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
                     </div>
+                  )}
+                </div>
+
+                {/* Gallery Images */}
+                <div>
+                  <label className="block text-xs font-medium text-gray-400 mb-2">Gallery Images/PDFs</label>
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      type="url"
+                      value={newImageUrl}
+                      onChange={(e) => setNewImageUrl(e.target.value)}
+                      placeholder="Image or PDF URL"
+                      className="flex-1 px-2 py-1 text-sm bg-gray-900 border border-gray-600 rounded text-white focus:outline-none focus:border-red-500"
+                      onKeyPress={(e) => e.key === 'Enter' && addImage()}
+                    />
                     <button
                       type="button"
-                      onClick={() => removeImage(idx)}
-                      className="absolute -top-2 -right-2 p-1.5 bg-red-500 hover:bg-red-600 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                      title="Remove"
+                      onClick={addImage}
+                      className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs rounded transition-colors"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
+                      Add
                     </button>
-                    <div className="absolute bottom-2 left-2 right-2">
-                      <div className="text-xs text-white bg-black/50 backdrop-blur-sm px-2 py-1 rounded truncate">
-                        {idx + 1}. {isPDF(img) ? 'PDF Document' : 'Image'}
-                      </div>
-                    </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
 
-          {/* SEO Fields */}
-          <div className="border-t border-white/10 pt-6">
-            <h4 className="text-lg font-bold text-white mb-4">SEO Settings</h4>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">SEO Title</label>
-                <input
-                  type="text"
-                  value={formData.seo_title}
-                  onChange={(e) => handleChange('seo_title', e.target.value)}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">SEO Description</label>
-                <textarea
-                  value={formData.seo_description}
-                  onChange={(e) => handleChange('seo_description', e.target.value)}
-                  rows="2"
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-red-500"
-                />
+                  {/* Display current images */}
+                  {formData.images && formData.images.length > 0 && (
+                    <div className="grid grid-cols-2 gap-2">
+                      {formData.images.map((img, idx) => (
+                        <div key={idx} className="relative group">
+                          <div className="aspect-video bg-gray-900 rounded overflow-hidden border border-gray-600">
+                            {isPDF(img) ? (
+                              <div className="w-full h-full flex flex-col items-center justify-center">
+                                <svg className="w-6 h-6 text-red-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                <span className="text-xs text-red-400">PDF</span>
+                              </div>
+                            ) : (
+                              <img src={img} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover" />
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeImage(idx)}
+                            className="absolute -top-1 -right-1 p-1 bg-red-500 hover:bg-red-600 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                            title="Remove"
+                          >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Actions */}
-        <div className="flex gap-3 mt-8">
-          <button
-            onClick={onClose}
-            className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg font-medium transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={!formData.title || !formData.excerpt || !formData.content}
-            className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-          >
-            {blog ? 'Update Blog Post' : 'Create Blog Post'}
-          </button>
+            {/* SEO Panel */}
+            {showSEOPanel && (
+              <div className="lg:col-span-1 bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                <h4 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                  <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  SEO Optimization
+                </h4>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">SEO Title</label>
+                    <input
+                      type="text"
+                      value={formData.seo_title}
+                      onChange={(e) => handleChange('seo_title', e.target.value)}
+                      className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500"
+                      placeholder="Optimized title for search engines"
+                    />
+                    <div className="text-xs text-gray-500 mt-1">{formData.seo_title.length}/60 chars</div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Meta Description</label>
+                    <textarea
+                      value={formData.seo_description}
+                      onChange={(e) => handleChange('seo_description', e.target.value)}
+                      rows="3"
+                      maxLength="160"
+                      className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500 resize-none"
+                      placeholder="Description for search engine results"
+                    />
+                    <div className="text-xs text-gray-500 mt-1">{formData.seo_description.length}/160 chars</div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Focus Keywords</label>
+                    <input
+                      type="text"
+                      value={formData.meta_keywords}
+                      onChange={(e) => handleChange('meta_keywords', e.target.value)}
+                      className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500"
+                      placeholder="keyword1, keyword2, keyword3"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Canonical URL</label>
+                    <input
+                      type="url"
+                      value={formData.canonical_url}
+                      onChange={(e) => handleChange('canonical_url', e.target.value)}
+                      className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500"
+                      placeholder="https://yourdomain.com/blog/post-slug"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </div>
+
+          {/* Action Buttons */}
+          <div className="lg:col-span-3 flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-700">
+            <div className="flex-1 flex gap-3">
+              <button
+                type="button"
+                onClick={() => handleSubmit()}
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                {formData.status === 'published' ? 'Update & Publish' : 'Save Draft'}
+              </button>
+              
+              {formData.status === 'draft' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleChange('status', 'published');
+                    handleSubmit();
+                  }}
+                  className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                  Publish Now
+                </button>
+              )}
+            </div>
+            
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>
